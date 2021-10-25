@@ -3,7 +3,8 @@ This project is intended for reading APS Systems inverters. The program can pair
 The program has a lot of smart features. All settings can be done via the webinterface. It has a console that can be used for debugging and sending/receiving zigbee messages
 
 ## the hardware
-It is nothing more than an esp device like nodemcu or its relatives and a prepaired cc2530, cc2531 zigbee module. And a powersupply.
+It is nothing more than an esp device like nodemcu or its relatives and a prepared cc2530, cc2531 zigbee module. And a powersupply.
+The zigbeemodule should be flashed with a firmware that can be found here https://github.com/Koenkk/zigbee2mqtt/issues/4221
 
 ![minhw](https://user-images.githubusercontent.com/12282915/138685751-98112dfd-8ed8-4185-9de7-c2e2e8f005a9.jpg)
 ## how does it work
