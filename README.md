@@ -7,7 +7,7 @@ Use arduino ide with the esp822 version 2.7.1 installed under boardmanager. The 
 
 ## the hardware
 It is nothing more than an esp device like nodemcu or its relatives and a prepared cc2530, cc2531 zigbee module. And a powersupply.
-The zigbeemodule should be flashed with a firmware that can be found here https://github.com/Koenkk/zigbee2mqtt/issues/4221
+The zigbeemodule should be flashed with a firmware that can be found here https://github.com/Koenkk/zigbee2mqtt/issues/4221. Here you can find much more information on this project.
 the wiring:
 ### cc2530 -> ESP 
 -  p2   -> d8
