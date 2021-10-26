@@ -1,8 +1,10 @@
 // deze functie berekent de zonsopkomst en zonsondergangstijden
 void sun_setrise() {
 
-float OUR_longtitude = atof(lengte);
-float OUR_latitude = atof(breedte);
+//float OUR_longtitude = atof(lengte);
+//float OUR_latitude = atof(breedte);
+float OUR_longtitude = longi;
+float OUR_latitude = lati;
 float OUR_timezone = atof(timezone); //   120                     // localtime with UTC difference in minutes
 
 sunMoon  sm;

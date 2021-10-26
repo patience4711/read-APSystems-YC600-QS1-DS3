@@ -49,7 +49,7 @@ switch (dst) {
 
 toSend += "<br><br><br><br>system time = <span style='font-size:20px;font-weight:bold' id='tijdveld'></span> hr.&nbsp&nbsp " + zt + "<br>";
 
-toSend += "firmware version : ESP-ECU-v6_12<br>";
+toSend += "firmware version : " + String(VERSION);
 
 toSend += "time retrieved today : "; if ( timeRetrieved ) { toSend += "yes<br>"; } else { toSend += "no<br>"; }
 

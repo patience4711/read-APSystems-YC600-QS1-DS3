@@ -74,8 +74,11 @@ void wifiConfigsave() {
     JsonObject json = doc.to<JsonObject>();   
     json["ip"] = static_ip;
     json["pswd"] = pswd;
-    json["lengte"] = lengte;
-    json["breedte"] = breedte;
+    //json["lengte"] = lengte;
+    //json["breedte"] = breedte;
+    json["longi"] = longi;
+    json["lati"] = lati;
+    
     json["timezone"] = timezone;
     json["zomerTijd"] = zomerTijd;
 
@@ -170,8 +173,10 @@ bool file_open_for_read(String bestand) {
             if (bestand == "/wificonfig.json") {
                       if(jsonStr.indexOf("ip") > 0){ strcpy(static_ip, doc["ip"]);}
                       if(jsonStr.indexOf("pswd") > 0){ strcpy(pswd, doc["pswd"]);}
-                      if(jsonStr.indexOf("lengte") > 0){ strcpy(lengte, doc["lengte"]);}
-                      if(jsonStr.indexOf("breedte") > 0){ strcpy(breedte, doc["breedte"]);}
+//                      if(jsonStr.indexOf("lengte") > 0){ strcpy(lengte, doc["lengte"]);}
+//                      if(jsonStr.indexOf("breedte") > 0){ strcpy(breedte, doc["breedte"]);}
+                      if(jsonStr.indexOf("longi") > 0){longi = doc["longi"].as<float>();}
+                      if(jsonStr.indexOf("lati") > 0){lati = doc["lati"].as<float>();}                      
                       if(jsonStr.indexOf("timezone") > 0){ strcpy(timezone, doc["timezone"]);}
                       if(jsonStr.indexOf("zomerTijd") > 0){zomerTijd = doc["zomerTijd"].as<bool>();}
             }
