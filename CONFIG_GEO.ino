@@ -27,13 +27,13 @@ const char GEOCONFIG[] PROGMEM = R"=====(
   <tr><td>latitude &deg<td><input class='inp3' name='be' length='8' placeholder='latitude' value='{be}'></input></tr> 
   <tr><td>timezone<td><input class='inp2' name='tz' length='6' placeholder='minutes relative to GMT' value='{tz}'></input></tr>
   <tr><td>dst y/n<td><input type='checkbox' style='width:30px; height:30px;' name='ts' #check></input></tr></table> 
+  
   </div></div><br></form>
 <div id='msect'>
   <ul>
    <li id='sub'><a href='#' onclick='submitFunction("/SW=BACK")'>save</a></li>
    <li><a href='/MENU'>done</a></li>
    <li><a href='#' onclick='helpfunctie()'>help</a>
-</div>
    </ul>
 </div>
 <br></body></html>
@@ -49,8 +49,11 @@ toSend = FPSTR(HTML_HEAD);
 toSend += FPSTR(GEOCONFIG);  
 
 // en de gegevens terugzetten
-toSend.replace("{le}",  String(lengte) );
-toSend.replace("{be}",  String(breedte) );
+//toSend.replace("{le}",  String(lengte) );
+//toSend.replace("{be}",  String(breedte) );
+toSend.replace("{le}",  String(longi,3) );
+toSend.replace("{be}",  String(lati,3) );
+
 toSend.replace("{tz}",  String(timezone) );
 
 //Serial.println("zendPageGEOconfig zomerTijd = " + String(zomerTijd) );
@@ -66,9 +69,16 @@ void handleGEOconfig(AsyncWebServerRequest *request) {
 //char static_ip2[16] = "";
 
   //de serverargumenten verzamelen
-strcpy(lengte, request->getParam("le")->value().c_str());
-strcpy(breedte, request->getParam("be")->value().c_str());
+//strcpy(lengte, request->getParam("le")->value().c_str());
+
+longi = request->getParam("le")->value().toFloat();
+
+//strcpy(breedte, request->getParam("be")->value().c_str());
+
+lati = request->getParam("be")->value().toFloat();
+
 strcpy(timezone, request->getParam("tz")->value().c_str());
+
 
 //BEWARE CHECKBOX
 String dag = "";
