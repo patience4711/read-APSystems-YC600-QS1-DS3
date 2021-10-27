@@ -1,9 +1,11 @@
 # read-APS-inverters
 This project is intended for reading APS Systems inverters. The program can pair and poll YC600 and QS1 inverters, up to 9 peaces. The read values are displayed on a web page and sent via mosquitto in a Json format.
 The program has a lot of smart features. All settings can be done via the webinterface. It has a console that can be used for debugging and sending/receiving zigbee messages.
+See it in action on youtube: https://youtu.be/j7s4FC1gu-U
 
 ## compile this sketch
-Use arduino ide with the esp822 version 2.7.1 installed under boardmanager. The ota updates won't work with other versons. 
+Use arduino ide with the esp822 version 2.7.1 installed under boardmanager. The ota updates won't work with other versons.
+Or use the binary file ESP-ECU-v6_10 to flash it directly on your ESP device.
 
 ## the hardware
 It is nothing more than an esp device like nodemcu or its relatives and a prepared cc2530, cc2531 zigbee module. And a powersupply.
