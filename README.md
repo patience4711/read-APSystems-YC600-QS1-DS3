@@ -1,7 +1,18 @@
-# read-APS-inverters
+# read APS inverters
 This project is intended for reading APS Systems inverters. The program can pair and poll YC600 and QS1 inverters, up to 9 peaces. The read values are displayed on a web page and sent via mosquitto in a Json format.
 The program has a lot of smart features. All settings can be done via the webinterface. It has a console that can be used for debugging and sending/receiving zigbee messages.
 See it in action on youtube: https://youtu.be/j7s4FC1gu-U
+
+## features
+- Easy wifi config portal
+- Easy add, delete and pair inverters
+- automatic polling or on demand via mqtt or http
+- data can be requested via http and mosquitto
+- There are 2 different json formats, a special one for domoticz
+- Fast asyc webserver
+- a very smart on-line console to send commands and debug
+- Smart timekeeping
+- A lot of system info on the webpage
 
 ## compile this sketch
 Use arduino ide with the esp822 version 2.7.1 installed under boardmanager. The ota updates won't work with other versons.
@@ -27,6 +38,7 @@ The ESP-ECU starts a coordinator (an entity that can start a zigbee network). Th
 The interesting values are send via mqtt and displayed on the main page.
 
 ![frontpage](https://user-images.githubusercontent.com/12282915/138686152-3b065a7c-88f8-49d6-bf89-c512f82fd562.jpg)
+![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
 ## know issues
 The zigbee module crashes sometimes during the pollings. The system recovers that by resetting it and start the coordinator again. This is done by a healthcheck that runs every 10 minutes. You can only notice this via the log and infopage where this is counted.
