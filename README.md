@@ -1,7 +1,7 @@
 # read APS inverters
 This project is intended for reading APS Systems inverters. The program can pair and poll YC600 and QS1 inverters, up to 9 peaces. The read values are displayed on a web page and sent via mosquitto in a Json format.
 The program has a lot of smart features. All settings can be done via the webinterface. It has a console that can be used for debugging and sending/receiving zigbee messages.
-See it in action on youtube: https://youtu.be/j7s4FC1gu-U
+See it in action on youtube: https://youtu.be/GDwtIjrQ-fw
 
 ## features
 - Easy wifi config portal
