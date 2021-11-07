@@ -487,37 +487,58 @@ yield();
 //                mqtt send polled data
 // ************************************************************************************
 void mqttPoll(int which) {
-// we polled the inverter which end mqtt the data
+    // we polled the inverter which end mqtt the data
 
-String toMQTT = "{\"inv_serial\":\"" + String(Inv_Prop[which].invSerial) + "\"";
-
-// the json to domoticz must be something like {"idx" : 7, "nvalue" : 0,"svalue" : "90;2975.00"}
-// does it work with the serial on the json?
-//sValue is something like "svalue":"20;30; / so we add a "}   
-//  "command": "udevice", // default so no meed to use
-// "idx" : 7,
-// "nvalue" : 0,
-// "svalue" : "90;2975.00"  
+    // Send in format easly readable in Timberwolf Server
+    // Basic topic which starts with TWECU, to select format add inverter id and postfix out
+    // Payload temperature and power in JSON as float so no conversion is necessary
+    if(Mqtt_outTopic.startsWith("TWECU")) {
+       char payload_buffer[128]; 
    
-   if( Mqtt_outTopic == "domoticz/in" ) 
-    { 
-       
-       String sValue="\"svalue\":\""; // "svalue":"
-       sValue += String(Inv_Data[which].power[4]) + ";" + String(Inv_Data[which].totalEnergy, 2) ; //total of the 2 or 4
-       toMQTT += ",\"idx\":" + String(Inv_Prop[which].invIdx) + ",\"nvalue\":0," + sValue + "\"}";
-       //Serial.println("we publish to domoticz, mess is : " + toMQTT);
-    }  else { 
-        // for not domoticz we have a different mqtt string how does this look?
-       toMQTT += ",\"temp\":\"" + String(Inv_Data[which].heath) + "\",\"p0\":\"" + String(Inv_Data[which].power[0]) + "\",\"p1\":\"" + String(Inv_Data[which].power[1]) + "\"";
        if( Inv_Prop[which].invType == 1 ) {
-       toMQTT += ",\"p2\":\"" + String(Inv_Data[which].power[2]) + "\",\"p3\":\"" + String(Inv_Data[which].power[3])  +  "\"";
+          const char* payload_format = "{ \"temp\": %.2f, \"p0\": %.2f, \"p1\": %.2f, \"p2\": %.2f, \"p3\": %.2f }";
+          snprintf(payload_buffer, sizeof(payload_buffer), payload_format, Inv_Data[which].heath, Inv_Data[which].power[0], Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[4]);
        }
-       toMQTT += ",\"energy\":\"" + String(Inv_Data[which].totalEnergy, 1) + "\"";
-       //Serial.println("we do not publish to domoticz, mess is : " + toMQTT);    
-       toMQTT += "}";  
+       else {
+          const char* payload_format = "{ \"temp\": %.2f, \"p0\": %.2f, \"p1\": %.2f }";
+          snprintf(payload_buffer, sizeof(payload_buffer), payload_format, Inv_Data[which].heath, Inv_Data[which].power[0], Inv_Data[which].power[1]);
        }
-   //DebugPrintln("mqtt mess :"); //DebugPrintln(toMQTT);
-   MQTT_Client.publish ( Mqtt_outTopic.c_str(), toMQTT.c_str() );
+
+       char topic_buffer[256];
+       snprintf(topic_buffer, sizeof(topic_buffer), "%s/%.12s/out", Mqtt_outTopic.c_str(), Inv_Prop[which].invSerial);
+            
+       MQTT_Client.publish ( Mqtt_outTopic.c_str(), payload_buffer);
+       return;
+    }
+
+    String toMQTT = "{\"inv_serial\":\"" + String(Inv_Prop[which].invSerial) + "\"";
+  
+    // the json to domoticz must be something like {"idx" : 7, "nvalue" : 0,"svalue" : "90;2975.00"}
+    // does it work with the serial on the json?
+    //sValue is something like "svalue":"20;30; / so we add a "}   
+    //  "command": "udevice", // default so no meed to use
+    // "idx" : 7,
+    // "nvalue" : 0,
+    // "svalue" : "90;2975.00"     
+    if( Mqtt_outTopic == "domoticz/in" ) 
+      { 
+         
+         String sValue="\"svalue\":\""; // "svalue":"
+         sValue += String(Inv_Data[which].power[4]) + ";" + String(Inv_Data[which].totalEnergy, 2) ; //total of the 2 or 4
+         toMQTT += ",\"idx\":" + String(Inv_Prop[which].invIdx) + ",\"nvalue\":0," + sValue + "\"}";
+         //Serial.println("we publish to domoticz, mess is : " + toMQTT);
+      }  else { 
+          // for not domoticz we have a different mqtt string how does this look?
+         toMQTT += ",\"temp\":\"" + String(Inv_Data[which].heath) + "\",\"p0\":\"" + String(Inv_Data[which].power[0]) + "\",\"p1\":\"" + String(Inv_Data[which].power[1]) + "\"";
+         if( Inv_Prop[which].invType == 1 ) {
+         toMQTT += ",\"p2\":\"" + String(Inv_Data[which].power[2]) + "\",\"p3\":\"" + String(Inv_Data[which].power[3])  +  "\"";
+         }
+         toMQTT += ",\"energy\":\"" + String(Inv_Data[which].totalEnergy, 1) + "\"";
+         //Serial.println("we do not publish to domoticz, mess is : " + toMQTT);    
+         toMQTT += "}";  
+         }
+    //DebugPrintln("mqtt mess :"); //DebugPrintln(toMQTT);
+    MQTT_Client.publish ( Mqtt_outTopic.c_str(), toMQTT.c_str() );
  }
 
  
