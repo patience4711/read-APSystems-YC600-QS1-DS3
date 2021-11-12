@@ -496,18 +496,18 @@ void mqttPoll(int which) {
        char payload_buffer[128]; 
    
        if( Inv_Prop[which].invType == 1 ) {
-          const char* payload_format = "{ \"temp\": %.2f, \"p0\": %.2f, \"p1\": %.2f, \"p2\": %.2f, \"p3\": %.2f }";
+          const char* payload_format = "{ \"temp\": %.5s, \"p0\": %.5s, \"p1\": %.5s, \"p2\": %.5s, \"p3\": %.5s }";
           snprintf(payload_buffer, sizeof(payload_buffer), payload_format, Inv_Data[which].heath, Inv_Data[which].power[0], Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[4]);
        }
        else {
-          const char* payload_format = "{ \"temp\": %.2f, \"p0\": %.2f, \"p1\": %.2f }";
+          const char* payload_format = "{ \"temp\": %.5s, \"p0\": %.5s, \"p1\": %.5s }";
           snprintf(payload_buffer, sizeof(payload_buffer), payload_format, Inv_Data[which].heath, Inv_Data[which].power[0], Inv_Data[which].power[1]);
        }
 
        char topic_buffer[256];
        snprintf(topic_buffer, sizeof(topic_buffer), "%s/%.12s/out", Mqtt_outTopic.c_str(), Inv_Prop[which].invSerial);
             
-       MQTT_Client.publish ( Mqtt_outTopic.c_str(), payload_buffer);
+       MQTT_Client.publish (topic_buffer, payload_buffer);
        return;
     }
 
