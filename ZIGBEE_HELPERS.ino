@@ -42,7 +42,7 @@ delayMicroseconds(250);
             if (readCounter < CC2530_MAX_SERIAL_BUFFER_SIZE)
             {
                 processIncomingByte(Serial.read());
-                readCounter += 1;
+                readCounter += 2;
             }
             else
             {
