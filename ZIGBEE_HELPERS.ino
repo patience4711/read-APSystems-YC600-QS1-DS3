@@ -39,7 +39,7 @@ delayMicroseconds(250);
         
         while (Serial.available())
         {
-            if (readCounter < CC2530_MAX_SERIAL_BUFFER_SIZE)
+            if (readCounter < CC2530_MAX_SERIAL_BUFFER_SIZE /2)
             {
                 processIncomingByte(Serial.read());
                 readCounter += 1;
@@ -68,44 +68,6 @@ delayMicroseconds(250);
         }
     cleanIncoming(); // check for F8 and remove it
 }
-//// *****************************************************************************
-////                 read zigbee radio 
-//// *****************************************************************************
-//void readZigbee() {
-//readCounter = 0;
-////inMessage[0] = '\0'; //terminate otherwise all is appended
-//memset( &inMessage, 0, sizeof(inMessage) ); //zero out the 
-//delayMicroseconds(250);
-//        
-//        while (Serial.available())
-//        {
-//            if (readCounter < CC2530_MAX_SERIAL_BUFFER_SIZE)
-//            {
-//                processIncomingByte(Serial.read());
-//                readCounter += 1;
-//            }
-//            else
-//            {
-//                Serial.read(); // we read from serial to empty the buffer but do not process
-//            }
-//    
-////            if (Serial.available() == 0)  // the buffer is empty
-////            {
-////
-////            }
-//        }
-//        // now we should have catched fullIncomingMessage, convert it to uppercase
-//        uint16_t iToUpper = 0; // has to be 16bit because the received message if the YC600 answers is longer then 255
-//        while (inMessage[iToUpper])
-//        {
-//            inMessage[iToUpper] = toupper(inMessage[iToUpper]);
-//            iToUpper++;
-//        }
-//#ifdef DEBUG
-//    cleanIncoming(); // with serialswaps we have to do this check for F8 and remove it
-//#endif
-//}
-
 
 // format the incoming byte and add it to inMessage
 void processIncomingByte(const byte inByte)
@@ -128,7 +90,7 @@ void cleanIncoming() {
 //                               data converters
 // **************************************************************************
 
-// calculate and return the length of the message
+// calculate and return the length of a message to send
 char *sLen(char Command[])  
 {
 char bufferSln[254];
@@ -215,13 +177,11 @@ strcpy(resetCmd, strncat(sLen(resetCmd), resetCmd, sizeof(sLen(resetCmd)) + size
 strcpy(resetCmd, strncat(resetCmd, checkSum(resetCmd), sizeof(resetCmd) + sizeof(checkSum(resetCmd))));
 
 ////commented out while testing
-//swap_to_zb(); // set serial to the cc2530
+
 sendZigbee(resetCmd);
 delay(1000);
-////waitSerial(); //check if anything was received
+
 readZigbee();
-////read_ZB();
-//swap_to_usb(); // set serial back to usb
 
     if(readCounter == 0) {
       //Serial.println("nothing received");
