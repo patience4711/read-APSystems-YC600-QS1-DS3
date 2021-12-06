@@ -48,5 +48,5 @@ The interesting values are send via mqtt and displayed on the main page.
 ![frontpage](https://user-images.githubusercontent.com/12282915/138686152-3b065a7c-88f8-49d6-bf89-c512f82fd562.jpg)
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
-## know issues
+## known issues
 The zigbee module crashes sometimes during the pollings. The system recovers that by resetting it and start the coordinator again. This is done by a healthcheck that runs every 10 minutes. You can only notice this via the log and infopage where this is counted.
