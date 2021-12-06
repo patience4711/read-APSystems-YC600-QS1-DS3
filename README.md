@@ -3,6 +3,8 @@ This project is intended for reading APS Systems inverters. The program can pair
 The program has a lot of smart features. All settings can be done via the webinterface. It has a console that can be used for debugging and sending/receiving zigbee messages.
 
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
+in case someone wants to print the housing: https://1drv.ms/u/s!AkMG5FvUwhedim8a_tVLywAivVDI?e=XIwhYg
+This is for a nodemcu board 31x58mm
 
 ## features
 - Easy wifi config portal
