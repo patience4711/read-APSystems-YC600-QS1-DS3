@@ -71,7 +71,6 @@ int checkCoordinator() {
 // this is basicly the 2700 command  
 // the answer can mean that the coordinator is up, not yet started or no answer
 // we evaluate that
-   
     char ecu_id_reverse[13];
     ECU_REVERSE().toCharArray(ecu_id_reverse, 13);
     char * tail;
@@ -98,7 +97,7 @@ int checkCoordinator() {
     //strncat(testAnswer, ecu_id_reverse, 12);
     //strncat(testAnswer, endFix, sizeof(endFix));
 
-    // now we do this 3 times, when we find an answer we return
+    // now we do this 3 times
     for (int x=1; x<4; x++)
     {
       #ifdef DEBUG
@@ -108,25 +107,17 @@ int checkCoordinator() {
       
       sendZigbee(checkCommand);
       if ( waitSerialAvailable() ) { readZigbee(); } else { readCounter = 0;} // when nothing available we don't read
-      if(diagNose) ws.textAll("cc inMessage = " + String(inMessage) + " rc = " + String(readCounter));
+      if(diagNose) ws.textAll("inMessage = " + String(inMessage) + " rc = " + String(readCounter));
       #ifdef DEBUG
       Serial.println("swap to usb");
       swap_to_usb();
       Serial.println("hc received " + String(inMessage));
       #endif
-    
+  
    // we get this : FE0E670000 FFFF80971B01A3D8 0000 07090011
-   // received : FE0E670000FFFF80971B01A3D600000709001F when ok
+  //    received : FE0E670000FFFF80971B01A3D600000709001F when ok
   
       //check if ecu_id_reverse is in the string, then split it there + 2 bytes
-      if( strstr(inMessage, "FE0145C0088C") )// ZDO_STATE_CHANGE_IND
-      {
-      ws.textAll("found FE0145C0088C, skipping");
-      // if we get this message ( after start ) we skip this loop
-        x--;
-        continue;
-      }
-      
       if( strstr(inMessage, ecu_id_reverse) )
       {
           //ws.textAll("found ecu id");

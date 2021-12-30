@@ -188,13 +188,5 @@ bool waitSerialAvailable()
    return true;
 }
 
-//bool waitSerialAvailable()
-//{
-//  for(int z=0; z <10; z++)
-//  {
-//   nbDelay(100);
-//   if(Serial.available()) break;
-//  } 
-//nbDelay(500); //wait an extra 500 so that the message can complete
-//}
+
   

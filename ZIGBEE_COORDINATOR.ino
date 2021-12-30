@@ -1,15 +1,8 @@
 bool coordinator(bool normal) { // if true we send the extra command for normal operations
-    //int chack = 0;
     DebugPrintln("start coordinator");  
     coordinator_init();
     if(normal) sendNO();
-    // now check the coordinator
-    //checkCoordinator(); // the first time after init we get an unexpected answer so ignore 
-    unsigned long thisMoment = millis();
-    while(millis() < thisMoment + 1000){
-    checkCoordinator();
-    }
-
+    // now check
     if ( checkCoordinator() != 0 ) // can be 0 1 or 2
     {
         Update_Log("zigbee" , "starting ZB coordinator failed");

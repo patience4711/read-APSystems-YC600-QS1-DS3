@@ -342,31 +342,43 @@ server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) {
      request->send(200, "text/plain", term);
      }
 });
-
+    
 server.on("/get.Power", HTTP_GET, [](AsyncWebServerRequest *request) {     
 // set the array into a json object
 String json;
 int i = atoi(request->arg("inv").c_str()) ;
+// inv prop comes from spiffs so if we could evaluate that it exixts
 
     json="{";
       json += "\"nm\":\"" + String(Inv_Prop[i].invLocation) + "\"";
       json += ",\"polled\":\"" + String(polled[i]) + "\"";    
       json += ",\"type\":\"" + String(Inv_Prop[i].invType) + "\"";
 
+if(String(Inv_Prop[i].invLocation) != "N/A") {
       for(int z = 0; z < 4; z++ ) 
       {
          if(Inv_Prop[i].conPanels[z]) // is this panel connected?
          {
              json += ",\"p" +  String(z) + "\":\"" + Inv_Data[i].power[z] + "\"";  
          }   else {
-             json += ",\"p" +  String(z) + "\":\"n/a\""; 
+             json += ",\"p" +  String(z) + "\":\"n/e\""; 
          }
-        
       }
-
      json += ",\"eN\":\"" + String(Inv_Data[i].totalEnergy/(float)1000, 2) + "\"";
-     json += ",\"state\":\"" + String(zigbeeUp) + "\"";
+     //json += ",\"state\":\"" + String(zigbeeUp) + "\"";
+ } 
+    else
+ { // invSerial="000000000000" so we put all n/e
+
+      for(int z = 0; z < 4; z++ ) 
+      {
+        json += ",\"p" +  String(z) + "\":\"n/e\""; 
+      }
+     json += ",\"eN\":\"n/e\"";
      
+ }
+     json += ",\"state\":\"" + String(zigbeeUp) + "\""; 
+ 
      uint8_t night = 0; 
      if(!timeRetrieved ) { night=0; } else {
      //if(now() > switchonTime && now() < switchoffTime )

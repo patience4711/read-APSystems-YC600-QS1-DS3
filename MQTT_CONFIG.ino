@@ -43,7 +43,7 @@ const char MQTTCONFIG[] PROGMEM = R"=====(
   <li><a href='/MENU'>done</a>
   <li><a href='#' onclick='helpfunctie()'>help</a>
   <li><a href='/MQTT_TEST' >test</a></ul>
-  <br></div>
+  <br>
 </div>
 </body></html>
 )=====";

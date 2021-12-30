@@ -16,6 +16,7 @@ table, th, td {
   width:78px;
   font-size:20px;
   text-align: center;
+  color: black;
   }
 #nameField {
   font-weight:bold; 
@@ -95,7 +96,7 @@ const char JAVA_SCRIPT[] PROGMEM = R"=====(
 var term;
 function loadScript() {
 setKeuze();
-loadData();
+getData();
 }
 
 function show4() {
@@ -157,40 +158,100 @@ function getData() {
          slp.style.display = "none";       
        }
       var panel_0 =  document.getElementById("ch0");
-      if (p0 != "n/a") {
+      if (p0 != "n/e") {
+      panel_0.style.background="white";  
+      if (polled == "1") {
+        panel_0.value = p0; } 
+        else 
+        {
+        panel_0.style.color="red";
+        panel_0.value = "n/a";  
+        }      
+      } 
+      else 
+      {
       panel_0.style.color="black";
-      } else {
-      panel_0.style.color="red";  
+      panel_0.style.background="#333333";
+      panel_0.value = p0;
       }
-      panel_0.value=p0;
-
+ 
       var panel_1 =  document.getElementById("ch1");
-      if (p1 != "n/a") {
+      if (p1 != "n/e") {
+      panel_1.style.background="white";
+      if (polled == "1") {
+        panel_1.value = p1; } 
+        else 
+        {
+        panel_1.style.color="red";
+        panel_1.value = "n/a";  
+        }      
+      } 
+      else 
+      {
       panel_1.style.color="black";
-      } else {
-      panel_1.style.color="red";  
+      panel_1.style.background="#333333";
+      panel_1.value = p1;
       }
-      panel_1.value=p1;
+
       var panel_2 =  document.getElementById("ch2");
-      if (p2 != "n/a") {
+      if (p2 != "n/e") {
+      panel_2.style.background="white";
+      if (polled == "1") {
+        panel_2.value = p2; } 
+        else 
+        {
+        panel_2.style.color="red";
+        panel_2.value = "n/a";  
+        }      
+      } 
+      else 
+      {
       panel_2.style.color="black";
-      } else {
-      panel_2.style.color="red";  
-      }
-      panel_2.value=p2;
+      panel_2.style.background="#333333";
+      panel_2.value = p2;
+      }      
+
       var panel_3 =  document.getElementById("ch3");
-      if (p3 != "n/a") {
+      if (p3 != "n/e") {
+      panel_3.style.background="white";
+      if (polled == "1") {
+        panel_3.value = p3; } 
+        else 
+        {
+        panel_3.style.color="red";
+        panel_3.value = "n/a";  
+        }      
+      } 
+      else 
+      {
       panel_3.style.color="black";
-      } else {
-      panel_3.style.color="red";  
-      }
-      panel_3.value=p3;      
-      document.getElementById("kwh").value=eN;
+      panel_3.style.background = "#333333";
+      panel_3.value = p3;
+      }      
+      
+      var ent = document.getElementById("kwh");
+      if (eN != "n/e") {
+      ent.style.background="white";
       if(polled == "1") {
-      show4();
+        ent.style.color="black";
+        ent.value=eN;
       } else {
-      show0();  
+        ent.style.color="red";
+        ent.value="n/a"; 
+      } 
+      
+      } else {
+        ent.style.color="black";
+        ent.style.background="#333333";
+        ent.value="n/e";
       }
+      
+      
+      //if(polled == "1") {
+      show4();
+      //} else {
+      //show0();  
+      //}
     }
   }
   xhttp.open("GET", term, true);

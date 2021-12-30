@@ -13,21 +13,19 @@
 //   3   D9
 //   1   D10
 
-// clock was not running good, added pwm for the pulsstrength and a pulselength var
-
-// The coordinator is the only device that can start a network
-// connect 2530ZB module: rx (D7) = P03, tx (D8) = P02
 // Serial of the APS inverter
 // we use Serial.swap to go from normal usb serial to serial on d7, d6
 // serial of my inverter 408000158215
 // made the homepage to include the scripts so it uses less memory
 // the inverterpage is served form progmem with processor for the form in 3 parts
+// otherwise it is too large for the server.
 // started making some global string vars in to chars freq heath acv dcc dcv power
 // added an inverterquery get.Inverter?inv=x
 // changed the reading procedure,
 // added mqtt check to healthcheck and removed it from loop
 // added a hardware reset command to use via serial
 // in the healthcheck, if the zigbee not responsive it will be reset.
+// added the console so that there are no swaps needed anymore.
 
 
 /*

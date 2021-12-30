@@ -39,7 +39,8 @@ delayMicroseconds(250);
         
         while (Serial.available())
         {
-            if (readCounter < CC2530_MAX_SERIAL_BUFFER_SIZE /2)
+// her we have the danger that when readcounter reaches 512, there are 1024 bytes processed 
+            if (readCounter < CC2530_MAX_SERIAL_BUFFER_SIZE/2)
             {
                 processIncomingByte(Serial.read());
                 readCounter += 1;
@@ -90,7 +91,7 @@ void cleanIncoming() {
 //                               data converters
 // **************************************************************************
 
-// calculate and return the length of a message to send
+// calculate and return the length of the message
 char *sLen(char Command[])  
 {
 char bufferSln[254];
@@ -177,11 +178,13 @@ strcpy(resetCmd, strncat(sLen(resetCmd), resetCmd, sizeof(sLen(resetCmd)) + size
 strcpy(resetCmd, strncat(resetCmd, checkSum(resetCmd), sizeof(resetCmd) + sizeof(checkSum(resetCmd))));
 
 ////commented out while testing
-
+//swap_to_zb(); // set serial to the cc2530
 sendZigbee(resetCmd);
 delay(1000);
-
+////waitSerial(); //check if anything was received
 readZigbee();
+////read_ZB();
+//swap_to_usb(); // set serial back to usb
 
     if(readCounter == 0) {
       //Serial.println("nothing received");

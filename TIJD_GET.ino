@@ -2,12 +2,22 @@ void getTijd() {
 
   timeRetrieved = false; // stays false until time is retrieved  
   timeClient.begin();
-
+  //unsigned long epochTime = 0;
   //get the time, if fails we try again during healthcheck
 
   timeClient.update();
   unsigned long epochTime = timeClient.getEpochTime();
 
+
+  //Serial.print("Epoch Time: ");
+  //Serial.println(epochTime);
+
+    // now convert NTP time into unix tijd:
+    // Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
+    //const unsigned long seventyYears = 2208988800UL;
+    // subtract seventy years:
+//    unsigned long epoch = secsSince1900 - seventyYears + atof(timezone) * 60; // * 60 weggehaald omdat timezone in minuten is
+//    unsigned long epochTime = timeClient.getEpochTime;
     // we have to do this conditional, if time retrieving failed
     if (epochTime < 1000) {
     ntpUDP.stop();
@@ -15,10 +25,12 @@ void getTijd() {
   } else {
    
     epochTime += atoi(timezone) * 60;
-    setTime(epochTime); // we have to do this 1st otherwise the calculation zomertijd() would fail
+    setTime(epochTime); // dit moeten we doen omdat anders zomertijd() niet werkt
+    //Serial.print("epoch gecorrigeerd voor timezone = "); Serial.println(epochTime);
     if ( zomerTijd == true ) {
+    //Serial.print("zomerTijd[0] = een o dus on "); Serial.println(String(zomerTijd));  
       if (zomertijd() == true) {  
-        epochTime += 3600; // add one hour
+        epochTime += 3600; // een uur erbij
         setTime(epochTime);
         //DebugPrint("epoch corrected with dts = "); //DebugPrintln(epochTime);
       }
@@ -26,68 +38,22 @@ void getTijd() {
     timeRetrieved=true;  
     Update_Log("system", "time retrieved");
     }
+    //DebugPrint(" Unix time epoch = ");
+    //DebugPrintln(epochTime);
   
 ntpUDP.stop();
-
+//
+//  // de tijd is nu opgehaald en in setTime gestopt
+//  // dus met de tijden die met setTime zijn opgeslagen gaan we  alle berekeningen doen
+//  
+//DebugPrint("het uur is ");  //DebugPrint(hour());
+//DebugPrint("   aantal minuten "); //DebugPrintln(minute());
 datum = day();
 //
 //yield();
 delay(10);
 sun_setrise(); //to calulate moonshape sunrise etc. and the switchtimes
 
-}
-
-bool zomertijd(){
-// are we between the last sunday in okt and the last sunday in march than wintertime
-
-int Sunmarch = 7 - dow(year(), 3 ,1) + 1;
-#ifdef DEBUG
-Serial.println("the first sunday of march is date " + String(Sunmarch));
-#endif
-// add a week as long as smaller than 25 (the last is max 31) 
-while(Sunmarch < 25){
-  Sunmarch = Sunmarch + 7;
-}
-
-#ifdef DEBUG
-Serial.print( "the last sunday of march is date " + String(Sunmarch) );
-#endif
-
-// say dow(2021,10,1) = daynr 5 = fry (sunday=0)
-// the date of the 1st sunday in oct = sunokt = 7 - 5 + 1 = 3 oct
-// the while counts
-//10
-//17
-//24 
-//31
-//so last sunday = 31 oct
-
-// dow goes from 0 to 6, sunday is 0
-int Sunoct = 7 - dow(year(), 10 ,1) + 1;
-#ifdef DEBUG
-Serial.println("the first sunday in oct is date " + String(Sunoct));
-#endif
-// the last is max 31 
-while(Sunoct < 25){
-  Sunoct = Sunoct + 7;
-}
-// now we have the last sunday in oct
-#ifdef DEBUG
-Serial.print( "the last sunday of oct is date " + String(Sunoct) );
-#endif
-
-if(((month() == 3 and day() >= Sunmarch) or month() > 3) and ((month() == 10 and day() < Sunoct) or month() < 10)) {  
-DebugPrintln("it is summertime");
-return true;
-} else {
-DebugPrintln("it is not summertime");
-return false; 
-}
-}
-
-int dow(int y, int m, int d) // returns what daynr for a specific date
-{
-static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
-y -= m < 3;
-return (y + y/4 - y/100 + y/400 + t[m-1] + d) % 7;
+//  switchonTime = sunrise - 900;
+//  switchoffTime = sunset + 900; // nightmode starts at 15 min after sunset
 }
