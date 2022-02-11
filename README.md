@@ -49,4 +49,4 @@ The interesting values are send via mqtt and displayed on the main page.
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
 ## known issues
-The zigbee module crashes sometimes during the pollings. The system recovers that by resetting it and start the coordinator again. This is done by a healthcheck that runs every 10 minutes. You can only notice this via the log and infopage where this is counted.
+The zigbee module crashes sometimes during the pollings. This is related to the polling rate, at a rate of 5 minutes (the APS standard) this almost never happens. Anyway, the system recovers that by resetting the zb module and restart the coordinator. This is done by a healthcheck that runs every 10 minutes. You can only notice this via the log and infopage where this is counted.
