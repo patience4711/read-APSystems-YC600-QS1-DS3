@@ -5,9 +5,9 @@ The program has a lot of smart features. All settings can be done via the webint
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
-feb. 16 2022: There is a new beta version available. This has an improved way of energy registration so that values are more accurate.
+feb. 16 2022: There is a new beta version available. This has an improved way of energy registration so that values are more accurate. Please note that this version has no option for poll intervall. This is standard 5 minutes to avoid stabillity problems.
 Looking for people willing to test with it since i can't do that myself.<br>
-Download it here: https://1drv.ms/u/s!AkMG5FvUwhedixXK0Rawy9RLWuxX?e=tEdarJ
+Download it here: https://1drv.ms/u/s!AkMG5FvUwhedixZU5bbAhdOCkgI1?e=GESPHV
 <br><br>In case someone wants to print the housing, here is an stl: https://1drv.ms/u/s!AkMG5FvUwhedim8a_tVLywAivVDI?e=XIwhYg
 This is for a nodemcu board 31x58mmr>
 
