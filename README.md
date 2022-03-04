@@ -55,3 +55,7 @@ The interesting values are send via mqtt and displayed on the main page.
 
 ## known issues
 The zigbee module crashes sometimes during the pollings. This is related to the polling rate, at a rate of 5 minutes (the APS standard) this almost never happens. Anyway, the system recovers that by resetting the zb module and restart the coordinator. This is done by a healthcheck that runs every 10 minutes. You can only notice this via the log and infopage where this is counted.
+
+## changelog ##
+As of version 8 the value of total energy is no longer comming from the inverter's register. Insteat all energy increases are stacked in a total energy value. 
+This way that value is not sensitive to inverter resets that will happen in twilight or due to an eclips.
