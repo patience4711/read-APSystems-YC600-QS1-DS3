@@ -109,8 +109,8 @@ document.getElementById("help").style.display = "none";
   }  
   function sendData(){
   var data = inputField.value; 
-
   websocket.send(data, 1);
+  inputField.value = "";
   }
 
 function disConnect() {
@@ -144,18 +144,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
   {
       data[len] = 0;
 
-//          if (strncasecmp(txBuffer+3 , "HELP",4) == 0) 
-//          {             
-//             ws.textAll("* * * * AVAILABLE COMMANDS * * * *");
-//             ws.textAll("10;DEL=filename:  delete a file");
-//             ws.textAll("10;INIT_P:  init coordinator for pairing");  
-//             ws.textAll("10;INIT_N:  init coordinator normal operations");
-//             ws.textAll("10;INV_REBOOT:  reboot an unresponsive inverter");
-//             ws.textAll("10;HEALTH: perform healthcheck zigbee");
-//             ws.textAll("10;POLL=x:  poll inverter nr x");
-//             ws.textAll("10;ERASE;  delete all inverter files");
-//          } else
-      
+     
            if (strncasecmp(txBuffer+3,"INV_REBOOT",10) == 0) {
               ws.textAll("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<br>");
               ws.textAll("Reboot an inverter that stopped working.");
@@ -284,7 +273,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
          } 
           ws.textAll("set diagnose to " + String(diagNose) );  
       } else      
-
+      
      if (strncasecmp(txBuffer+3, "INIT_N",6) == 0) // normal operation
       {
          ws.textAll("command = " + String(txBuffer) );  

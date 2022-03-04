@@ -30,13 +30,33 @@ DebugPrint("len of txBuffer :  "); DebugPrintln(String(txBuffer));
 }
 
 
-
-//void readZigbeeMessage() {
-//#ifdef DEBUG
-//Serial.println("readZigbeeMessage()");  
-//#endif
+#ifdef TEST
+void testDecode(int type) {
 //
-//// first we read untill FE found and calculate length
+// we define an inmessage first
+// the time in the message = 36887
+//we want a timespan of 300 
+
+//en_saved[0][0] = 245;
+testCount += 1; 
+
+switch (type) {
+ case 0: //yc
+   strncpy(inMessage, "FE0164010064FE034480001401D2FE0345C43A1000A8FE724481000006013A101414007100B57CFA00005E408000158215FBFB51B103D40F4117000074CF00000076706A73D06B0496000000000000000172072D88017862E8201F00030555073F0303030100000100000000000000000000000000000000000000000000000000000000000000FEFE3A100E76",300);
+   break;
+ case 1: //ds3
+   strncpy(inMessage, "FE0164010064FE034480001401D2FE0345C43A1000A8FE724481000006013A101414007100B57CFA00005E703000021300fbfb5cbbbb20000200e6ffff000000000000000006f506f9002e00340360138a17a70024001fffff054206900016f62b0018e451ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff3969fefe",300);
+   break;
+ case 2: //qs1 johan
+   strncpy(inMessage, "FE0164010064FE034480001401D2FE72448100000601C0051414005E00905D5B00005E801000085070FBFB51B103EB0F419300CAF069D9F068C7C068C1206804B868E0000006A80001BB38134D01CCE90E0A01FD1E052201D967D0641F0003055400000000000000000000000000000000000000000000000000002B2A0000FEFEC0050E55",300);
+   break;
+}
+
+decodePollAnswer(0);
+polled[0]=true;
+}
+#endif
+
 //int langte = readMessageHead() ; 
 //// now we know the length we can read the rest of the message
 //readCounter=0;

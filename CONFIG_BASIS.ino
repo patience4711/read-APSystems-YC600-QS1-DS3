@@ -10,8 +10,6 @@ const char BASISCONFIG[] PROGMEM = R"=====(
   <br><br><b>user passwd:</b><br>Grant others access to the ECU with  
   <span style='color:red;'>user</span> and the <span style='color:red;'>user passw.</span> 
   The user has no access to the settings.
-  <br><br><b>poll interval</b><br>
-  Determines how often the inverters are polled, e.g. every 30 seconds.
   <br><br><b>poll offset</b><br>
   minutes before sunset and after sunrise to stop/start polling.
   <br><br><b>polling</b><br>
@@ -37,8 +35,7 @@ const char BASISCONFIG[] PROGMEM = R"=====(
   <tr><td style='width:140px;'>ecu id<td><input class='inp6' name='ecuid' value='{id}' minlength='12' maxlength='12' required></input><td></tr>
   <tr><td>user passwd<td><input  class='inp5' name='pw1' length='11' placeholder='max. 10 char' value='{pw1}' pattern='.{4,10}' title='between 4 en 10 characters'></input> 
   </td></tr>
-  <tr><td style='width:140px;'>pollinterval secs.<td><input class='inp2' type='number' min='10' max='600' name='pr' value='{pr}' size='4' ><td>
-  <tr><td style='width:140px;'>offset sun-set/rise<td><input class='inp2' type='number' min='0' max='30' name='offs' value='{of}' size='4' ><td>
+  <tr><td style='width:140px;'>offset sun-set/rise<td><input class='inp2' type='number' min='-15' max='15' name='offs' value='{of}' size='4' ><td>
   <tr><td>polling<td><input type='checkbox' style='width:30px; height:30px;' name='pL' #check></input></td><tr>
 
   </td></tr></table></form>
@@ -61,7 +58,7 @@ void zendPageBasis() {
     
     // replace data
     toSend.replace("'{id}'" , "'" + String(ECU_ID) + "'") ;
-    toSend.replace("'{pr}'" , "'" + String(pollRes) + "'") ;
+//    toSend.replace("'{pr}'" , "'" + String(pollRes) + "'") ;
     toSend.replace( "'{pw1}'" , "'" + String(userPwd) + "'") ;
     toSend.replace( "'{of}'" , "'" + String(pollOffset) + "'") ; 
     if (Polling) { 
@@ -73,9 +70,10 @@ void handleBasisconfig(AsyncWebServerRequest *request) { // form action = handle
 // verzamelen van de serverargumenten   
    strcpy(ECU_ID, request->arg("ecuid").c_str());
    strcpy(userPwd, request->arg("pw1").c_str());
-   pollRes = request->arg("pr").toInt();
+//   pollRes = request->arg("pr").toInt();
 //   hc_IDX = request->arg("hcidx").toInt();
-   pollOffset = request->arg("offs").toInt();  
+   pollOffset = request->arg("offs").toInt(); //-15 leads to 241
+   //pollOffset = pollOffset- 
   //Serial.println("ECU_ID now = " +  String(ECU_ID)); 
   //DebugPrintln("renew toSend");
 //BEWARE CHECKBOX

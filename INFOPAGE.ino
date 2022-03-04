@@ -49,7 +49,7 @@ switch (dst) {
 
 toSend += "<br><br><br><br>system time = <span style='font-size:20px;font-weight:bold' id='tijdveld'></span> hr.&nbsp&nbsp " + zt + "<br>";
 
-toSend += "firmware version : " + String(VERSION);
+toSend += "firmware version : " + String(VERSION) + "<br>";
 
 toSend += "time retrieved today : "; if ( timeRetrieved ) { toSend += "yes<br>"; } else { toSend += "no<br>"; }
 
@@ -123,7 +123,7 @@ toSend += "<tr><td>Free memory<td>" +  String(ESP.getFreeHeap()) + " bytes<td>re
 
 toSend += "<h4>variables dump</h4>";
 toSend += "value=" + String(value)  + "  inverterCount=" + String(inverterCount) + "  zigbeeUp=" + String(zigbeeUp) + "<br>";
-toSend += "pollRes=" + String(pollRes)  + "  now=" + String(now()) + "  switchonTime=" + String(switchonTime)  + "  switchoffTime=" + String(switchoffTime)+ "<br>";
+toSend += "pollRes= 300  now=" + String(now()) + "  switchonTime=" + String(switchonTime)  + "  switchoffTime=" + String(switchoffTime)+ "<br>";
 toSend += "unixtime=" + String(now()) + "<br>";
 toSend += "polled = " + String(polled[0]) + String(polled[1]) + String(polled[2]) + String(polled[3]) + String(polled[4]) + String(polled[5]) + String(polled[6]) + String(polled[7]) + String(polled[8]) + "<br>";
 toSend += "resetCounter = " + String(resetCounter);

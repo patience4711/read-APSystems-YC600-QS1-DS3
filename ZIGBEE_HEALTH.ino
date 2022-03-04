@@ -17,8 +17,7 @@ void healthCheck() {
     if(errorCode >= 200) errorCode -= 200;
     if(errorCode >= 100) errorCode -= 100;
     
-    
-    ZigbeePing();
+     ZigbeePing();
 
     switch(checkCoordinator() ) // send the 2700 command 
        {
@@ -37,30 +36,10 @@ void healthCheck() {
               Update_Log("zigbee", term);
               ws.textAll(term);
               resetCounter += 1;
+              resetValues(false, false); // reset all values, no mqtt
               if (coordinator(true) ) zigbeeUp = 1; // start the coordinator
         }      
-   
 }
-
-//   // we only send a message when something's wrong or initial
-//  if(ESP.getFreeHeap() < 500 ) 
-//  {
-//    errorCode += 3000;
-//  }
-//  if(diagNose) ws.textAll("healtcheck error code: " + String(errorCode));
-//
-//#ifdef DEBUG
-//  if(errorCode != 0) // we send a message if errorCode != 0
-//  {
-//
-//  String toMQTT = "{\"idx\":887"; // lead-in with idx
-//
-//  toMQTT += ",\"errorcode\":\"" + String(errorCode) + "\"}"; //total of the 2 or 4
-//
-//  MQTT_Client.publish ( Mqtt_outTopic.c_str(), toMQTT.c_str() );
-//  }
-//#endif
-//}
 
 
 // *************************************************************************
@@ -89,13 +68,6 @@ int checkCoordinator() {
 
     char checkCommand[10]; // we send 2700 to the zb
     strncpy(checkCommand, "00270027", 9);
-
-    //char endFix[12]={"00000709001"};
-    //char endFix[12]={"00000709"}; // see above 09 = started as coodinator
- 
-    //char testAnswer[40] = {"FE0E670000FFFF"}; //80 97 1B 01 A3 D8 00000709001"};
-    //strncat(testAnswer, ecu_id_reverse, 12);
-    //strncat(testAnswer, endFix, sizeof(endFix));
 
     // now we do this 3 times
     for (int x=1; x<4; x++)

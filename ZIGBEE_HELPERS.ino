@@ -203,7 +203,7 @@ void resetValues(bool energy, bool mustSend) {
          ws.textAll("reset power values");
          if(energy) 
          {
-            Inv_Data[z].totalEnergy = 0; // make energy null
+            Inv_Data[z].en_total = 0; // make energy null
             ws.textAll("reset energy values");
          }
          if(mustSend) mqttPoll(z); // send the null values

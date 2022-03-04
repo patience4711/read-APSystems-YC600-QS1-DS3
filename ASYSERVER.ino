@@ -270,29 +270,28 @@ server.on("/CONFIRM_INV", HTTP_GET, [](AsyncWebServerRequest *request) {
 //                    X H T  R E Q U E S T S
 //***********************************************************************
 
-server.on("/get.inverterdata", HTTP_GET, [](AsyncWebServerRequest *request) {
-//Serial.println("handleGetknop: value = " + String(value));
-// moet zoiets als {"h_state":2,"r_state":0, etc} zijn 
-// serial
-  String json = "{";
-     json += "\"inv0\":\"" + String(Inv_Prop[0].invSerial) + "\"";
-  for(int z = 1; z < 10; z++ ) {
-    json += "\"inv" + String(z) + "\":\"" + String(Inv_Prop[z].invSerial) + "\"";
-  }
-// invID    
-  for(int z = 0; z < 10; z++ ) {
-    json += ",\"id" + String(z) + "\":\"" + String(Inv_Prop[z].invID) + "\"";
-  }
-// invType
-  for(int z = 0; z < 10; z++ ) {
-    json += ",\"tp" + String(z) + "\":\"" + String(Inv_Prop[z].invType) + "\"";
-  }  
-    json += "}";
-
-    //Serial.println("get.inverterdata reaction = " + json);
-    request->send(200, "text/json", json);
-    json = String();
-});
+//server.on("/get.inverterdata", HTTP_GET, [](AsyncWebServerRequest *request) {
+////for the inverter page
+//// moet zoiets als {"h_state":2,"r_state":0, etc} zijn 
+//// serial
+//  String json = "{";
+//     json += "\"inv0\":\"" + String(Inv_Prop[0].invSerial) + "\"";
+//  for(int z = 1; z < 10; z++ ) {
+//    json += "\"inv" + String(z) + "\":\"" + String(Inv_Prop[z].invSerial) + "\"";
+//  }
+//// invID    
+//  for(int z = 0; z < 10; z++ ) {
+//    json += ",\"id" + String(z) + "\":\"" + String(Inv_Prop[z].invID) + "\"";
+//  }
+//// invType
+//  for(int z = 0; z < 10; z++ ) {
+//    json += ",\"tp" + String(z) + "\":\"" + String(Inv_Prop[z].invType) + "\"";
+//  }  
+//    json += "}";
+//
+//    request->send(200, "text/json", json);
+//    json = String();
+//});
 
 
 server.on("/get.currentTime", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -328,13 +327,9 @@ server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) {
         json += ",\"dcc" + String(z) + "\":\"" + String(Inv_Data[i].dcc[z])  + "\"";
         json += ",\"pow" + String(z) + "\":\"" + String(Inv_Data[i].power[z]) + "\"";
       }
-      json += ",\"energy\":\"" + String(Inv_Data[i].totalEnergy, 2) + "\"";
+      json += ",\"energy\":\"" + String(Inv_Data[i].en_total, 2) + "\"";
       json += "}";     
 
-//     if( Mqtt_Enabled ) {
-//      //DebugPrintln("mqtt mess :"); //DebugPrintln(json); 
-//      MQTT_Client.publish ( Mqtt_outTopic.c_str(), json.c_str() );
-//     }
      request->send(200, "text/json", json);
      json = String();
      } else {
@@ -364,8 +359,12 @@ if(String(Inv_Prop[i].invLocation) != "N/A") {
              json += ",\"p" +  String(z) + "\":\"n/e\""; 
          }
       }
-     json += ",\"eN\":\"" + String(Inv_Data[i].totalEnergy/(float)1000, 2) + "\"";
-     //json += ",\"state\":\"" + String(zigbeeUp) + "\"";
+     if( Inv_Data[i].en_total != 0 ) { 
+      json += ",\"eN\":\"" + String(Inv_Data[i].en_total/(float)1000, 2) + "\"";
+     } else {
+     json += ",\"eN\":\"na\"";
+     }
+ 
  } 
     else
  { // invSerial="000000000000" so we put all n/e

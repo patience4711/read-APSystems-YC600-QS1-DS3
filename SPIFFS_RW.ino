@@ -103,7 +103,7 @@ void basisConfigsave() {
     JsonObject json = doc.to<JsonObject>();
     json["ECU_ID"] = ECU_ID;
     json["userPwd"] = userPwd;
-    json["pollRes"] = pollRes;
+//    json["pollRes"] = pollRes;
     json["inverterCount"] = inverterCount;
     json["Polling"] = Polling;
     json["pollOffset"] = pollOffset;
@@ -184,7 +184,7 @@ bool file_open_for_read(String bestand) {
             if (bestand == "/basisconfig.json") {
                     if(jsonStr.indexOf("ECU_ID") > 0) { strcpy (ECU_ID, doc["ECU_ID"] );}
                     if(jsonStr.indexOf("userPwd") > 0) { strcpy (userPwd, doc["userPwd"] );}
-                    if(jsonStr.indexOf("pollRes") > 0) {pollRes = doc["pollRes"].as<int>();}
+  //                  if(jsonStr.indexOf("pollRes") > 0) {pollRes = doc["pollRes"].as<int>();}
                     if(jsonStr.indexOf("pollOffset") > 0) {pollOffset = doc["pollOffset"].as<int>();}
                     if(jsonStr.indexOf("inverterCount") > 0) {inverterCount = doc["inverterCount"].as<int>();}
                     if(jsonStr.indexOf("Polling") > 0) {Polling = doc["Polling"].as<bool>();}

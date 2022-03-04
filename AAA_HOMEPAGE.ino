@@ -232,7 +232,7 @@ function getData() {
       var ent = document.getElementById("kwh");
       if (eN != "n/e") {
       ent.style.background="white";
-      if(polled == "1") {
+      if(eN != "na") {
         ent.style.color="black";
         ent.value=eN;
       } else {
@@ -246,12 +246,8 @@ function getData() {
         ent.value="n/e";
       }
       
-      
-      //if(polled == "1") {
       show4();
-      //} else {
-      //show0();  
-      //}
+
     }
   }
   xhttp.open("GET", term, true);
