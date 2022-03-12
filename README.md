@@ -5,10 +5,9 @@ The program has a lot of smart features. All settings can be done via the webint
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
-feb. 16 2022: There is a new beta version available. This has an improved way of energy registration so that values are more accurate. Please note that this version has no option for poll intervall. This is standard 5 minutes to avoid stabillity problems.
-I did some testing with poll answers from yc600 and qs1 and it seems to work. 
+feb. 16 2022: There is a new version available. This has an improved way of energy registration so that values are more accurate. Please note that this version has no option for poll intervall. This is standard 5 minutes to avoid stabillity problems.
 
-Download it here: ESP-ECU-v8_0_BETA6 https://1drv.ms/u/s!AkMG5FvUwhediyTg0tSR5dSClawQ?e=JtjgD7
+Download it here: ESP-ECU-v8_0 https://1drv.ms/u/s!AkMG5FvUwhediyjH3zbxd24_30wd?e=PsvH5L
 <br><br>In case someone wants to print the housing, here is an stl: https://1drv.ms/u/s!AkMG5FvUwhedim8a_tVLywAivVDI?e=XIwhYg
 This is for a nodemcu board 31x58mmr>
 
@@ -57,5 +56,5 @@ The interesting values are send via mqtt and displayed on the main page.
 The zigbee module crashes sometimes during the pollings. This is related to the polling rate, at a rate of 5 minutes (the APS standard) this almost never happens. Anyway, the system recovers that by resetting the zb module and restart the coordinator. This is done by a healthcheck that runs every 10 minutes. You can only notice this via the log and infopage where this is counted.
 
 ## changelog ##
-As of version 8 the value of total energy is no longer comming from the inverter's register. Insteat all energy increases are stacked in a total energy value. 
-This way that value is not sensitive to inverter resets that will happen in twilight or due to an eclips.
+As of version 8 the value of total energy is no longer directly comming from the inverter's register. Instead all energy increases are added up in a total energy value. 
+This way that value is not sensitive to inverter resets that will happen in twilight or due to an eclips etc.
