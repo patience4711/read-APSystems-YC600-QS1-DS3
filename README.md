@@ -5,9 +5,10 @@ The program has a lot of smart features. All settings can be done via the webint
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
-march 28 2022: There is a new version v9_0 available which is made suitable for the new DS3 inverter.
+march 28 2022: There is a new version v9_0 available which is made suitable for the new DS3 inverter. There is still some work to do to
+get the reported figures realistic.
 
-Download ESP-ECU-v9_0 https://1drv.ms/u/s!AkMG5FvUwhedizJga69IYhWlurIR?e=xCrbcL
+Download ESP-ECU-v9_0 https://1drv.ms/u/s!AkMG5FvUwhedizJga69IYhWlurIR?e=xCrbcL<br>
 Download ESP-ECU-v8_0 https://1drv.ms/u/s!AkMG5FvUwhediyjH3zbxd24_30wd?e=PsvH5L
 <br><br>In case someone wants to print the housing, here is an stl: https://1drv.ms/u/s!AkMG5FvUwhedim8a_tVLywAivVDI?e=XIwhYg
 This is for a nodemcu board 31x58mmr>
