@@ -1,13 +1,14 @@
 # read APS inverters
-This project is for reading APS Systems inverters. The program can pair and poll YC600 and QS1 inverters, up to 9 peaces. The read values are displayed on a web page and sent via mosquitto in a Json format.
+This project is for reading APS Systems inverters. The program can pair and poll YC600 QS1 and DS3 inverters, up to 9 peaces. The read values are displayed on a web page and sent via mosquitto in a Json format.
 The program has a lot of smart features. All settings can be done via the webinterface. It has a console that can be used for debugging and sending/receiving zigbee messages.
 
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
-feb. 16 2022: There is a new version available. This has an improved way of energy registration so that values are more accurate. Please note that this version has no option for poll intervall. This is standard 5 minutes to avoid stabillity problems.
+march 28 2022: There is a new version v9_0 available which is made suitable for the new DS3 inverter.
 
-Download it here: ESP-ECU-v8_0 https://1drv.ms/u/s!AkMG5FvUwhediyjH3zbxd24_30wd?e=PsvH5L
+Download ESP-ECU-v9_0 https://1drv.ms/u/s!AkMG5FvUwhedizJga69IYhWlurIR?e=xCrbcL
+Download ESP-ECU-v8_0 https://1drv.ms/u/s!AkMG5FvUwhediyjH3zbxd24_30wd?e=PsvH5L
 <br><br>In case someone wants to print the housing, here is an stl: https://1drv.ms/u/s!AkMG5FvUwhedim8a_tVLywAivVDI?e=XIwhYg
 This is for a nodemcu board 31x58mmr>
 
@@ -32,8 +33,6 @@ It is nothing more than an esp device like nodemcu, wemos or its relatives and a
 The zigbeemodule should be flashed with a firmware that can be found here https://github.com/Koenkk/zigbee2mqtt/issues/4221. Here you can find much more information on this project.
 The most recent link to a lua implementation (including firmware) by kadszol :https://github.com/Koenkk/zigbee2mqtt/files/6797510/discord-11-7-2021.zip
 
-A compiled binary of this software, firmware and additional information can be found here: https://1drv.ms/u/s!AkMG5FvUwhedinhaB3WHDf1J00X_?e=jZLNqJ 
-
 the wiring:
 ### cc2530 -> ESP 
 -  p2   -> d8
@@ -56,5 +55,10 @@ The interesting values are send via mqtt and displayed on the main page.
 The zigbee module crashes sometimes during the pollings. This is related to the polling rate, at a rate of 5 minutes (the APS standard) this almost never happens. Anyway, the system recovers that by resetting the zb module and restart the coordinator. This is done by a healthcheck that runs every 10 minutes. You can only notice this via the log and infopage where this is counted.
 
 ## changelog ##
+version ESP-ECU_V9_0:
+-made it suitable for the DS3 inverter.
+-fixed polling intervall of 5 minutes.
+
+
 As of version 8 the value of total energy is no longer directly comming from the inverter's register. Instead all energy increases are added up in a total energy value. 
 This way that value is not sensitive to inverter resets that will happen in twilight or due to an eclips etc.
