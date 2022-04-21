@@ -4,18 +4,14 @@ void pairOnActionflag() {
    
    String term = "start pairing inverter sn " + String(Inv_Prop[iKeuze].invSerial);
    Update_Log("pairing", term);
-
-#ifndef TEST
-// in the test version we don't need a running coordinator
     if( !coordinator_init() ) {
       term="pairing failed, zb system down";
       Update_Log("pairing", term);
       ws.textAll(term);
        return;
     }
-#endif
 
-  ws.textAll("try pairing inv " + String(iKeuze));
+  ws.textAll("trying pair inv " + String(iKeuze));
   // now that we know that the radio is up, we don't need to test this in the pairing routine
 
   if( pairing(iKeuze) ) {

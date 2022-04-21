@@ -135,6 +135,7 @@ function getData() {
       var st = obj.state;
       var sl = obj.sleep;
       var eN = obj.eN;
+      var eN2 = obj.eN2;
       var ch0 = obj.ch0
       var ch1 = obj.ch1
       var ch2 = obj.ch2
@@ -232,7 +233,7 @@ function getData() {
       var ent = document.getElementById("kwh");
       if (eN != "n/e") {
       ent.style.background="white";
-      if(eN != "na") {
+      if(polled == "1") {
         ent.style.color="black";
         ent.value=eN;
       } else {
@@ -246,8 +247,12 @@ function getData() {
         ent.value="n/e";
       }
       
+      
+      //if(polled == "1") {
       show4();
-
+      //} else {
+      //show0();  
+      //}
     }
   }
   xhttp.open("GET", term, true);

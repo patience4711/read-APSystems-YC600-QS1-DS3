@@ -42,9 +42,6 @@ sunMoon  sm;
        } else { 
            dst = 0; 
            }
-
-   Serial.println("sunrise = " + String(sunrise));
-   Serial.println("sunset = " + String(sunset));  
    switchonTime = sunrise + pollOffset*60; // was -900
    switchoffTime = sunset - pollOffset*60; // was +900
  

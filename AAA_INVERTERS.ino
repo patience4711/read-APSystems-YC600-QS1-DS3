@@ -118,6 +118,7 @@ div.overlay {
     <tr><td class="cap" style="width:100px;">SERIALNR<td><input class='inp4' id='iv' name='iv' minlength='12' maxlength='12' required value='000000'></input>
     <tr><td class="cap">TYPE<td><select name='invt' class='sb1' id='sel' onchange='myFunction()'>
     <option value='0' invtype_0>YC600</option>
+    <option value='2' invtype_2>DS3</option>
     <option value='1' invtype_1>QS1</option></select>
     </tr>
     <tr><td class="cap" >NAME<td class="cap" ><input class='inp4' id='il' name='il' maxlength='12' value='{location}'></input>
@@ -148,10 +149,10 @@ function hideFunction() {
   document.getElementById("invspan").style.display = "none";
 }
 function myFunction(){
- if(document.getElementById("sel").value == 0 ) { 
-    hideFunction();
+ if(document.getElementById("sel").value == 1 ) { 
+    showFunction();
  } else {
-   showFunction();
+   hideFunction();
  }
 }
 
@@ -184,7 +185,7 @@ void handleInverterconfig(AsyncWebServerRequest *request)
    // collect the serverarguments
    strcpy(Inv_Prop[iKeuze].invLocation, request->arg("il").c_str());
    strcpy(Inv_Prop[iKeuze].invSerial, request->arg("iv").c_str());
-   Inv_Prop[iKeuze].invType = request->arg("invt").toInt(); //values are 0 1   
+   Inv_Prop[iKeuze].invType = request->arg("invt").toInt(); //values are 0 1 2  
    Inv_Prop[iKeuze].invIdx = request->arg("mqidx").toInt(); //values are 0 1  
 // the selectboxes
    char tempChar[1] = "";
@@ -405,13 +406,17 @@ int verklikker = 0;
         // the selectboxes
         if (Inv_Prop[iKeuze].conPanels[0]) { toSend.replace("#1check", "checked");}
         if (Inv_Prop[iKeuze].conPanels[1]) { toSend.replace("#2check", "checked");}
-        
-        if(Inv_Prop[iKeuze].invType == 0 ) { // when the type = yc600
-            //Serial.println(" inverter type = 1");  
+                
+        if(Inv_Prop[iKeuze].invType != 1 ) { // when the type = yc600 (0) or ds3 (2)
+              
             toSend.replace("onload='showFunction()", "onload='hideFunction()" );
-            toSend.replace("invtype_0", "selected");
-             
-        } else { 
+            if(Inv_Prop[iKeuze].invType == 0) 
+            { 
+              toSend.replace("invtype_0", "selected");
+            } else {
+             toSend.replace("invtype_2", "selected");  
+           }
+        } else { // inv type == 1 
           
           //Serial.println(" inverter type = 1");
           toSend.replace("invtype_1", "selected");
@@ -427,7 +432,7 @@ int verklikker = 0;
         } else {
         // the file does not exist so we show an empty page
         //Serial.println("File does not exist");
-        toSend.replace("invtype_1", "selected");
+        toSend.replace("invtype_2", "selected");
         toSend.replace("000000", "");
         toSend.replace("{location}", "");
         toSend.replace("{idx}", "0");

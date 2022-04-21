@@ -2,19 +2,21 @@ bool coordinator(bool normal) { // if true we send the extra command for normal 
     DebugPrintln("start coordinator");  
     coordinator_init();
     if(normal) sendNO();
-    // now check
-    if ( checkCoordinator() != 0 ) // can be 0 1 or 2
+    // now check if running
+    //healthCheck();
+    if ( checkCoordinator() == 0 ) // can be 0 1 or 2
+    //if ( zigbeeUp == 1 ) 
     {
-        Update_Log("zigbee" , "starting ZB coordinator failed");
-        ws.textAll("starting ZB coordinator failed");
-        return false;
-
-    } else {
         Update_Log("zigbee" , "ZB coordinator started");
         ws.textAll("ZB coordinator started");
         //busyState = 0;
         ledblink(5,100);
-        return true;  
+        return true;
+      
+    } else {
+        Update_Log("zigbee" , "starting ZB coordinator failed");
+        ws.textAll("starting ZB coordinator failed");
+        return false;  
     }
 }
 

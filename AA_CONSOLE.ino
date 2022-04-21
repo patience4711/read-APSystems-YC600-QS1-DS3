@@ -28,8 +28,6 @@ document.getElementById("help").style.display = "none";
   <span class='close' onclick='sl();'>&times;</span><h3>CONSOLE COMMANDS</h3>
   <b>10;ZBT=message: </b> send a zigbee message (e.g. 2710).<br><br>
   <b>10;DEL=filename: </b> delete a file.<br><br>
-  <b>10;INIT_P: </b> start coordinator for pairing<br><br>  
-  <b>10;INIT_N: </b> start coordinator for polling<br><br>
   <b>10;INV_REBOOT: </b> reboot an unresponsive inverter<br><br>
   <b>10;HEALTH: </b> healthcheck zigbee hw/system<br><br>
   <b>10;POLL=x: </b> poll inverter #x<br><br>
@@ -55,7 +53,8 @@ document.getElementById("help").style.display = "none";
 
 <script>
   var field = document.getElementById('tekstveld');
-  var gateway = `ws://${window.location.hostname}/ws`;
+  //var gateway = `ws://${window.location.hostname}/ws`;
+  var gateway = `${(window.location.protocol == "https:"?"wss":"ws")}://${window.location.hostname}/ws`;
   var websocket;
   var inputField = document.getElementById('tiep');
 
@@ -272,18 +271,29 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
           diagNose= true;
          } 
           ws.textAll("set diagnose to " + String(diagNose) );  
-      } else      
-      
-     if (strncasecmp(txBuffer+3, "INIT_N",6) == 0) // normal operation
-      {
-         ws.textAll("command = " + String(txBuffer) );  
-         actionFlag = 21;
+//      } else      
+//      
+//     if (strncasecmp(txBuffer+3, "INIT_N",6) == 0) // normal operation
+//      {
+//         ws.textAll("command = " + String(txBuffer) );  
+//         actionFlag = 21;
+//      } else 
+//
+//      if (strncasecmp(txBuffer+3, "INIT_P",6) == 0)  // pairing
+//      {
+//         ws.textAll("command = " + String(txBuffer) );  
+//         actionFlag = 22;
+
+#ifdef TEST
       } else 
 
-      if (strncasecmp(txBuffer+3, "INIT_P",6) == 0)  // pairing
+      if (strncasecmp(txBuffer+3, "TESTINV",7) == 0)  
       {
          ws.textAll("command = " + String(txBuffer) );  
-         actionFlag = 22;
+         actionFlag = 122;
+#endif      
+      
+ 
       } else {
 
        

@@ -39,7 +39,7 @@ delayMicroseconds(250);
         
         while (Serial.available())
         {
-// her we have the danger that when readcounter reaches 512, there are 1024 bytes processed 
+// here we have the danger that when readcounter reaches 512, there are 1024 bytes processed 
             if (readCounter < CC2530_MAX_SERIAL_BUFFER_SIZE/2)
             {
                 processIncomingByte(Serial.read());
@@ -49,18 +49,20 @@ delayMicroseconds(250);
             {
                 Serial.read(); // we read from serial to empty the buffer but do not process
             }
-    
-            if (Serial.available() == 0)  // the buffer is empty
-            {
-                //fullIncomingMessage[readcounter] = '\0'; // terminate the char ha mod
+            if (Serial.available() == 0) delay(120); // we wait if there comes more data
+        }
+           //if we come here there is no serial data anymore
+            //if (Serial.available() == 0)  // the buffer is empty
+            //{
+                //Put lower case in the message to upper
                 uint16_t iToUpper = 0; // has to be 16bit because the received message if the YC600 answers is longer then 255
                 while (inMessage[iToUpper])
                 {
                     inMessage[iToUpper] = toupper(inMessage[iToUpper]);
                     iToUpper++;
                 }
-            }
-        }
+            //}
+        
         // now we should have catched inMessage
         if (Serial.available() == 0)
         {

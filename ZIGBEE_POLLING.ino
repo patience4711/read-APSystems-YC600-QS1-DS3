@@ -6,13 +6,14 @@ void polling(int which) {
       return;
     }
     char pollCommand[254] = {0};
-    char normalOperationBaseCommand[][254] =
+    char normalOperationBaseCommand[][254]  =
     {
         "2401",                      //+ ..string.sub(inv_id[x],3,4)..string.sub(inv_id[x],1,2)..
         "1414060001000F13",          //append (concatenate) _ecu_id_reverse
+         // "1414000601000F13",          //append (concatenate) _ecu_id_reverse
         "FBFB06BB000000000000C1FEFE" // end of String
     };
-
+    
     //Serial.println("Inv_Prop[which].invID = " + String(Inv_Prop[which].invID) );
     char inv_id[7];
     memset(&inv_id[0], 0, sizeof(inv_id)); //zero out otherwise we get strange tokens
@@ -41,7 +42,7 @@ void polling(int which) {
     // put in the CRC at the end of the command
     strcpy(pollCommand, strncat(pollCommand, checkSum(pollCommand), sizeof(pollCommand) + sizeof(checkSum(pollCommand))));
     //DebugPrintln("pollCommand:");  //DebugPrintln(String(pollCommand));
-    if(diagNose) ws.textAll("zb send poll cmd inverter " + String(which));   
+    if(diagNose) ws.textAll("zb send poll cmd inverter " + String(which) + "  cmd:" + String(pollCommand));   
         #ifdef DEBUG
         swap_to_zb(); // set serial to zb  
         #endif
@@ -50,10 +51,7 @@ void polling(int which) {
      //delay(1000); now we wait max 2 seconds
     if ( waitSerialAvailable() ) { readZigbee(); } else { readCounter = 0;} // when nothing available we don't read
 
-        #ifdef DEBUG
-        swap_to_usb(); // set serial to zb  
-        #endif
-
+    //  readSerial(); test
  
       if(diagNose) ws.textAll("polling answer " + String(inMessage));
 

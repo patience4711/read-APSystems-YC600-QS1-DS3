@@ -98,7 +98,7 @@ int checkCoordinator() {
           //Serial.println("\nhealth received : " + String(inMessage) );
           if( strstr(tail, "0709") ) 
             {
-              //ws.textAll("found 0709");
+              if(diagNose) ws.textAll("found 0709");
               //String term = "zb up, attempts = " + String(x);
               return 0;            
             } 

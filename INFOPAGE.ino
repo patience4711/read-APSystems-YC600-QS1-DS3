@@ -103,7 +103,7 @@ if(polled[i]) {
         toSend += "<td>" + String(Inv_Data[i].acv) + "<td>" + String(Inv_Data[i].heath) + "<td>" + String(Inv_Data[i].freq);
         toSend += "<td>" + String(Inv_Data[i].dcv[0]) + "<td>" + String(Inv_Data[i].dcc[0]) + "<td>" + String(Inv_Data[i].dcv[1]) + "<td>" + String(Inv_Data[i].dcc[1]);
         
-        if(Inv_Prop[i].invType == 1) { // add 2 channels extra
+        if(Inv_Prop[i].invType == 2) { // add 2 channels extra
         toSend += "<td>" + String(Inv_Data[i].dcv[2]) + "<td>" + String(Inv_Data[i].dcc[2]) + "<td>" + String(Inv_Data[i].dcv[3]) + "<td>" + String(Inv_Data[i].dcc[3]);
         } else {
         toSend += "<td>n/a<td>n/a<td>n/a<td>n/a";
@@ -126,8 +126,12 @@ toSend += "value=" + String(value)  + "  inverterCount=" + String(inverterCount)
 toSend += "pollRes= 300  now=" + String(now()) + "  switchonTime=" + String(switchonTime)  + "  switchoffTime=" + String(switchoffTime)+ "<br>";
 toSend += "unixtime=" + String(now()) + "<br>";
 toSend += "polled = " + String(polled[0]) + String(polled[1]) + String(polled[2]) + String(polled[3]) + String(polled[4]) + String(polled[5]) + String(polled[6]) + String(polled[7]) + String(polled[8]) + "<br>";
-toSend += "resetCounter = " + String(resetCounter);
+toSend += "resetCounter = " + String(resetCounter) + "  calliBration = " + String(calliBration, 2);
 
+#ifdef TEST
+toSend += "  testCounter = " + String(testCounter) + " inv0 type = " + String(Inv_Prop[0].invType);
+
+#endif
 toSend += "<h3>Content filesystem :</h3>";
 
 Dir dir = LittleFS.openDir("/");
