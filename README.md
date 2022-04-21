@@ -5,8 +5,7 @@ The program has a lot of smart features. All settings can be done via the webint
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
-march 28 2022: There is a new version v9_2 available, suitable for the new DS3 inverter. Some bugs repaired.
-get the reported figures realistic.
+april 21 2022: There is a new version v9_2 available, suitable for the new DS3 inverter. Some bugs repaired.
 
 Download ESP-ECU-v9_2 https://1drv.ms/u/s!AkMG5FvUwhedizsQis3vYaFpLy4w?e=jKA4An<br>
 Download ESP-ECU-v8_0 https://1drv.ms/u/s!AkMG5FvUwhediyjH3zbxd24_30wd?e=PsvH5L
