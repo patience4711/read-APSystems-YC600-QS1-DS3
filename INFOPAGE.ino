@@ -103,7 +103,7 @@ if(polled[i]) {
         toSend += "<td>" + String(Inv_Data[i].acv) + "<td>" + String(Inv_Data[i].heath) + "<td>" + String(Inv_Data[i].freq);
         toSend += "<td>" + String(Inv_Data[i].dcv[0]) + "<td>" + String(Inv_Data[i].dcc[0]) + "<td>" + String(Inv_Data[i].dcv[1]) + "<td>" + String(Inv_Data[i].dcc[1]);
         
-        if(Inv_Prop[i].invType == 2) { // add 2 channels extra
+        if(Inv_Prop[i].invType == 1) { // add 2 channels extra
         toSend += "<td>" + String(Inv_Data[i].dcv[2]) + "<td>" + String(Inv_Data[i].dcc[2]) + "<td>" + String(Inv_Data[i].dcv[3]) + "<td>" + String(Inv_Data[i].dcc[3]);
         } else {
         toSend += "<td>n/a<td>n/a<td>n/a<td>n/a";
