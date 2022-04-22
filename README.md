@@ -41,6 +41,13 @@ the wiring:
 -  gnd  -> gnd
 -  rst  -> d5
 
+### cc2531 - > esp (not tested by me!)
+- dd -> d8 
+- dc -> d7 
+- rst -> d5
+- vcc -> 3.3V
+- gnd -> gnd
+
 ![minhw](https://user-images.githubusercontent.com/12282915/138685751-98112dfd-8ed8-4185-9de7-c2e2e8f005a9.jpg)
 ## how does it work
 The APS system works with a separate zigbee implementation. The ESP-ECU sends zigbee requests to the inverters and analyzes the answers, extracting the values. 
