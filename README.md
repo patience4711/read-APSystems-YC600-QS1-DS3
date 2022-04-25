@@ -26,7 +26,7 @@ This is for a nodemcu board 31x58mmr>
 ## compile this sketch
 Use arduino ide with the esp822 version 2.7.1 installed under boardmanager. The ota updates won't work with other versons.
 
-Or use the binary file ESP-ECU-v6_12 to flash directly on your ESP device.
+Or use the binary file ESP-ECU-v9_3 to flash directly on your ESP device.
 
 ## the hardware
 It is nothing more than an esp device like nodemcu, wemos or its relatives and a prepared cc2530, cc2531 zigbee module. And a powersupply.
