@@ -1,6 +1,8 @@
 
 const char ECU_HOMEPAGE[] PROGMEM = R"=====(
-<!DOCTYPE html><html><head><meta charset='utf-8' name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html><html><head>
+<meta http-equiv="refresh" content="112">
+<meta charset='utf-8' name="viewport" content="width=device-width, initial-scale=1">
 <title>ESP-ECU</title>
 <link rel="stylesheet" type="text/css" href="/STYLESHEET">  
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -9,6 +11,10 @@ const char ECU_HOMEPAGE[] PROGMEM = R"=====(
 body {
  background-color: #EEE;
 }
+span {
+  padding: 6px;
+}
+
 table, th, td {
   border: 1px solid blue; font-size:14px; padding:6px;
   }
@@ -44,7 +50,7 @@ table, th, td {
 <div id='msect'>
     <div class='divstijl' id='maindiv'>
         <center>
-        <table style = "border:none;"><tr><td style = "border:none;">
+        <table style = "border:none;"><tr style = "height:25px;"><td style = "border:none;">
         <select class='sb1' id="SEL#" onchange='setKeuze()'>
         <option value='0'>inverter 0</option>
         <option value='1'>inverter 1</option>
@@ -57,6 +63,8 @@ table, th, td {
         <option value='8'>inverter 8</option>
         </select>
         <td style = 'border:none;' id='nameField'></table>
+        
+        <p>polling &nbsp; from  <span id='srt'></span> to <span id='sst'></span></p>
         <h4>INVERTER OUTPUT (WATTS) PER PANEL</h4>
         
         <div id='noOutput' style='display:block'>
@@ -94,7 +102,14 @@ table, th, td {
 const char JAVA_SCRIPT[] PROGMEM = R"=====(
 
 var term;
+window.addEventListener("beforeunload", function(event) {
+  console.log("UNLOAD:1");
+getTimes();
+});
+
+
 function loadScript() {
+getTimes();
 setKeuze();
 getData();
 }
@@ -110,7 +125,7 @@ document.getElementById("4channel").style.display = "none";
 
 function setKeuze() {
 var a = document.getElementById("SEL#").value;
-term = "get.Power?inv=" + a; 
+term = "get.Power?inv=" + a;
 getData();
 }
 
@@ -256,6 +271,22 @@ function getData() {
     }
   }
   xhttp.open("GET", term, true);
+  xhttp.send();
+}
+
+function getTimes() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var antwoord = this.responseText;
+      var obj = JSON.parse(antwoord);
+      var srt = obj.srt;
+      var sst = obj.sst;
+      document.getElementById("srt").innerHTML = srt;
+      document.getElementById("sst").innerHTML = sst;        
+    }
+  }
+  xhttp.open("GET", "get.Times", true);
   xhttp.send();
 }
 

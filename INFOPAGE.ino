@@ -76,17 +76,17 @@ if ( Mqtt_Enabled ) { //bool == y en er is een mqtt adres, ja kijk dan of er een
   toSend += "system up time: " + String(dagen) + " days " + String(urens-dagen*24) + " hrs " + String(minutens - urens*60) + " min.<br> ";
   toSend += "current errorCode = " + String(errorCode) + "<br>"; 
 
-String ssuur = String(hour(switchonTime));
-String ssmin = String(minute(switchonTime));
-if( minute(switchonTime) < 10 ) ssmin = "0" + ssmin;
-ssuur += ":" + ssmin;
-toSend += "polling starts at " + ssuur;
-
-ssuur = String(hour(switchoffTime));
-ssmin = String(minute(switchoffTime));
-if( minute(switchoffTime) < 10 ) ssmin = "0" + ssmin;
-ssuur += ":" + ssmin;
-toSend += " and stops at " + ssuur + "<br>";
+//String ssuur = String(hour(switchonTime));
+//String ssmin = String(minute(switchonTime));
+//if( minute(switchonTime) < 10 ) ssmin = "0" + ssmin;
+//ssuur += ":" + ssmin;
+//toSend += "polling starts at " + ssuur;
+//
+//ssuur = String(hour(switchoffTime));
+//ssmin = String(minute(switchoffTime));
+//if( minute(switchoffTime) < 10 ) ssmin = "0" + ssmin;
+//ssuur += ":" + ssmin;
+//toSend += " and stops at " + ssuur + "<br>";
 
 toSend += "<h4>PAIRED INVERTERS</h4>";
 for(int x=0;x<inverterCount;x++) {
@@ -127,7 +127,7 @@ toSend += "pollRes= 300  now=" + String(now()) + "  switchonTime=" + String(swit
 toSend += "unixtime=" + String(now()) + "<br>";
 toSend += "polled = " + String(polled[0]) + String(polled[1]) + String(polled[2]) + String(polled[3]) + String(polled[4]) + String(polled[5]) + String(polled[6]) + String(polled[7]) + String(polled[8]) + "<br>";
 toSend += "resetCounter = " + String(resetCounter) + "  calliBration = " + String(calliBration, 2);
-
+toSend += "  pollOffset = " + String(pollOffset) + "<br>";
 #ifdef TEST
 toSend += "  testCounter = " + String(testCounter) + " inv0 type = " + String(Inv_Prop[0].invType);
 

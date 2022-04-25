@@ -282,6 +282,25 @@ server.on("/get.currentTime", HTTP_GET, [](AsyncWebServerRequest *request) {
      json = String();
 });
 
+server.on("/get.Times", HTTP_GET, [](AsyncWebServerRequest *request) {
+     String json = "{";
+     // start polling
+     String ssuur = "0" + String(hour(switchonTime));
+     String ssmin = String(minute(switchonTime));
+     if( minute(switchonTime) < 10 ) ssmin = "0" + ssmin;
+     ssuur += ":" + ssmin;
+     json += "\"srt\":\"" + ssuur + " hr\"";
+     // end polling
+     ssuur = String(hour(switchoffTime));
+     ssmin = String(minute(switchoffTime));
+     if( minute(switchoffTime) < 10 ) ssmin = "0" + ssmin;
+     ssuur += ":" + ssmin;
+     json += ",\"sst\":\"" + ssuur + " hr\"}";
+
+     request->send(200, "text/json", json);
+     json = String();
+});
+
 server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) {     
 // set the array into a json object
   String json;

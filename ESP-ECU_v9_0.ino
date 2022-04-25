@@ -1,4 +1,4 @@
-#define VERSION  "ESP-ECU_v9_1"
+#define VERSION  "ESP-ECU_v9_3"
 
 
 #include <TimeLib.h>
@@ -64,7 +64,7 @@ int testCounter = 0;
 #define DebugPrintln(x)
 #endif
 
-float calliBration = 1.200;
+float calliBration = 1.85;
   //bool stoPPed = false;
   bool USB_serial = true;
   char ssid[33] = ""; // was 33 
@@ -137,7 +137,7 @@ inverterdata Inv_Data[9];
  
  bool polled[9]={false,false,false,false,false,false,false,false,false};
  uint8_t zigbeeUp = 11; // initial allways initializing 0 = up
- uint8_t pollOffset = 0;
+ int pollOffset = 0;
  int inverterKeuze=0;
  int inverterCount=0;
  char ECU_ID[13] = "D8A3011B9780";
