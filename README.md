@@ -5,10 +5,10 @@ The program has a lot of smart features. All settings can be done via the webint
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
-april 21 2022: There is a new version v9_3 available, suitable for the new DS3 inverter. Some bugs repaired.
+april 25 2022: There is a new version v9_3 available, suitable for the new DS3 inverter. See changelog.
 
-Download ESP-ECU-v9_3 https://1drv.ms/u/s!AkMG5FvUwhedizwGGER1BkLMrQHX?e=62dSwj<br>
-Download ESP-ECU-v8_0 https://1drv.ms/u/s!AkMG5FvUwhediyjH3zbxd24_30wd?e=PsvH5L
+Download ESP-ECU-v9_3 https://1drv.ms/u/s!AkMG5FvUwhediz0qN74TfLC3PUGS?e=YX0kmC<br>
+
 <br><br>In case someone wants to print the housing, here is an stl: https://1drv.ms/u/s!AkMG5FvUwhedim8a_tVLywAivVDI?e=XIwhYg
 This is for a nodemcu board 31x58mmr>
 
@@ -63,7 +63,7 @@ The zigbee module crashes sometimes during the pollings. This is related to the 
 
 ## changelog ##
 version ESP-ECU_V9_3:
-- fixed a bugg with a negative poll offset
+- fixed a bug with a negative poll offset
 - added the poll- begin and end time on the main page
 version ESP-ECU_V9_2:
 -made it suitable for the DS3 inverter.
