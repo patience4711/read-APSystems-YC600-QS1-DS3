@@ -65,10 +65,11 @@ The zigbee module crashes sometimes during the pollings. This is related to the 
 version ESP-ECU_V9_3:
 - fixed a bug with a negative poll offset
 - added the poll- begin and end time on the main page
+
 version ESP-ECU_V9_2:
--made it suitable for the DS3 inverter.
--fixed polling intervall of 5 minutes.
--bug repaired, sq1 dc data panels 2 and 3
+- made it suitable for the DS3 inverter.
+- fixed polling intervall of 5 minutes.
+- bug repaired, sq1 dc data panels 2 and 3
 
 As of version 8 the value of total energy is no longer directly comming from the inverter's register. Instead all energy increases are added up in a total energy value. 
 This way that value is not sensitive to inverter resets that will happen in twilight or due to an eclips etc.
