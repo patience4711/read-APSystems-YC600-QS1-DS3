@@ -119,17 +119,21 @@ if(!*inMessage) return 50; // if empty we return with erroCode 50
         
         // ******************  dc voltage   *****************************************
          //voltage ch1 offset 28
-         dtostrf( extractValue( 52, 4, 1, 0, s_d ) * (float)1 / (float)48, 0, 1, Inv_Data[which].dcv[1]);
+         dtostrf( extractValue( 52, 4, 1, 0, s_d ) * (float)1 / (float)48, 0, 1, Inv_Data[which].dcv[0]);
          //voltage ch2 offset 26
-         dtostrf( extractValue( 56, 4, 1, 0, s_d ) * (float)1 / (float)48, 0, 1, Inv_Data[which].dcv[0]);
+         dtostrf( extractValue( 56, 4, 1, 0, s_d ) * (float)1 / (float)48, 0, 1, Inv_Data[which].dcv[1]);
          // ******************  current   *****************************************
          //current ch1 offset 30
-        dtostrf( extractValue(60, 4, 1, 0, s_d )/100, 0, 1, Inv_Data[which].dcc[1]);
+        //dtostrf( extractValue(60, 4, 1, 0, s_d ) * 1.25 / 100, 0, 1, Inv_Data[which].dcc[0]);
+        dtostrf( extractValue(60, 4, 1, 0, s_d ) * 0.0125, 0, 1, Inv_Data[which].dcc[0]);
          //current ch1 offset 34
-        dtostrf( extractValue(64, 4, 1, 0, s_d )/100, 0, 1, Inv_Data[which].dcc[0]);
+        dtostrf( extractValue(64, 4, 1, 0, s_d ) * 0.0125, 0, 1, Inv_Data[which].dcc[1]);
       
       } else {
-          
+         #ifdef TEST
+         if(Inv_Prop[which].invType == 0) {
+         ws.textAll( "decoding a YC600 inverter"); } else { ws.textAll( "decoding a QS1 inverter");}
+         #endif
         //yc600 or QS1
 //      frequency ac voltage and temperature
         //Inv_Data[which].acv = String((float)((extractValue(56, 4, 1, 0, s_d) * ((float)1 / (float)1.3277)) / 4), 1);
@@ -157,6 +161,9 @@ if(!*inMessage) return 50; // if empty we return with erroCode 50
         //********************************************************************************************
         if(Inv_Prop[which].invType == 1) //SQ1 inverter
         {
+          #ifdef TEST
+          ws.textAll( "extracting dc values for panels 2 and 3");
+          #endif
           //these are the values of channel 2 and 3 of the sq1 according to electrosun911
           //offset 21 -> byte for voltage ch3
           dtostrf( (extractValue( 42, 2, (float)16, 0, s_d ) + extractValue(40, 1, 1, 0, s_d)) * (float)82.5 / (float)4096, 0, 1, Inv_Data[which].dcv[2]);          
@@ -174,6 +181,7 @@ if(!*inMessage) return 50; // if empty we return with erroCode 50
         }  
       }      
             yield();
+
 
 /* 
 we extract a value out of the inverter answer: en_extr

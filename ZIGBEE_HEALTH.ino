@@ -24,12 +24,12 @@ void healthCheck() {
         case 0:
               zigbeeUp = 1; // all oke
               break;
-        case 1:
-              zigbeeUp = 0;
-              Update_Log("zigbee", "Stopped reason: Tostart");
-              // we send the start command
-              if (coordinatorStart() ) zigbeeUp = 1;
-              break;
+//        case 1:
+//              zigbeeUp = 0;
+//              Update_Log("zigbee", "Stopped reason: Tostart");
+//              // we send the start command
+//              if (coordinatorStart() ) zigbeeUp = 1;
+//              break;
         case 2:
               zigbeeUp = 0;
               String term = "zb down, received : " + String(inMessage);
@@ -98,17 +98,18 @@ int checkCoordinator() {
           //Serial.println("\nhealth received : " + String(inMessage) );
           if( strstr(tail, "0709") ) 
             {
-              if(diagNose) ws.textAll("found 0709");
+              if(diagNose) ws.textAll("found 0709, oke");
               //String term = "zb up, attempts = " + String(x);
               return 0;            
             } 
-            else
-            {
-              // we know that the message contains euc_id_reverse but not 0709
-              // so the coordinator exists but is not running
-              return 1;
-            }
+//            else
+//            {
+//              // we know that the message contains euc_id_reverse but not 0709
+//              // so the coordinator exists but is not running
+//              return 1;
+//            }
        }     
+   delay(700);
    }
    // if we come here 3 attempts failed       
     return 2;
@@ -148,35 +149,35 @@ void ZigbeePing() {
     // we ignore the answer
 }
 
-bool coordinatorStart() {
-    // send the 2600 start command
-    // this command already have the length 00 and checksum 20 resp 26
-    char startCmd[20]={"00260026"}; // zigbee start
-     
-    #ifdef DEBUG
-    Serial.println("send start cmd";
-    swap_to_zb();
-    #endif
-    
-    sendZigbee(startCmd); // answer is FE02 6101 79 07 1C
-    
-    if ( waitSerialAvailable() ) { readZigbee(); } else { readCounter = 0;} // when nothing available we don't read
-    if(diagNose) ws.textAll("inMessage = " + String(inMessage) + " rc = " + String(readCounter));
-    
-    #ifdef DEBUG
-    swap_to_usb();
-    #endif
-    // answer is FE00660066 FE0145C0098D
-    if (strstr(inMessage, "45C0" ) == NULL) 
-    {
-        if(diagNose) ws.textAll("no start answer");
-        Update_Log("zigbee", "stopped reason no start answer");
-        return false;
-     } else {
-        if(diagNose) ws.textAll("zb start success");
-        return true;
-    }
-}
+//bool coordinatorStart() {
+//    // send the 2600 start command
+//    // this command already have the length 00 and checksum 20 resp 26
+//    char startCmd[20]={"00260026"}; // zigbee start
+//     
+//    #ifdef DEBUG
+//    Serial.println("send start cmd";
+//    swap_to_zb();
+//    #endif
+//    
+//    sendZigbee(startCmd); // answer is FE02 6101 79 07 1C
+//    
+//    if ( waitSerialAvailable() ) { readZigbee(); } else { readCounter = 0;} // when nothing available we don't read
+//    if(diagNose) ws.textAll("inMessage = " + String(inMessage) + " rc = " + String(readCounter));
+//    
+//    #ifdef DEBUG
+//    swap_to_usb();
+//    #endif
+//    // answer is FE00660066 FE0145C0098D
+//    if (strstr(inMessage, "45C0" ) == NULL) 
+//    {
+//        if(diagNose) ws.textAll("no start answer");
+//        Update_Log("zigbee", "stopped reason no start answer");
+//        return false;
+//     } else {
+//        if(diagNose) ws.textAll("zb start success");
+//        return true;
+//    }
+//}
 
 // *************************************************************************
 //                          hard reset the cc2530
