@@ -6,7 +6,7 @@ See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
 may 17 2022: There is a new version v9_4 available, See changelog.<br>
-Download ESP-ECU-v9_4 https://1drv.ms/u/s!AkMG5FvUwhedi0QciHYc0d3fpHTN?e=aBxsyN <br>
+Download ESP-ECU-v9_4 https://1drv.ms/u/s!AkMG5FvUwhedi0bA08s8itWhnSJA?e=risayF <br>
 
 <br><br>In case someone wants to print the housing, here is an stl: https://1drv.ms/u/s!AkMG5FvUwhedim8a_tVLywAivVDI?e=XIwhYg
 This is for a nodemcu board 31x58mmr>
@@ -64,6 +64,7 @@ The zigbee module crashes sometimes during the pollings. This is related to the 
 version ESP-ECU_V9_4:
 - fixed failed polling after power cycle
 - fine-tuned some dc values of the DS3
+- default conversion factor now 1.66
  
 version ESP-ECU_V9_3:
 - fixed a bug with a negative poll offset
