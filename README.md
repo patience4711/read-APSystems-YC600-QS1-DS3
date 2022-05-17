@@ -5,9 +5,8 @@ The program has a lot of smart features. All settings can be done via the webint
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
-april 25 2022: There is a new version v9_3 available, suitable for the new DS3 inverter. See changelog.
-
-Download ESP-ECU-v9_3 https://1drv.ms/u/s!AkMG5FvUwhediz0qN74TfLC3PUGS?e=YX0kmC<br>
+may 17 2022: There is a new version v9_4 available, See changelog.
+Download ESP-ECU-v9_4 https://1drv.ms/u/s!AkMG5FvUwhedi0QciHYc0d3fpHTN?e=aBxsyN <br>
 
 <br><br>In case someone wants to print the housing, here is an stl: https://1drv.ms/u/s!AkMG5FvUwhedim8a_tVLywAivVDI?e=XIwhYg
 This is for a nodemcu board 31x58mmr>
@@ -62,6 +61,10 @@ The interesting values are send via mqtt and displayed on the main page.
 The zigbee module crashes sometimes during the pollings. This is related to the polling rate, at a rate of 5 minutes (the APS standard) this almost never happens. Anyway, the system recovers that by resetting the zb module and restart the coordinator. This is done by a healthcheck that runs every 10 minutes. You can only notice this via the log and infopage where this is counted.
 
 ## changelog ##
+version ESP-ECU_V9_4:
+- fixed failed polling after power cycle
+- fine-tuned some dc values of the DS3
+ 
 version ESP-ECU_V9_3:
 - fixed a bug with a negative poll offset
 - added the poll- begin and end time on the main page
