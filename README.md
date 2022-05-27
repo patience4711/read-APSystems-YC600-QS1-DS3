@@ -1,6 +1,7 @@
 # read APS inverters
 This project is for reading APS Systems inverters. The program can pair and poll YC600 QS1 and DS3 inverters, up to 9 pieces. The read values are displayed on a web page and sent via mosquitto in a Json format.
 The program has a lot of smart features. All settings can be done via the webinterface. It has a console that can be used for debugging and sending/receiving zigbee messages.
+See the WIKI for information on building it, the working, etc.
 
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
@@ -56,9 +57,6 @@ The interesting values are send via mqtt and displayed on the main page.
 
 ![frontpage](https://user-images.githubusercontent.com/12282915/138686152-3b065a7c-88f8-49d6-bf89-c512f82fd562.jpg)
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
-
-## known issues
-The zigbee module crashes sometimes during the pollings. This is related to the polling rate, at a rate of 5 minutes (the APS standard) this almost never happens. Anyway, the system recovers that by resetting the zb module and restart the coordinator. This is done by a healthcheck that runs every 10 minutes. You can only notice this via the log and infopage where this is counted.
 
 ## changelog ##
 version ESP-ECU_V9_4:
