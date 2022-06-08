@@ -33,20 +33,13 @@ It is nothing more than an esp device like nodemcu, wemos or its relatives and a
 The zigbeemodule should be flashed with a firmware that can be found here https://github.com/Koenkk/zigbee2mqtt/issues/4221. Here you can find much more information on this project.
 The most recent link to a lua implementation (including firmware) by kadszol :https://github.com/Koenkk/zigbee2mqtt/files/6797510/discord-11-7-2021.zip
 
-the wiring: ( also see issues )
-### cc2530 -> ESP 
--  p2   -> d8
--  p3   -> d7
+the wiring: ( also see the wiki and issues )
+### cc2530/31 -> ESP 
+-  p02   -> d8
+-  p03   -> d7
 -  vcc  -> 3.3v
 -  gnd  -> gnd
 -  rst  -> d5
-
-### cc2531 - > esp (not tested by me!)
-- dd -> d8         p01 -> d8 
-- dc -> d7         p02 -> d7
-- rst -> d5        rst -> d5
-- vcc -> 3.3V      vcc -> 3.3V
-- gnd -> gnd       gnd -> gnd
 
 ![minhw](https://user-images.githubusercontent.com/12282915/138685751-98112dfd-8ed8-4185-9de7-c2e2e8f005a9.jpg)
 ## how does it work
