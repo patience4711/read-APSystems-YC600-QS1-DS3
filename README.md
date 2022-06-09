@@ -8,18 +8,17 @@ See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 ## downloads
 may 17 2022: There is a new version v9_4 available, See changelog.<br>
 Download ESP-ECU-v9_4 https://1drv.ms/u/s!AkMG5FvUwhedi0bA08s8itWhnSJA?e=risayF <br>
-
-<br><br>In case someone wants to print the housing, here is an stl: https://1drv.ms/u/s!AkMG5FvUwhedim8a_tVLywAivVDI?e=XIwhYg
-This is for a nodemcu board 31x58mmr>
+<br>In case someone wants to print the housing, here is an stl: https://1drv.ms/u/s!AkMG5FvUwhedim8a_tVLywAivVDI?e=XIwhYg
+This is for a nodemcu board 31x58mm.
 
 ## features
-- Easy wifi config portal
+- Simply to connect to your wifi
 - Easy add, delete and pair inverters
 - automatic polling or on demand via mqtt or http
 - data can be requested via http and mosquitto
 - There are 2 different json formats, a special one for domoticz
 - Fast asyc webserver
-- a very smart on-line console to send commands and debug
+- a very smart on-line console to send commands and debugging
 - Smart timekeeping
 - A lot of system info on the webpage
 
@@ -33,13 +32,7 @@ It is nothing more than an esp device like nodemcu, wemos or its relatives and a
 The zigbeemodule should be flashed with a firmware that can be found here https://github.com/Koenkk/zigbee2mqtt/issues/4221. Here you can find much more information on this project.
 The most recent link to a lua implementation (including firmware) by kadszol :https://github.com/Koenkk/zigbee2mqtt/files/6797510/discord-11-7-2021.zip
 
-the wiring: ( also see the wiki and issues )
-### cc2530/31 -> ESP 
--  p02   -> d8
--  p03   -> d7
--  vcc  -> 3.3v
--  gnd  -> gnd
--  rst  -> d5
+For info on how to build and use it, please see the <a href='https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/wiki'>WIKI</a>
 
 ![minhw](https://user-images.githubusercontent.com/12282915/138685751-98112dfd-8ed8-4185-9de7-c2e2e8f005a9.jpg)
 ## how does it work
