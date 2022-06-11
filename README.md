@@ -36,7 +36,7 @@ For info on how to build and use it, please see the <a href='https://github.com/
 
 ![minhw](https://user-images.githubusercontent.com/12282915/138685751-98112dfd-8ed8-4185-9de7-c2e2e8f005a9.jpg)
 ## how does it work
-The APS works with their own zigbee implementation. The ESP-ECU sends zigbee commands (wireless) to the inverters and analyzes the answers, extracting the values. 
+APS works with their own zigbee implementation. The ESP-ECU sends zigbee commands (wireless) to the inverters and analyzes the answers, extracting the values. 
 The ESP communicates with the zigbee module through the alternative serial port (wired).
 The ESP-ECU starts a coordinator (an entity that can start a zigbee network). The coordinator binds the inverters and sends the poll requests to them.
 The interesting values are send via mqtt and displayed on the main page.
