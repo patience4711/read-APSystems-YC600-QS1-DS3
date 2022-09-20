@@ -6,8 +6,8 @@ See the <a href='https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/wi
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
-may 17 2022: There is a new version v9_4 available, See changelog.<br>
-Download ESP-ECU-v9_4 https://1drv.ms/u/s!AkMG5FvUwhedi0bA08s8itWhnSJA?e=risayF <br>
+sep 20 2022: There is a new version v9_5 available, See changelog.<br>
+Download ESP-ECU-v9_5 https://1drv.ms/u/s!AkMG5FvUwhedi3fyJZJLbil2-lb8?e=hi3D24 <br>
 <br>In case someone wants to print the housing, here is an stl: https://1drv.ms/u/s!AkMG5FvUwhedim8a_tVLywAivVDI?e=XIwhYg
 This is for a nodemcu board 31x58mm.
 
@@ -45,6 +45,10 @@ The interesting values are send via mqtt and displayed on the main page.
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
 ## changelog ##
+version ESP-ECU_V9_5:
+- added a mqtt command for polling all inverters
+- added a signal quality value
+
 version ESP-ECU_V9_4:
 - fixed failed polling after power cycle
 - fine-tuned some dc values of the DS3
