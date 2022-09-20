@@ -63,8 +63,10 @@ if ( Mqtt_Enabled ) { //bool == y en er is een mqtt adres, ja kijk dan of er een
     String clientId = String( ESP.getChipId() );
     toSend += "de mqtt clientId = : " + clientId + "<br>";    
     if ( MQTT_Client.connected() ) {
-    toSend += "status mqtt : connected to " + Mqtt_Broker + "<br>";
-    } 
+       toSend += "status mqtt : connected to " + Mqtt_Broker + "<br>";
+       } else {
+       toSend += "status mqtt : not connected<br>";
+       }
     } else {
    toSend += "mosquitto not configured<br>";
    toSend += "check the mosquitto settings<br>";  
@@ -76,23 +78,18 @@ if ( Mqtt_Enabled ) { //bool == y en er is een mqtt adres, ja kijk dan of er een
   toSend += "system up time: " + String(dagen) + " days " + String(urens-dagen*24) + " hrs " + String(minutens - urens*60) + " min.<br> ";
   toSend += "current errorCode = " + String(errorCode) + "<br>"; 
 
-//String ssuur = String(hour(switchonTime));
-//String ssmin = String(minute(switchonTime));
-//if( minute(switchonTime) < 10 ) ssmin = "0" + ssmin;
-//ssuur += ":" + ssmin;
-//toSend += "polling starts at " + ssuur;
-//
-//ssuur = String(hour(switchoffTime));
-//ssmin = String(minute(switchoffTime));
-//if( minute(switchoffTime) < 10 ) ssmin = "0" + ssmin;
-//ssuur += ":" + ssmin;
-//toSend += " and stops at " + ssuur + "<br>";
 
 toSend += "<h4>PAIRED INVERTERS</h4>";
 for(int x=0;x<inverterCount;x++) {
     if(String(Inv_Prop[x].invID) != "0x0000" ) {
-      toSend += "inverter " + String(x) + " serialnr " + String(Inv_Prop[x].invSerial) + "  ID = " + String(Inv_Prop[x].invID) + "<br>"; 
-    }
+      toSend += "inverter " + String(x) + " serialnr " + String(Inv_Prop[x].invSerial) + "  ID = " + String(Inv_Prop[x].invID) + "  signal quality: "; 
+      if (polled[x] )
+        { 
+        toSend += String(Inv_Data[x].sigQ) + "%<br>";  
+        } else {
+        toSend += "n/a <br>";
+        } 
+      }
 }
 
 toSend += "<h4>INVERTER OUTPUT</h4>";

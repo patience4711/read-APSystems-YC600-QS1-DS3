@@ -61,7 +61,13 @@ if(!*inMessage) return 50; // if empty we return with erroCode 50
 
     tail = split(messageToDecode, "44810000"); // remove the 0000 as well
     //tail = after removing the 1st part
-    
+    // in tail at offset 14, 2 bytes with signalQuality reside   
+
+    //sigQ = roundoff( (float) (extractValue(14, 2, 1, 0, tail) * 100 / 254 ), 1);
+    dtostrf((float)(extractValue(14, 2, 1, 0, tail) * 100 / 254 ), 0, 1, Inv_Data[which].sigQ);
+    ws.textAll( "extracted sigQ = " + String(Inv_Data[which].sigQ) );
+    //    dtostrf((float)(extractValue(68, 4, 1, 0, s_d) / 3.8 ), 0, 1, Inv_Data[which].acv);
+    //    ws.textAll( "extracted ACV = " + String(Inv_Data[which].acv) );
 // a YC600 message
 // tail 06 01 3A 10 14 14 00 71 00 B5 7C FA 00 00 5E | 40 80 00 15 82 15 | FB FB 51 | B1 03 D4 0F 41 17 00 00 74 CF 00 | 00 00 76 70 | 6A 73 D0 6B 04 96 |
 //      0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 | 15 16 17 18 19 20 | 21 22 23 | 24 25 26 27 28 29 30 31 32 33 34 | 35 36 37 38 | 39 40 41 42 43 44 |
