@@ -6,9 +6,9 @@
 // with the 2600 command
 void healthCheck() {
    // check moquitto
-   if(Mqtt_Enabled) {
-      if (!MQTT_Client.connected())  mqttConnect();
-   }
+//   if(Mqtt_Enabled) {
+//      if (!MQTT_Client.connected())  mqttConnect();
+//   }
    // check if we need to get time
    if(!timeRetrieved) getTijd();
 
@@ -98,18 +98,19 @@ int checkCoordinator() {
           //Serial.println("\nhealth received : " + String(inMessage) );
           if( strstr(tail, "0709") ) 
             {
-              if(diagNose) ws.textAll("found 0709, oke");
+              if(diagNose) ws.textAll("found 0709, running oke");
               //String term = "zb up, attempts = " + String(x);
               return 0;            
             } 
 //            else
 //            {
-//              // we know that the message contains euc_id_reverse but not 0709
+//              // we know that the message contains ece_id_reverse but not 0709
 //              // so the coordinator exists but is not running
 //              return 1;
 //            }
        }     
    delay(700);
+   if(diagNose) ws.textAll("retrying..");
    }
    // if we come here 3 attempts failed       
     return 2;
