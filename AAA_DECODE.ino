@@ -374,7 +374,7 @@ String toMQTT = "{\"inv_serial\":\"" + String(Inv_Prop[which].invSerial) + "\"";
        String sValue="\"svalue\":\""; // "svalue":"
        sValue += String(Inv_Data[which].power[4]) + ";" + String(Inv_Data[which].en_total, 2) ; //total of the 2 or 4
        toMQTT += ",\"idx\":" + String(Inv_Prop[which].invIdx) + ",\"nvalue\":0," + sValue + "\"}";
-       //Serial.println("we publish to domoticz, mess is : " + toMQTT);
+       //Serial.println("send msg is in domoticz format: " + toMQTT);
     }  else { 
         // for not domoticz we have a different mqtt string how does this look?
        toMQTT += ",\"temp\":\"" + String(Inv_Data[which].heath) + "\",\"p0\":\"" + String(Inv_Data[which].power[0]) + "\",\"p1\":\"" + String(Inv_Data[which].power[1]) + "\"";
@@ -382,10 +382,10 @@ String toMQTT = "{\"inv_serial\":\"" + String(Inv_Prop[which].invSerial) + "\"";
        toMQTT += ",\"p2\":\"" + String(Inv_Data[which].power[2]) + "\",\"p3\":\"" + String(Inv_Data[which].power[3])  +  "\"";
        }
        toMQTT += ",\"energy\":\"" + String(Inv_Data[which].en_total, 1) + "\"";
-       //Serial.println("we do not publish to domoticz, mess is : " + toMQTT);    
+       //Serial.println("send msg is in generic format: " + toMQTT);    
        toMQTT += "}";  
        }
-   //DebugPrintln("mqtt mess :"); //DebugPrintln(toMQTT);
+   //DebugPrintln("mqtt debug msg:"); //DebugPrintln(toMQTT);
    MQTT_Client.publish ( Mqtt_outTopic.c_str(), toMQTT.c_str() );
  }
 
