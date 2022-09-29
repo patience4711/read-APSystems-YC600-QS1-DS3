@@ -7,7 +7,7 @@ See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
 sep 29 2022: There is a new version v9_6 available, See changelog.<br>
-Download [ESP-ECU-v9_6]( ) (not yet available, waiting for test results)<br>
+Download [ESP-ECU-v9_6](https://1drv.ms/u/s!AkMG5FvUwhedi3vUFfU8UwW7CCU9?e=yYJeFu)<br>
 
 sep 20 2022: There is a new version v9_5 available, See changelog.<br>
 Download [ESP-ECU-v9_5](https://1drv.ms/u/s!AkMG5FvUwhedi3fyJZJLbil2-lb8?e=hi3D24) <br>
@@ -49,7 +49,7 @@ The interesting values are send via mqtt and displayed on the main page.
 
 ## changelog ##
 version ESP-ECU_V9_6:
-- added 2 mqtt json formats, numeric values are included as float
+- added 2 mqtt json formats, numeric values are included as float now.
 
 version ESP-ECU_V9_5:
 - added a mqtt command for polling all inverters
