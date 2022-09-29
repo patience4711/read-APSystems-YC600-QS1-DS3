@@ -50,6 +50,7 @@ The interesting values are send via mqtt and displayed on the main page.
 ## changelog ##
 version ESP-ECU_V9_6:
 - added 2 mqtt json formats, numeric values are included as float now.
+- changed the format of the returned json when http request. 
 
 version ESP-ECU_V9_5:
 - added a mqtt command for polling all inverters
