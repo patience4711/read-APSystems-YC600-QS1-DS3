@@ -6,9 +6,11 @@ See the <a href='https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/wi
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
+sep 29 2022: There is a new version v9_6 available, See changelog.<br>
+Download [ESP-ECU-v9_6]( ) (not yet available, waiting for test results)<br>
 
 sep 20 2022: There is a new version v9_5 available, See changelog.<br>
-Download ESP-ECU-v9_5 https://1drv.ms/u/s!AkMG5FvUwhedi3fyJZJLbil2-lb8?e=hi3D24 <br>
+Download [ESP-ECU-v9_5](https://1drv.ms/u/s!AkMG5FvUwhedi3fyJZJLbil2-lb8?e=hi3D24) <br>
 <br>In case someone wants to print the housing, here is an stl: https://1drv.ms/u/s!AkMG5FvUwhedim8a_tVLywAivVDI?e=XIwhYg
 This is for a nodemcu board 31x58mm.
 
@@ -17,7 +19,7 @@ This is for a nodemcu board 31x58mm.
 - Easy add, delete and pair inverters
 - automatic polling or on demand via mqtt or http
 - data can be requested via http and mosquitto
-- There are 2 different json formats, a special one for domoticz
+- There are 4 different mqtt json formats
 - Fast asyc webserver
 - a very smart on-line console to send commands and debugging
 - Smart timekeeping
