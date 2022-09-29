@@ -7,7 +7,7 @@ See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
 sep 29 2022: There is a new version v9_6 available, See changelog.<br>
-Download [ESP-ECU-v9_6](https://1drv.ms/u/s!AkMG5FvUwhedi3vUFfU8UwW7CCU9?e=yYJeFu)<br>
+Download [ESP-ECU-v9_6](https://1drv.ms/u/s!AkMG5FvUwhedi3x-W1Y1KluEUNEd?e=SF8cMG)<br>
 
 sep 20 2022: There is a new version v9_5 available, See changelog.<br>
 Download [ESP-ECU-v9_5](https://1drv.ms/u/s!AkMG5FvUwhedi3fyJZJLbil2-lb8?e=hi3D24) <br>
