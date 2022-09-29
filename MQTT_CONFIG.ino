@@ -4,18 +4,20 @@ const char MQTTCONFIG[] PROGMEM = R"=====(
 <div id='bo'></div>
   <div id='help'>
   <span class='close' onclick='sl();'>&times;</span><h3>MOSQUITTO HELP</h3>
-  Mosquitto can be used to send short messages back and forth to an mqtt server (broker).
-  With these messages you can switch or update sensors. <br><br>
-  <b>enable:</b><br>Check this if you want to use mosquitto.<br><br>
+   <b>json format:</b><br>
+  f0: mosquitto disabled<br>  
+  f1: {"inv_serial":"408000158215","idx":879,"nvalue":0,"svalue":"5.2"}<br>
+  f2: {"inv_serial":"408000158215","temp":"19.3","p0":"0.0","p1":"5.2","energy":"en_total"}<br>
+  f3: {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"dcv":[36.8,37.0],"dcc":[4.3,3.0],"pwr":[123.4,123.5],"en":[174.35,178.44]}
+  f4: {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"ch0":[36.8,4.3,123.4,174.35],"ch1":[37.0,3.0,123.5,178.44],total[power,energy]}
+  <br><br> 
+  
   <b>address:</b><br>The (ip) address of the mqtt-broker cq domoticz<br><br>
   <b>send topic:</b><br>For outgoing communication to domoticz, the topic is '<strong>domoticz/in</strong>'.<br><br>
   <b>receive topic:</b><br>The topic where will be subscribed for incoming messages.<br><br>
   <b>mqtt_username en password</b><br>Optional, these can be left empty.
   <br><br>
-  <b>json format depends on the topic:</b><br>{"inv_serial":"408000158215","temp":"19.3","p0":"0.0","p1":"5.2"}<br>
-  or to domoticz: {"inv_serial":"408000158215","idx":879,"nvalue":0,"svalue":"5.2"}
 
-  <br><br>
   </div>
 </div>
 <div id='msect'>
@@ -26,13 +28,21 @@ const char MQTTCONFIG[] PROGMEM = R"=====(
   <center>
   <form id='formulier' method='get' action='MQTTconfig' oninput='showSubmit();'><table>
   
-  <tr><td style='width:130px;'>enable ?<td><input type='checkbox' style='width:30px; height:30px;' name='mqtEn' #check></input></tr> 
+  
+   <tr><td>format:&nbsp<td><select name='fm' class='sb1' id='sel'>
+    <option value='0' fm_0>disabled</option>
+    <option value='1' fm_1>format 1</option>
+    <option value='2' fm_2>format 2</option>
+    <option value='3' fm_3>format 3</option>
+    <option value='4' fm_4>format 4</option>
+    </select>
   <tr><td >address<td><input class='inp6' name='mqtAdres' value='{mqttAdres}' size='31' placeholder='broker adres'></tr>
   <tr><td >port<td><input class='inp2' name='mqtPort' value='{mqttPort}' size='31' placeholder='mqtt port'></tr>
   <tr><td>receive topic:&nbsp<td><input class='inp6' name='mqtinTopic' value='{mqttinTopic}' placeholder='mqtt topic send' length='60'></tr>
   <tr><td>send topic:&nbsp<td><input class='inp6' name='mqtoutTopic' value='{mqttoutTopic}' placeholder='mqtt topic receive' length='60'></tr>
   <tr><td>username:&nbsp<td><input class='inp4' name='mqtUser' value='{mqtu}' size='4' length='4'></td></tr>
   <tr><td>password:&nbsp<td><input class='inp4' name='mqtPas' value='{mqtp}' size='4' length='4'></td></tr>
+ 
   </form>
   </td></table>
   </div><br>
@@ -58,7 +68,7 @@ toSend += FPSTR(MQTTCONFIG);
 
   //altijd de mqtt gegevens terugzetten
  
-if (Mqtt_Enabled) { toSend.replace("#check", "checked");}
+//if (Mqtt_Enabled) { toSend.replace("#check", "checked");}
 toSend.replace("{mqttAdres}", Mqtt_Broker);
 toSend.replace("{mqttPort}", Mqtt_Port);
 toSend.replace("{mqttinTopic}", Mqtt_inTopic);
@@ -66,6 +76,23 @@ toSend.replace("{mqttoutTopic}", Mqtt_outTopic);
 toSend.replace("{mqtu}", Mqtt_Username );
 toSend.replace("{mqtp}", Mqtt_Password );
 //toSend.replace("{idx1}", String(Mqtt_Idx));
+switch (Mqtt_Format) {
+ case 0:
+    toSend.replace("fm_0", "selected");
+    break;
+ case 1:
+    toSend.replace("fm_1", "selected");
+    break;
+ case 2:
+    toSend.replace("fm_2", "selected");
+    break;
+ case 3:
+    toSend.replace("fm_3", "selected");
+    break;
+ case 4:
+    toSend.replace("fm_4", "selected");
+    break;
+  }
 }
 
 void handleMQTTconfig(AsyncWebServerRequest *request) {
@@ -89,12 +116,12 @@ void handleMQTTconfig(AsyncWebServerRequest *request) {
   Mqtt_Password = request->arg("mqtPas");
   //DebugPrint("Mqtt_Username na strcpy = "); //DebugPrintln(Mqtt_Password); // oke
 
-  //Mqtt_Idx = request->arg("mqidx1").toInt(); 
+  Mqtt_Format = request->arg("fm").toInt(); //values are 0 1 2//Mqtt_Idx = request->arg("mqidx1").toInt(); 
 
 // de selectbox
-   char tempChar[1] = "";
-   String dag = request->arg("mqtEn");  // mqselect
-   if ( dag == "on") { Mqtt_Enabled = true; } else { Mqtt_Enabled = false; }
+//   char tempChar[1] = "";
+//   String dag = request->arg("mqtEn");  // mqselect
+//   if ( dag == "on") { Mqtt_Enabled = true; } else { Mqtt_Enabled = false; }
 
 //  toSend = FPSTR(CONFIRM);
 //  toSend.replace("SW=BACK", "MQTT");

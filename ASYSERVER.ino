@@ -313,17 +313,19 @@ server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) {
       if(Inv_Prop[i].invType == 2) panelCount=4;
       
       json += "\"serial\":\"" + String(Inv_Prop[i].invSerial)  + "\"";      
-      json += ",\"freq\":\""  + String(Inv_Data[i].freq)       + "\""; //freq = a char    
-      json += ",\"temp\":\""  + String(Inv_Data[i].heath)      + "\"";
-      json += ",\"avc\":\""   + String(Inv_Data[i].acv)        + "\"";
+      json += ",\"freq\":"  + String(Inv_Data[i].freq); //freq = a char    
+      json += ",\"temp\":"  + String(Inv_Data[i].heath);
+      json += ",\"avc\":"   + String(Inv_Data[i].acv);
 
       for(int z = 0; z < panelCount; z++ ) 
       {
-        json += ",\"dcv" + String(z) + "\":\"" + String(Inv_Data[i].dcv[z])  + "\"";
-        json += ",\"dcc" + String(z) + "\":\"" + String(Inv_Data[i].dcc[z])  + "\"";
-        json += ",\"pow" + String(z) + "\":\"" + String(Inv_Data[i].power[z]) + "\"";
+        json += ",\"dcv" + String(z) + "\":" + String(Inv_Data[i].dcv[z]);
+        json += ",\"dcc" + String(z) + "\":" + String(Inv_Data[i].dcc[z]);
+        json += ",\"pow" + String(z) + "\":" + String(Inv_Data[i].power[z]);
+        json += ",\"en" + String(z) + "\":" + String(en_saved[i][z]);
       }
-      json += ",\"energy\":\"" + String(Inv_Data[i].en_total, 2) + "\"";
+      json += ",\"power\":" + String(Inv_Data[i].power[4]);
+      json += ",\"energy\":" + String(Inv_Data[i].en_total, 2);
       json += "}";     
 
      request->send(200, "text/json", json);

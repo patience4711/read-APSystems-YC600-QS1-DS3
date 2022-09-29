@@ -64,7 +64,7 @@ if(!*inMessage) return 50; // if empty we return with erroCode 50
     // in tail at offset 14, 2 bytes with signalQuality reside   
 
     //sigQ = roundoff( (float) (extractValue(14, 2, 1, 0, tail) * 100 / 254 ), 1);
-    dtostrf((float)(extractValue(14, 2, 1, 0, tail) * 100 / 254 ), 0, 1, Inv_Data[which].sigQ);
+    dtostrf((float)(extractValue(14, 2, 1, 0, tail) * 100 / 255 ), 0, 1, Inv_Data[which].sigQ);
     ws.textAll( "extracted sigQ = " + String(Inv_Data[which].sigQ) );
     //    dtostrf((float)(extractValue(68, 4, 1, 0, s_d) / 3.8 ), 0, 1, Inv_Data[which].acv);
     //    ws.textAll( "extracted ACV = " + String(Inv_Data[which].acv) );
@@ -367,26 +367,65 @@ String toMQTT = "{\"inv_serial\":\"" + String(Inv_Prop[which].invSerial) + "\"";
 // "idx" : 7,
 // "nvalue" : 0,
 // "svalue" : "90;2975.00"  
-   
-   if( Mqtt_outTopic == "domoticz/in" ) 
-    { 
+String sValue="\"svalue\":\"";   
+   switch( Mqtt_Format)  {
+    case 1: 
        // en_total is the stacked energy increase
-       String sValue="\"svalue\":\""; // "svalue":"
+       //String sValue="\"svalue\":\""; // "svalue":"
        sValue += String(Inv_Data[which].power[4]) + ";" + String(Inv_Data[which].en_total, 2) ; //total of the 2 or 4
        toMQTT += ",\"idx\":" + String(Inv_Prop[which].invIdx) + ",\"nvalue\":0," + sValue + "\"}";
        //Serial.println("we publish to domoticz, mess is : " + toMQTT);
-    }  else { 
-        // for not domoticz we have a different mqtt string how does this look?
+       break;
+       
+     case 2: // for not domoticz we have a different mqtt string how does this look?
        toMQTT += ",\"temp\":\"" + String(Inv_Data[which].heath) + "\",\"p0\":\"" + String(Inv_Data[which].power[0]) + "\",\"p1\":\"" + String(Inv_Data[which].power[1]) + "\"";
        if( Inv_Prop[which].invType == 1 ) {
        toMQTT += ",\"p2\":\"" + String(Inv_Data[which].power[2]) + "\",\"p3\":\"" + String(Inv_Data[which].power[3])  +  "\"";
        }
        toMQTT += ",\"energy\":\"" + String(Inv_Data[which].en_total, 1) + "\"";
        //Serial.println("we do not publish to domoticz, mess is : " + toMQTT);    
-       toMQTT += "}";  
-       }
+       toMQTT += "}";
+       break;  
+       
+     case 3:
+       toMQTT += ",\"acv\":" + String(Inv_Data[which].acv) + ",\"freq\":" + String(Inv_Data[which].freq) + ",\"temp\":" + String(Inv_Data[which].heath);
+       if( Inv_Prop[which].invType == 1 ) {
+       toMQTT += ",\"dcv\":["+String(Inv_Data[which].dcv[0])+","+String(Inv_Data[which].dcv[1])+","+String(Inv_Data[which].dcv[2])+","+String(Inv_Data[which].dcv[3])+ "]";
+       toMQTT += ",\"dcc\":["+String(Inv_Data[which].dcc[0])+","+String(Inv_Data[which].dcc[1])+","+String(Inv_Data[which].dcc[2])+","+String(Inv_Data[which].dcc[3])+"]";
+       toMQTT += ",\"pwr\":["+String(Inv_Data[which].power[0])+","+String(Inv_Data[which].power[1])+","+String(Inv_Data[which].power[2])+","+String(Inv_Data[which].power[3])+"]";
+       toMQTT += ",\"en\":["+String(en_saved[which][0])+","+String(en_saved[which][1])+","+String(en_saved[which][2])+","+String(en_saved[which][3])+"]}";
+       //toMQTT += ",\"totalen\":" + String(Inv_Data[which].en_total, 2) +"}";
+             } else {
+       toMQTT += ",\"dcv\":["+String(Inv_Data[which].dcv[0])+","+String(Inv_Data[which].dcv[1])+"]";
+       toMQTT += ",\"dcc\":["+String(Inv_Data[which].dcc[0])+","+String(Inv_Data[which].dcc[1])+"]";
+       toMQTT += ",\"pwr\":["+String(Inv_Data[which].power[0])+","+String(Inv_Data[which].power[1])+"]";
+       toMQTT += ",\"en\":["+String(en_saved[which][0])+","+String(en_saved[which][1])+"]}";
+       //toMQTT += ",\"totalen\":" + String(Inv_Data[which].en_total, 2) +"}";
+         }
+        break;
+
+     case 4:
+       toMQTT += ",\"acv\":" + String(Inv_Data[which].acv) + ",\"freq\":" + String(Inv_Data[which].freq) + ",\"temp\":" + String(Inv_Data[which].heath);
+       
+       toMQTT += ",\"ch0\":[" + String(Inv_Data[which].dcv[0]) + "," + String(Inv_Data[which].dcc[0]) + "," + String(Inv_Data[which].power[0]) + "," + String(en_saved[which][0]) + "]";
+       toMQTT += ",\"ch1\":[" + String(Inv_Data[which].dcv[1]) + "," + String(Inv_Data[which].dcc[1]) + "," + String(Inv_Data[which].power[1]) + "," + String(en_saved[which][1]) + "]";
+        if( Inv_Prop[which].invType == 1 ) { // add ch2 and ch3
+       toMQTT += ",\"ch2\":[" + String(Inv_Data[which].dcv[2]) + "," + String(Inv_Data[which].dcc[2]) + "," + String(Inv_Data[which].power[2]) + "," + String(en_saved[which][2]) + "]";
+       toMQTT += ",\"ch3\":[" + String(Inv_Data[which].dcv[3]) + "," + String(Inv_Data[which].dcc[3]) + "," + String(Inv_Data[which].power[3]) + "," + String(en_saved[which][3]) + "]";
+        }
+       toMQTT += ",\"totals\":[" + String(Inv_Data[which].power[4]) + "," + String(Inv_Data[which].en_total, 2) + "]}";
+    }
+ 
+
    //DebugPrintln("mqtt mess :"); //DebugPrintln(toMQTT);
+   #ifdef TEST
+     ws.textAll("sending mqtt\n");
+   #endif
+   
    MQTT_Client.publish ( Mqtt_outTopic.c_str(), toMQTT.c_str() );
  }
 
- 
+// not domoticz: {"inv_serial":"123456789012","temp":"12,3","p0":"123",p1":"123",p2":"123",p3":"123","energy":"345"}
+//format 2 {"inv_serial":"408000158211","temp":"18.0","p0":"88.4","p1":"88.0","energy":"174.4"}
+//format3 {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"dcv":[36.8,37.0],"dcc":[4.3,3.0],"pwr":[nan,nan],"totalen":174.35}
+//format3 {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"ch0":[dcv0,dcc0,power0,enSaved0],"ch2":[dcv1,dcc1,power1,en_saved1] etc
