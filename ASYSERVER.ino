@@ -310,7 +310,7 @@ server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) {
   if( i < inverterCount) {
       json="{";
 
-      if(Inv_Prop[i].invType == 2) panelCount=4;
+      if(Inv_Prop[i].invType == 1) panelCount=4;
       
       json += "\"serial\":\"" + String(Inv_Prop[i].invSerial)  + "\"";      
       json += ",\"freq\":"  + String(atof(Inv_Data[i].freq)); //freq = a char    
