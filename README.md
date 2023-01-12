@@ -11,7 +11,7 @@ Download [ESP-ECU-v9_6](https://github.com/patience4711/read-APSystems-YC600-QS1
 
 sep 20 2022: There is a new version v9_5 available, See changelog.<br>
 Download [ESP-ECU-v9_5](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_5.zip) <br>
-<br>In case someone wants to print the housing, here is an [stl file](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/especu.zip)
+<br>In case someone wants to print the housing, here is an [stl file](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-housing.zip)
 This is for a nodemcu board 31x58mm.
 
 ## features
