@@ -1,10 +1,11 @@
-// hier komen we als een ongeautoriseerde request is gedaan
+// we come her when an unautorized request is done
+
 void handleNotFound(AsyncWebServerRequest *request) {
   
 String serverargument = request->url().c_str();
-//DebugPrintln("we zijn in handleNotFound");
+//DebugPrintln("we are in handleNotFound");
 //DebugPrint("serverargument = "); //DebugPrintln(serverargument);
-// als de client van buiten het netwerk komt mag hij niks
+// if the client is outside the network he is can do nothing
 
 String addy = request->client()->remoteIP().toString();
 bool intern = false;
@@ -37,17 +38,16 @@ if ( intern ) {    //DebugPrintln("the request comes from inside the network");
               String teZenden = "polling inverternr " + String(inv);
               if(inv > inverterCount-1 ) {
                   String teZenden="ERROR " + serverargument + " inverter not exists !";
-                  request->send ( 200, "text/plain", teZenden ); //zend bevestiging
+                  request->send ( 200, "text/plain", teZenden ); 
                   return;
               }               
              iKeuze = inv;
-             teZenden = "poll inverter " + String(inv);
-             request->send ( 200, "text/plain", teZenden ); //zend bevestiging
+             teZenden = "polled inverter " + String(inv);
+             request->send ( 200, "text/plain", teZenden ); 
              actionFlag = 47; // takes care for the polling
              return;
              }
-             
-             
+
              // if we are here, no valid api was found    
              request->send ( 200, "text/plain", "ERROR this link is invalid, go back <--" );//send not found message
              }             

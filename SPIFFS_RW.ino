@@ -126,14 +126,15 @@ void mqttConfigsave() {
     DynamicJsonDocument doc(1024);
     JsonObject json = doc.to<JsonObject>();
 // 
-    json["Mqtt_Enabled"] = Mqtt_Enabled;
+//    json["Mqtt_Enabled"] = Mqtt_Enabled;
     json["Mqtt_Broker"] = Mqtt_Broker;
     json["Mqtt_Port"] = Mqtt_Port;    
     json["Mqtt_inTopic"] = Mqtt_inTopic;
     json["Mqtt_outTopic"] = Mqtt_outTopic;
     json["Mqtt_Username"] = Mqtt_Username;
     json["Mqtt_Password"] = Mqtt_Password;
-//    json["Mqtt_Idx"] = Mqtt_Idx;    
+//    json["Mqtt_Idx"] = Mqtt_Idx;
+    json["Mqtt_Format"] = Mqtt_Format;    
     File configFile = LittleFS.open("/mqttconfig.json", "w");
     if (!configFile) {
       //DebugPrintln("open file for writing failed");
@@ -193,14 +194,14 @@ bool file_open_for_read(String bestand) {
               }            
 
             if (bestand == "/mqttconfig.json"){
-                     if(jsonStr.indexOf("Mqtt_Enabled") > 0)  { Mqtt_Enabled =  doc["Mqtt_Enabled"].as<bool>();}   
+                     //if(jsonStr.indexOf("Mqtt_Enabled") > 0)  { Mqtt_Enabled =  doc["Mqtt_Enabled"].as<bool>();}   
                      if(jsonStr.indexOf("Mqtt_Broker") > 0)   { Mqtt_Broker =   doc["Mqtt_Broker"].as<String>();}
                      if(jsonStr.indexOf("Mqtt_Port") > 0)     { Mqtt_Port =   doc["Mqtt_Port"].as<String>();}  
                      if(jsonStr.indexOf("Mqtt_inTopic") > 0)  { Mqtt_inTopic =  doc["Mqtt_inTopic"].as<String>();}         
                      if(jsonStr.indexOf("Mqtt_outTopic") > 0) { Mqtt_outTopic = doc["Mqtt_outTopic"].as<String>();}         
                      if(jsonStr.indexOf("Mqtt_Username") > 0) { Mqtt_Username = doc["Mqtt_Username"].as<String>();}
                      if(jsonStr.indexOf("Mqtt_Password") > 0) { Mqtt_Password = doc["Mqtt_Password"].as<String>();}
-                     //if(jsonStr.indexOf("Mqtt_Idx") > 0) { Mqtt_Idx = doc["Mqtt_Idx"].as<int>();}
+                     if(jsonStr.indexOf("Mqtt_Format") > 0) { Mqtt_Format = doc["Mqtt_Format"].as<int>();}
             
             }
              return true;

@@ -17,7 +17,7 @@ int decodePollAnswer(int which)
   int t_extr  = 0;
   int ts = 0;
   bool resetFlag = false;
-   
+  float total_pwr = 0;
 if(!*inMessage) return 50; // if empty we return with erroCode 50
 
     strncpy(messageToDecode, inMessage, strlen(inMessage));
@@ -140,6 +140,8 @@ if(!*inMessage) return 50; // if empty we return with erroCode 50
          if(Inv_Prop[which].invType == 0) {
          ws.textAll( "decoding a YC600 inverter"); } else { ws.textAll( "decoding a QS1 inverter");}
          #endif
+
+         
         //yc600 or QS1
 //      frequency ac voltage and temperature
         //Inv_Data[which].acv = String((float)((extractValue(56, 4, 1, 0, s_d) * ((float)1 / (float)1.3277)) / 4), 1);
@@ -292,6 +294,7 @@ We keep stacking the increases so we have also en_inc_total
               power = en_incr / ts * (float)3600; //[W]
             }
             dtostrf( power, 0, 1, Inv_Data[which].power[x]); // write the value in the struct
+            total_pwr += power;
             
             yield();
             if(diagNose) 
@@ -308,6 +311,7 @@ We keep stacking the increases so we have also en_inc_total
      // now we extracted all values per panel and added the increased energy
      // we have invData[which].power[x] and invData[which].en_total
     Inv_Data[which].en_total += en_incr_total; // stack the increase
+    dtostrf( total_pwr, 0, 1, Inv_Data[which].power[4]); // write the total value in the struct   
 
 #ifdef TEST
      yield();

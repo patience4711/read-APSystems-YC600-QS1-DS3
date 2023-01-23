@@ -74,7 +74,7 @@ void start_portal() {
   } 
   // ************************ end while loop ******************************* 
 
-  //we only are here after a timeout. or if we clicked close      
+  //we only are here after a timeout, or we clicked close      
 //  if (Timed_Out == true) {
     Serial.println(F("portal timed out, resetting..."));
     delay(1000);

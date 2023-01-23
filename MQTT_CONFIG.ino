@@ -8,7 +8,7 @@ const char MQTTCONFIG[] PROGMEM = R"=====(
   f0: mosquitto disabled<br>  
   f1: {"inv_serial":"408000158215","idx":879,"nvalue":0,"svalue":"5.2"}<br>
   f2: {"inv_serial":"408000158215","temp":"19.3","p0":"0.0","p1":"5.2","energy":"en_total"}<br>
-  f3: {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"dcv":[36.8,37.0],"dcc":[4.3,3.0],"pwr":[123.4,123.5],"en":[174.35,178.44]}
+  f3: {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"dcv":[36.8,37.0],"dcc":[4.3,3.0],"pwr":[123.4,123.5],"en":[174.35,178.44]}<br>
   f4: {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"ch0":[36.8,4.3,123.4,174.35],"ch1":[37.0,3.0,123.5,178.44],total[power,energy]}
   <br><br> 
   

@@ -57,7 +57,7 @@ toSend += "time retrieved today : "; if ( timeRetrieved ) { toSend += "yes<br>";
 long rssi = WiFi.RSSI();
 toSend += "the signalstrength of the connection to the router = " + String(rssi) + "<br>";
 
-if ( Mqtt_Enabled ) { //bool == y en er is een mqtt adres, ja kijk dan of er een sensor is ingesteld
+if ( Mqtt_Format != 0 ) { //bool == y en er is een mqtt adres, ja kijk dan of er een sensor is ingesteld
 // check if connected
     //String clientId = "ESPClient#";
     String clientId = String( ESP.getChipId() );
@@ -124,7 +124,7 @@ toSend += "pollRes= 300  now=" + String(now()) + "  switchonTime=" + String(swit
 toSend += "unixtime=" + String(now()) + "<br>";
 toSend += "polled = " + String(polled[0]) + String(polled[1]) + String(polled[2]) + String(polled[3]) + String(polled[4]) + String(polled[5]) + String(polled[6]) + String(polled[7]) + String(polled[8]) + "<br>";
 toSend += "resetCounter = " + String(resetCounter) + "  calliBration = " + String(calliBration, 2);
-toSend += "  pollOffset = " + String(pollOffset) + "<br>";
+toSend += "  pollOffset = " + String(pollOffset) + "  Mqtt_Format = " + String(Mqtt_Format) + "<br>";
 #ifdef TEST
 toSend += "  testCounter = " + String(testCounter) + " inv0 type = " + String(Inv_Prop[0].invType);
 

@@ -16,7 +16,7 @@ function showSubmit() {
 document.getElementById("sub").style.display = "block";
 }
 function submitFunction(a) {
-document.getElementById("bo").innerHTML="<br>wait...<br>processing<br>your<br>request"; 
+document.getElementById("bo").innerHTML="<br>wait...<br>saving<br>this<br>inverter"; 
 document.getElementById("bo").style.display="block"; 
 document.getElementById('formulier').submit();
 setTimeout(function(){window.location.href=a;}, 3000 ); 

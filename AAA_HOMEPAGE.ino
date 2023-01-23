@@ -62,7 +62,7 @@ table, th, td {
         <option value='7'>inverter 7</option>
         <option value='8'>inverter 8</option>
         </select>
-        <td style = 'border:none;' id='nameField'></table>
+        <td style = 'border:none; font-size:22px;' id='nameField'></table>
         
         <p>polling &nbsp; from  <span id='srt'></span> to <span id='sst'></span></p>
         <h4>INVERTER OUTPUT (WATTS) PER PANEL</h4>

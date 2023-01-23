@@ -35,6 +35,7 @@ document.getElementById("help").style.display = "none";
   <b>10;DIAG: </b> more Debug messages in console<br><br>
   <b>10;EDIT=0-0xAABB: </b> mark an inverter as paired<br><br>
   <b>10;CLEAR: </b clear console window<br><br>
+ 
   </div>
 
 <div id='msect'>
@@ -271,12 +272,14 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
           diagNose= true;
          } 
           ws.textAll("set diagnose to " + String(diagNose) );  
-//      } else      
-//      
-//     if (strncasecmp(txBuffer+3, "INIT_N",6) == 0) // normal operation
-//      {
-//         ws.textAll("command = " + String(txBuffer) );  
-//         actionFlag = 21;
+// ****************************************************************
+      } else      
+      
+     if (strncasecmp(txBuffer+3, "INIT_N",6) == 0) // normal operation
+      {
+         ws.textAll("command = " + String(txBuffer) );  
+         actionFlag = 21;
+// ***************************************************************
 //      } else 
 //
 //      if (strncasecmp(txBuffer+3, "INIT_P",6) == 0)  // pairing

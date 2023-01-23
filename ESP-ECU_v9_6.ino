@@ -46,7 +46,7 @@ DNSServer dnsServer;
  * - more debug information in the console
  */
 
-//#define TEST
+#define TEST
 
 #ifdef TEST
 int testCounter = 0;
@@ -487,7 +487,8 @@ iKeuze = data.haha; // inverterkeuze
 EEPROM.commit();
 }
 
-
+// all actions called by the webinterface should run outside the async webserver environment
+// otherwise crashes will occure.
     void test_actionFlag() {
   // ******************  reset the nework data and reboot in AP *************************
     if (actionFlag == 11 || value == 11) { // 
@@ -520,6 +521,11 @@ EEPROM.commit();
 #ifdef TEST
     if (actionFlag == 122) {
       actionFlag = 0; //reset the actionflag
+      if(testCounter > 1) { 
+        testCounter=0; // reset testcounter
+        // make all values null
+        resetValues(true, false);
+      }
       testDecode(); // test a fake pollinganswer for the invType
     }
 //    if (actionFlag == 123) {

@@ -315,7 +315,7 @@ server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) {
       json += "\"serial\":\"" + String(Inv_Prop[i].invSerial)  + "\"";      
       json += ",\"freq\":"  + String(atof(Inv_Data[i].freq)); //freq = a char    
       json += ",\"temp\":"  + String(atof(Inv_Data[i].heath));
-      json += ",\"avc\":"   + String(atof(Inv_Data[i].acv));
+      json += ",\"acv\":"   + String(atof(Inv_Data[i].acv));
 
       for(int z = 0; z < panelCount; z++ ) 
       {

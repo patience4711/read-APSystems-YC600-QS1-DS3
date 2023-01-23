@@ -1,7 +1,7 @@
 bool mqttConnect() {   // MQTT connection (documented way from AutoConnect : https://github.com/Hieromon/AutoConnect/tree/master/examples/mqttRSSI_NA)
     if ( Mqtt_Broker[0] == '\0' || Mqtt_Broker[0] == '0'  ) 
     {
-      Mqtt_Enabled = false; // we proberen het niet opnieuw
+      Mqtt_Format = 0; // we proberen het niet opnieuw
       //DebugPrintln("no broker, cancelling");
       return false;
     }
@@ -81,6 +81,12 @@ void MQTT_Receive_Callback(char *topic, byte *payload, unsigned int length)
             //ws.textAll( "found {\"poll\" " + String(inv) + "}\"" );
             
             iKeuze = inv;
+            if(iKeuze == 99) {
+              ws.textAll( "found {\"poll\" " + String(inv) + "}\"" );
+              actionFlag = 48; // takes care for the polling of all inverters
+              return;  
+            }
+
             if ( iKeuze < inverterCount ) 
             { 
               actionFlag = 47; // takes care for the polling

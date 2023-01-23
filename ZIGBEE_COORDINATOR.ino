@@ -3,7 +3,7 @@ bool coordinator(bool normal) { // if true we send the extra command for normal 
     coordinator_init();
     if(normal) sendNO();
     // now check if running
-    //healthCheck();
+    delay(1000); // to give the ZB the timne to start
     if ( checkCoordinator() == 0 ) // can be 0 1 or 2
     //if ( zigbeeUp == 1 ) 
     {

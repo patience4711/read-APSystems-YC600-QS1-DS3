@@ -12,7 +12,7 @@ const char BASISCONFIG[] PROGMEM = R"=====(
   The user has no access to the settings.
   <br><br><b>poll offset</b><br>
   minutes relative to sunrise and sunset to stop/start polling.
-  <br><br><b>polling</b><br>
+  <br><br><b>auto polling</b><br>
   We can uncheck this to stop automatic polling. Now we can poll<br>
   via mqtt (e.g. {"POLL":0) or http (e.g. http://ip_of_ecu/POLL=0)
   <br><br>
@@ -36,7 +36,7 @@ const char BASISCONFIG[] PROGMEM = R"=====(
   <tr><td>user passwd<td><input  class='inp5' name='pw1' length='11' placeholder='max. 10 char' value='{pw1}' pattern='.{4,10}' title='between 4 en 10 characters'></input> 
   </td></tr>
   <tr><td style='width:140px;'>offset sun-set/rise<td><input class='inp2' type='number' min='-15' max='15' name='offs' value='{of}' size='4' ><td>
-  <tr><td>polling<td><input type='checkbox' style='width:30px; height:30px;' name='pL' #check></input></td><tr>
+  <tr><td>auto polling<td><input type='checkbox' style='width:30px; height:30px;' name='pL' #check></input></td><tr>
   <td>DS3 conversion<td><input class='inp2' type='number' id='cali' name='cali' min='0.2' max='2' value='{ca}'</input></td><tr>
 
   </td></tr></table></form>
@@ -74,8 +74,11 @@ void handleBasisconfig(AsyncWebServerRequest *request) { // form action = handle
 //   pollRes = request->arg("pr").toInt();
 //   hc_IDX = request->arg("hcidx").toInt();
    pollOffset = request->arg("offs").toInt();  
-  //Serial.println("ECU_ID now = " +  String(ECU_ID)); 
-  //DebugPrintln("renew toSend");
+// this value gets currupted when it is negative, we get 256 -/- the number
+// so -2 becomes 254
+//   if (po > 200) { pollOffset = po - 256; } else { pollOffset = po; } 
+   
+   
    calliBration = request->arg("cali").toFloat();
 //BEWARE CHECKBOX
 String dag = "";
