@@ -6,7 +6,7 @@ See the <a href='https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/wi
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## downloads
-sep 30 2022: 13:00hr There is a new version v9_6 available, See changelog.<br>
+feb 2 2023: 18:00hr There is a recompiled version v9_6 available, See changelog.<br>
 Download [ESP-ECU-v9_6](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_6.zip)<br>
 
 sep 20 2022: There is a new version v9_5 available, See changelog.<br>
@@ -49,6 +49,7 @@ The interesting values are send via mqtt and displayed on the main page.
 
 ## changelog ##
 version ESP-ECU_V9_6:
+- fixed a type in the help page of mosquitto settings
 - added 2 mqtt json formats, numeric values are included as float now.
 - changed the format of the returned json when http request. 
 
