@@ -5,6 +5,10 @@ See the <a href='https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/wi
 
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
+## compile this sketch
+Use arduino ide with the esp822 version 2.7.1 installed under boardmanager. The ota updates won't work with other versons.
+please note: by popular demand I have published the code here but i do not feel responsible for problems as to compiling. Impossible for me to know why it doesn't compile in your situation.
+
 ## downloads
 feb 2 2023: 18:00hr There is a recompiled version v9_6 available, See changelog.<br>
 Download [ESP-ECU-v9_6](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_6.zip)<br>
