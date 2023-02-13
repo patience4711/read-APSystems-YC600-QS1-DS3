@@ -46,7 +46,7 @@ DNSServer dnsServer;
  * - more debug information in the console
  */
 
-#define TEST
+//#define TEST
 
 #ifdef TEST
 int testCounter = 0;
@@ -352,6 +352,7 @@ void loop() {
   unsigned long nu = millis();  // de tijd dat het programma al loopt
    if (nu - laatsteMeting >= 1000UL * 300) 
    {
+   if(diagNose) ws.textAll("300 secs passed"); //
         laatsteMeting += 1000UL * 300 ; // wordt iedere keer (meetRes * miliseconden) groter;
          //if(now() > switchonTime && now() < switchoffTime )
          if(dayTime && Polling) // we only poll at day and when Polling = true 
