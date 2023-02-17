@@ -7,7 +7,7 @@ See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
 ## compile this sketch
 Use arduino ide with the esp822 version 2.7.1 installed under boardmanager. The ota updates won't work with other versons.
-please note: by popular demand I have published the code here but i do not feel responsible for problems as to compiling. Impossible for me to know why it doesn't compile in your situation.
+<br>Please note: by popular demand I have published the code here but i do not feel responsible for problems as to compiling. Impossible for me to know why it doesn't compile in your situation.
 
 ## downloads
 feb 13 2023: 18:00hr There is a recompiled version v9_6a available, See changelog.<br>
@@ -28,11 +28,6 @@ This is for a nodemcu board 31x58mm.
 - a very smart on-line console to send commands and debugging
 - Smart timekeeping
 - A lot of system info on the webpage
-
-## compile this sketch
-Use arduino ide with the esp822 version 2.7.1 installed under boardmanager. The ota updates won't work with other versons.
-
-Or use the binary file ESP-ECU-v9_4 to flash directly on your ESP device.
 
 ## the hardware
 It is nothing more than an esp device like nodemcu, wemos or its relatives and a prepared cc2530, cc2531 zigbee module. And a powersupply.
