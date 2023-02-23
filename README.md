@@ -13,7 +13,7 @@ Use arduino ide with the esp822 version 2.7.1 installed under boardmanager. The 
 feb. 23 2023: There is a new experimental version [ESP-ECU_v9_7_exp](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_7_exp.bin) available. This version has output of all inverters together in the frontpage. Looking for people to test this and provide feedback. Look [here]( https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/issues/89) for more info.
 
 feb 13 2023: 18:00hr There is a recompiled version v9_6a available, See changelog.<br>
-Download [ESP-ECU-v9_6a](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_6a.zip)<br>
+Download [ESP-ECU-v9_6a](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_7_exp.bin)<br>
 
 sep 20 2022: There is a new version v9_5 available, See changelog.<br>
 Download [ESP-ECU-v9_5](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_5.zip) <br>
