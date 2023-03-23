@@ -12,8 +12,8 @@ You can use the provided binary but if you must compile it yourself: Use arduino
 ## downloads
 feb. 23 2023: There is a new experimental version [ESP-ECU_v9_7_beta](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_7_beta.bin) available. This version has output of all inverters together in the frontpage. Look [here]( https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/issues/89) for more info.
 
-feb 13 2023: 18:00hr There is a recompiled version v9_6a available, See changelog.<br>
-Download [ESP-ECU-v9_6a](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_6a.bin)<br>
+march 24 2023: 18:00hr There is a recompiled version v9_6c available, See changelog.<br>
+Download [ESP-ECU-v9_6c](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_6c.bin)<br>
 
 sep 20 2022: There is a new version v9_5 available, See changelog.<br>
 Download [ESP-ECU-v9_5](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_5.zip) <br>
@@ -49,10 +49,14 @@ The interesting values are send via mqtt and displayed on the main page.
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
 ## changelog ##
-version ESP-ECU_V9_6:
+version ESP-ECU_V9_6c:
 - fixed a typo in the help page of mosquitto settings
 - added 2 mqtt json formats, numeric values are included as float now.
-- changed the format of the returned json when http request. 
+- added the retain flag to mqtt formats 3 and 4
+- changed the format of the returned json when http request.
+- added an option to have an mqtt topic for each inverter.
+- some changes to improve the polling provess
+- a forced zigbee reset every midnight.
 
 version ESP-ECU_V9_5:
 - added a mqtt command for polling all inverters
