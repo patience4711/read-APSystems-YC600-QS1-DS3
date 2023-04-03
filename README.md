@@ -10,7 +10,7 @@ You can use the provided binary but if you must compile it yourself: Use arduino
 <br>Please note: by popular demand I have published the code here but i do not feel responsible for problems as to compiling. Impossible for me to know why it doesn't compile in your situation.
 
 ## downloads
-april 1 2023: There is a new experimental version [ESP-ECU_v9_7g](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_7g.bin) available. This version has output of all inverters together in the frontpage. Look [here]( https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/issues/89) for more info.
+april 1 2023: There is a new experimental version [ESP-ECU_v9_7_beta](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_7_beta.bin) available. This version has output of all inverters together in the frontpage. Look [here]( https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/issues/89) for more info.
 
 march 24 2023: 18:00hr There is a recompiled version v9_6c available, See changelog.<br>
 Download [ESP-ECU-v9_6c](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_6c.bin)<br>
