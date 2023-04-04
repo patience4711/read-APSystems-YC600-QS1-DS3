@@ -9,11 +9,14 @@ const char MQTTCONFIG[] PROGMEM = R"=====(
   f1: {"inv_serial":"408000158215","idx":879,"nvalue":0,"svalue":"5.2"}<br>
   f2: {"inv_serial":"408000158215","temp":"19.3","p0":"0.0","p1":"5.2","energy":"en_total"}<br>
   f3: {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"dcv":[36.8,37.0],"dcc":[4.3,3.0],"pwr":[123.4,123.5],"en":[174.35,178.44]}<br>
-  f4: {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"ch0":[36.8,4.3,123.4,174.35],"ch1":[37.0,3.0,123.5,178.44],total[power,energy]}
+  f4: {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"ch0":[36.8,4.3,123.4,174.35],"ch1":[37.0,3.0,123.5,178.44],"totals":[power,energy]}
+  <br>Format 3 and 4 have the retainflag set.
   <br><br> 
   
-  <b>address:</b><br>The (ip) address of the mqtt-broker cq domoticz<br><br>
-  <b>send topic:</b><br>For outgoing communication to domoticz, the topic is '<strong>domoticz/in</strong>'.<br><br>
+  <b>send topic:</b><br> 
+  <br>If topic ends with '/' the idx of the inverter is added.
+
+  <br><br>
   <b>receive topic:</b><br>The topic where will be subscribed for incoming messages.<br><br>
   <b>mqtt_username en password</b><br>Optional, these can be left empty.
   <br><br>

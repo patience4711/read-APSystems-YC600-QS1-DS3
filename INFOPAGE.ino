@@ -1,3 +1,21 @@
+//var interval = 60000;
+//setInterval(function loadTime() {
+//  var xhttp = new XMLHttpRequest();
+//  xhttp.onreadystatechange = function() {
+//    if (this.readyState == 4 && this.status == 200) {
+//      var antwoord = this.responseText;
+//      var obj = JSON.parse(antwoord);
+//      var hr = obj.uur;
+//      var mn = obj.min;
+//      var tijd= hr + ":" + mn;
+//      document.getElementById('tijdveld').innerHTML=tijd;
+//      }
+//  };
+//  xhttp.open("GET", "get.currentTime", true);
+//  xhttp.send();
+//  interval=60000;
+//},interval);
+
 const char INFOPAGE [] PROGMEM = R"=====(
 <!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,8 +27,13 @@ table, th, td {border: 1px solid blue; width:font-size:12px;}
 body {margin:10px 10px 0px 20px; font-family:'lato',Verdana,Sans-serif;font-size:12px;}
 </style>
 <script>
-var interval = 100;
-setInterval(function loadTime() {
+//var interval = 60000;
+
+//setInterval(function loadData() {
+//loadTime()();
+//},15000);
+
+function loadTime() {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -24,8 +47,7 @@ setInterval(function loadTime() {
   };
   xhttp.open("GET", "get.currentTime", true);
   xhttp.send();
-  interval=2000;
-},interval);
+}
 </script>
 </head><body onload='loadTime()'>
 )=====";
@@ -111,6 +133,20 @@ if(polled[i]) {
 }
 toSend += "</table>";
 
+#ifdef TEST
+toSend += "<table><tr><td>inv#<td>power0<td>power1<td>power2<td>power3<td>energy<td>"; 
+for (int i=0; i < inverterCount; i++) {
+toSend += "<tr><td>" + String(i);
+if(polled[i]) {
+        toSend += "<td>" + String(Inv_Data[i].power[0]) + "<td>" + String(Inv_Data[i].power[1]) + "<td>" + String(Inv_Data[i].power[2]);
+        toSend += "<td>" + String(Inv_Data[i].power[3]) + "<td>" + String(Inv_Data[i].en_total);
+  } else { // not polled
+         toSend += "<td>n/a<td>n/a<td>n/a<td>n/a<td>n/a</tr>";
+  }
+}
+toSend += "</table>";
+#endif
+
 toSend += "<br><br><table><tr><TH> ESP INFORMATION</th></tr>";
 toSend += "<tr><td>ESP CHIP ID nr: <td>" + String(ESP.getChipId());
 toSend += "<td>Flash Chip ID nr: <td>"  + String(ESP.getFlashChipId()) + "</tr>";
@@ -123,8 +159,9 @@ toSend += "value=" + String(value)  + "  inverterCount=" + String(inverterCount)
 toSend += "pollRes= 300  now=" + String(now()) + "  switchonTime=" + String(switchonTime)  + "  switchoffTime=" + String(switchoffTime)+ "<br>";
 toSend += "unixtime=" + String(now()) + "<br>";
 toSend += "polled = " + String(polled[0]) + String(polled[1]) + String(polled[2]) + String(polled[3]) + String(polled[4]) + String(polled[5]) + String(polled[6]) + String(polled[7]) + String(polled[8]) + "<br>";
-toSend += "resetCounter = " + String(resetCounter) + "  calliBration = " + String(calliBration, 2);
+toSend += "resetCounter = " + String(resetCounter);
 toSend += "  pollOffset = " + String(pollOffset) + "  Mqtt_Format = " + String(Mqtt_Format) + "<br>";
+toSend += "  Polling = " + String(Polling) + "<br>";
 #ifdef TEST
 toSend += "  testCounter = " + String(testCounter) + " inv0 type = " + String(Inv_Prop[0].invType);
 

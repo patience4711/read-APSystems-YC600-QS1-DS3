@@ -190,18 +190,18 @@ void handleInverterconfig(AsyncWebServerRequest *request)
 // the selectboxes
    char tempChar[1] = "";
    String dag = request->arg("pan1");  // mqselect
-   if ( dag == "on") { Inv_Prop[iKeuze].conPanels[0] = true; Serial.println("p1 true");} else { Inv_Prop[iKeuze].conPanels[0] = false; }   
+   if ( dag == "on") { Inv_Prop[iKeuze].conPanels[0] = true; } else { Inv_Prop[iKeuze].conPanels[0] = false; }   
    dag = request->arg("pan2");  // mqselect
-   if ( dag == "on") { Inv_Prop[iKeuze].conPanels[1] = true; Serial.println("p2 true");} else { Inv_Prop[iKeuze].conPanels[1] = false; }
+   if ( dag == "on") { Inv_Prop[iKeuze].conPanels[1] = true;} else { Inv_Prop[iKeuze].conPanels[1] = false; }
 
    Inv_Prop[iKeuze].conPanels[2] = false;
    Inv_Prop[iKeuze].conPanels[3] = false;
    //we only collect this when type = 1
    if(Inv_Prop[iKeuze].invType == 1) {
    dag = request->arg("pan3");  // mqselect
-   if ( dag == "on") { Inv_Prop[iKeuze].conPanels[2] = true; Serial.println("p2 true");}    
+   if ( dag == "on") { Inv_Prop[iKeuze].conPanels[2] = true; }    
    dag = request->arg("pan4");  // mqselect
-   if ( dag == "on") { Inv_Prop[iKeuze].conPanels[3] = true; Serial.println("p3 true");}    
+   if ( dag == "on") { Inv_Prop[iKeuze].conPanels[3] = true;}    
    }
    Serial.println("checked panels are : " + String(Inv_Prop[iKeuze].conPanels[0])+ String(Inv_Prop[iKeuze].conPanels[2])+ String(Inv_Prop[iKeuze].conPanels[2])+ String(Inv_Prop[iKeuze].conPanels[3]));
    //is this a addition?
@@ -217,8 +217,8 @@ void handleInverterconfig(AsyncWebServerRequest *request)
    
    basisConfigsave();  // save inverterCount
    #ifdef DEBUG
-   //Serial.println("\ninverterCount after edit (saved) = " + String(inverterCount));  
-   //Serial.println("list of the files we have after edit");
+   DebugPrintln("\ninverterCount after edit (saved) = " + String(inverterCount));  
+   DebugPrintln("list of the files we have after edit");
    printInverters();
    #endif
        

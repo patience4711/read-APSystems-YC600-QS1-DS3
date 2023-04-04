@@ -267,7 +267,7 @@ We keep stacking the increases so we have also en_inc_total
 
             //we calculate a new energy value for this panel and remember it
             if ( Inv_Prop[which].invType == 2) {
-              en_saved[which][x] = (en_extr / (float)1000 /100) * calliBration; //[Wh]
+              en_saved[which][x] = (en_extr / (float)1000 /100) * 1.66; //[Wh]
             } else {
               en_saved[which][x] = (en_extr * 8.311F / (float)3600); //[Wh]
             }
@@ -360,7 +360,14 @@ yield();
 //                mqtt send polled data
 // ************************************************************************************
 void mqttPoll(int which) {
-// we polled the inverter which end mqtt the data
+
+if(Mqtt_Format == 0) return;  
+bool reTain = false;
+String Mqtt_send = Mqtt_outTopic;
+if(Mqtt_outTopic.endsWith("/")) {
+
+  Mqtt_send += String(Inv_Prop[which].invIdx);
+  }
 
 String toMQTT = "{\"inv_serial\":\"" + String(Inv_Prop[which].invSerial) + "\"";
 
@@ -405,6 +412,7 @@ String sValue="\"svalue\":\"";
        toMQTT += ",\"pwr\":["+String(Inv_Data[which].power[0])+","+String(Inv_Data[which].power[1])+"]";
        toMQTT += ",\"en\":["+String(en_saved[which][0])+","+String(en_saved[which][1])+"]}";
        //toMQTT += ",\"totalen\":" + String(Inv_Data[which].en_total, 2) +"}";
+       reTain=true;
          }
         break;
 
@@ -418,15 +426,17 @@ String sValue="\"svalue\":\"";
        toMQTT += ",\"ch3\":[" + String(Inv_Data[which].dcv[3]) + "," + String(Inv_Data[which].dcc[3]) + "," + String(Inv_Data[which].power[3]) + "," + String(en_saved[which][3]) + "]";
         }
        toMQTT += ",\"totals\":[" + String(Inv_Data[which].power[4]) + "," + String(Inv_Data[which].en_total, 2) + "]}";
+       reTain=true;
     }
  
 
    //DebugPrintln("mqtt mess :"); //DebugPrintln(toMQTT);
    #ifdef TEST
-     ws.textAll("sending mqtt\n");
+     ws.textAll("sending mqtt to " + Mqtt_send );
+     ws.textAll("message:  " + toMQTT );
    #endif
    
-   MQTT_Client.publish ( Mqtt_outTopic.c_str(), toMQTT.c_str() );
+   MQTT_Client.publish ( Mqtt_send.c_str(), toMQTT.c_str(), reTain );
  }
 
 // not domoticz: {"inv_serial":"123456789012","temp":"12,3","p0":"123",p1":"123",p2":"123",p3":"123","energy":"345"}

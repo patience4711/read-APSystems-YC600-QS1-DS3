@@ -107,7 +107,7 @@ void basisConfigsave() {
     json["inverterCount"] = inverterCount;
     json["Polling"] = Polling;
     json["pollOffset"] = pollOffset;
-    json["calli"] = calliBration;
+//    json["calli"] = calliBration;
     File configFile = LittleFS.open("/basisconfig.json", "w");
     if (!configFile) {
       //DebugPrintln("open file for writing failed");
@@ -190,7 +190,7 @@ bool file_open_for_read(String bestand) {
                     if(jsonStr.indexOf("pollOffset") > 0) {pollOffset = doc["pollOffset"].as<int>();}
                     if(jsonStr.indexOf("inverterCount") > 0) {inverterCount = doc["inverterCount"].as<int>();}
                     if(jsonStr.indexOf("Polling") > 0) {Polling = doc["Polling"].as<bool>();}
-                    if(jsonStr.indexOf("calli") > 0) {calliBration = doc["calli"].as<float>();}
+                   // if(jsonStr.indexOf("calli") > 0) {calliBration = doc["calli"].as<float>();}
               }            
 
             if (bestand == "/mqttconfig.json"){

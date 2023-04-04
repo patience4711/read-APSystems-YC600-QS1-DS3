@@ -27,6 +27,8 @@
 // in the healthcheck, if the zigbee not responsive it will be reset.
 // added the console so that there are no swaps needed anymore.
 
+// compile settings FS: 1mB OTA 1019
+
 
 /*
 from the readme from kadszol

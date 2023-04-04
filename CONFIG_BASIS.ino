@@ -1,3 +1,5 @@
+//<td>DS3 conversion<td><input class='inp2' type='number' id='cali' name='cali' min='0.2' max='2' value='{ca}'</input></td><tr>
+
 const char BASISCONFIG[] PROGMEM = R"=====(
 
 <body>
@@ -37,8 +39,7 @@ const char BASISCONFIG[] PROGMEM = R"=====(
   </td></tr>
   <tr><td style='width:140px;'>offset sun-set/rise<td><input class='inp2' type='number' min='-15' max='15' name='offs' value='{of}' size='4' ><td>
   <tr><td>auto polling<td><input type='checkbox' style='width:30px; height:30px;' name='pL' #check></input></td><tr>
-  <td>DS3 conversion<td><input class='inp2' type='number' id='cali' name='cali' min='0.2' max='2' value='{ca}'</input></td><tr>
-
+  
   </td></tr></table></form>
   </table>
   </div><br>
@@ -65,7 +66,7 @@ void zendPageBasis() {
     if (Polling) { 
       toSend.replace("#check", "checked");
     }
-    toSend.replace( "'{ca}'" , "'" + String(calliBration) + "'") ;
+//    toSend.replace( "'{ca}'" , "'" + String(calliBration) + "'") ;
 }
 void handleBasisconfig(AsyncWebServerRequest *request) { // form action = handleConfigsave
 // verzamelen van de serverargumenten   
@@ -79,7 +80,7 @@ void handleBasisconfig(AsyncWebServerRequest *request) { // form action = handle
 //   if (po > 200) { pollOffset = po - 256; } else { pollOffset = po; } 
    
    
-   calliBration = request->arg("cali").toFloat();
+//   calliBration = request->arg("cali").toFloat();
 //BEWARE CHECKBOX
 String dag = "";
 if(request->hasParam("pL")) {

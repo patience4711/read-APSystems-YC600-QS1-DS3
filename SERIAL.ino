@@ -179,7 +179,7 @@
 //           if (strncasecmp(InputBuffer_Serial+3,"CC2530_RST",10) == 0) {  
 //  
 //              Serial.println("hard reset the cc2530");
-//              hardReset();
+//              ZBhardReset();
 //              return; 
 ////          } else
 //

@@ -3,9 +3,9 @@ bool coordinator(bool normal) { // if true we send the extra command for normal 
     coordinator_init();
     if(normal) sendNO();
     // now check if running
-    delay(1000); // to give the ZB the timne to start
+    delay(1000); // to give the ZB the time to start
     if ( checkCoordinator() == 0 ) // can be 0 1 or 2
-    //if ( zigbeeUp == 1 ) 
+     
     {
         Update_Log("zigbee" , "ZB coordinator started");
         ws.textAll("ZB coordinator started");
@@ -20,10 +20,9 @@ bool coordinator(bool normal) { // if true we send the extra command for normal 
     }
 }
 
-
 bool coordinator_init() {
 ws.textAll("init zb coordinator");
-zigbeeUp = 11;
+zigbeeUp = 11; //initial it is initializing 11, 0=down 1=up
 yield();
 
 // init the coordinator takes the following procedure
@@ -70,7 +69,7 @@ char initBaseCommand[][254] = {
 //  "6700", // the checkZigbeeRadio we can skip this, instead do checkZigbeeRadio
 
 // we start with a hard reset of the zb module
-hardReset();
+ZBhardReset();
 delay(500);
 
 // construct some of the commands
@@ -98,7 +97,7 @@ delayMicroseconds(250);
       // CRC at the end of the command
       strcpy(initCmd, strncat(initCmd, checkSum(initCmd), sizeof(initCmd) + sizeof(checkSum(initCmd))));
       delayMicroseconds(250);
-      ws.textAll("zb send cmd " + String(y));
+      //ws.textAll("zb send cmd " + String(y));
           #ifdef DEBUG
           swap_to_zb(); // set serial to zb  
           #endif  

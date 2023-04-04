@@ -206,9 +206,17 @@ server.on("/CLEAR_LOG", HTTP_GET, [](AsyncWebServerRequest *request) {
 
 server.on("/MQTT_TEST", HTTP_GET, [](AsyncWebServerRequest *request) {
 loginBoth(request, "admin");
-String toMQTT = "{\"test\":\"" + String(Mqtt_outTopic) + "\"}";
+
+String Mqtt_send = Mqtt_outTopic;
+if(Mqtt_outTopic.endsWith("/")) {
+//String suffix = String(Inv_Prop[which].invIdx);
+  //Mqtt_send += suffix;
+  Mqtt_send += String(Inv_Prop[0].invIdx);
+}
+
+String toMQTT = "{\"test\":\"" + Mqtt_send + "\"}";
 //DebugPrintln("MQTT_Client.publish the message : " + toMQTT);
-MQTT_Client.publish ( Mqtt_outTopic.c_str(), toMQTT.c_str() );
+MQTT_Client.publish ( Mqtt_send.c_str(), toMQTT.c_str(), true );
 toSend = "sent mqtt message : " + toMQTT;
 request->send( 200, "text/plain", toSend  );
 });
@@ -272,6 +280,7 @@ server.on("/CONFIRM_INV", HTTP_GET, [](AsyncWebServerRequest *request) {
 
 
 server.on("/get.currentTime", HTTP_GET, [](AsyncWebServerRequest *request) {
+     //ledblink(1, 100);
      String uur = String(hour());
      if(hour() < 10) { uur = "0" + String(hour()); } 
       String minuten = String(minute());
@@ -300,6 +309,15 @@ server.on("/get.Times", HTTP_GET, [](AsyncWebServerRequest *request) {
      request->send(200, "text/json", json);
      json = String();
 });
+
+//server.on("/get.Count", HTTP_GET, [](AsyncWebServerRequest *request) {     
+//// set the array into a json object
+//  String json="{";
+//      json += "\"count\":\"" + String(inverterCount) + "\"";
+//      json += "}";     
+//     request->send(200, "text/json", json);
+//     json = String();
+//});
 
 server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) {     
 // set the array into a json object
@@ -336,17 +354,23 @@ server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) {
      }
 });
     
+// this link provides the inverterdata on the frontpage
 server.on("/get.Power", HTTP_GET, [](AsyncWebServerRequest *request) {     
 // set the array into a json object
+#ifdef TEST
+zigbeeUp = 1;
+#endif
+
 String json;
 int i = atoi(request->arg("inv").c_str()) ;
-// inv prop comes from spiffs so if we could evaluate that it exixts
-
-    json="{";
+// inv prop comes from spiffs so if we could evaluate that it exists
+      json="{";
       json += "\"nm\":\"" + String(Inv_Prop[i].invLocation) + "\"";
       json += ",\"polled\":\"" + String(polled[i]) + "\"";    
       json += ",\"type\":\"" + String(Inv_Prop[i].invType) + "\"";
-
+      json += ",\"count\":\"" + String(inverterCount) + "\"";
+      
+// first test if the inverter exists
 if(String(Inv_Prop[i].invLocation) != "N/A") {
       for(int z = 0; z < 4; z++ ) 
       {
@@ -354,15 +378,15 @@ if(String(Inv_Prop[i].invLocation) != "N/A") {
          {
              json += ",\"p" +  String(z) + "\":\"" + Inv_Data[i].power[z] + "\"";  
          }   else {
-             json += ",\"p" +  String(z) + "\":\"n/e\""; 
+             json += ",\"p" +  String(z) + "\":\"n/e\""; //when no panel
          }
       }
-     json += ",\"eN\":\"" + String(Inv_Data[i].en_total/(float)1000, 2) + "\"";
-     json += ",\"eN2\":\"" + String((en_saved[i][0] + en_saved[i][1]), 2) + "\"";
+     json += ",\"eN\":\"" + String(Inv_Data[i].en_total/(float)1000, 2) + "\""; 
+//     json += ",\"eN2\":\"" + String((en_saved[i][0] + en_saved[i][1]), 2) + "\"";//energy per panel
      //json += ",\"state\":\"" + String(zigbeeUp) + "\"";
  } 
     else
- { // invSerial="000000000000" so we put all n/e
+ { // invSerial="000000000000" so we make all values n/e
 
       for(int z = 0; z < 4; z++ ) 
       {
@@ -384,7 +408,7 @@ if(String(Inv_Prop[i].invLocation) != "N/A") {
     //Serial.println("get.Power reaction = " + json);
      request->send(200, "text/json", json);
      json = String();
-
+ 
 });
 
 server.on("/get.Paired", HTTP_GET, [](AsyncWebServerRequest *request) {     

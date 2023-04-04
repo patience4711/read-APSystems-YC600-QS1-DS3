@@ -160,6 +160,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
               int kz = String(txBuffer[8]).toInt();
               if ( kz > inverterCount-1 ) {
               ws.textAll("error, no such inverter");
+              if ( kz == 9 ) actionFlag=47;
               return;  
               }
               ws.textAll("poll inverter " + String(kz));
@@ -188,7 +189,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
            
            if (strncasecmp(txBuffer+3,"HEALTH",6) == 0) {  
               ws.textAll("check zb system");
-              actionFlag=44; // check radio
+              actionFlag=44; // perform the healthcheck
               return;             
           } else          
 
@@ -293,6 +294,9 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       if (strncasecmp(txBuffer+3, "TESTINV",7) == 0)  
       {
          ws.textAll("command = " + String(txBuffer) );  
+ //          which = String(txBuffer[10]).toInt();
+  //         ws.textAll("chosen = " + String(which) );
+ 
          actionFlag = 122;
 #endif      
       

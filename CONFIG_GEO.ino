@@ -23,8 +23,8 @@ const char GEOCONFIG[] PROGMEM = R"=====(
   <div class='divstijl' style='height:62vh;'>
   <form id='formulier' method='get' action='geoconfig' oninput='showSubmit()'>
   <center><table>
-  <tr><td style='width:140px;'>longitude &deg<td><input  class='inp3' name='le' length='8' placeholder='longitude' value='{le}'></input></tr> 
-  <tr><td>latitude &deg<td><input class='inp3' name='be' length='8' placeholder='latitude' value='{be}'></input></tr> 
+  <tr><td style='width:140px;'>latitude &deg<td><input class='inp3' name='be' length='8' placeholder='latitude' value='{be}'></input></tr>
+  <tr><td>longitude &deg<td><input  class='inp3' name='le' length='8' placeholder='longitude' value='{le}'></input></tr> 
   <tr><td>timezone<td><input class='inp2' name='tz' length='6' placeholder='minutes relative to GMT' value='{tz}'></input></tr>
   <tr><td>dst y/n<td><input type='checkbox' style='width:30px; height:30px;' name='ts' #check></input></tr></table> 
   

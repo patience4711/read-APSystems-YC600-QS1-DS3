@@ -2,14 +2,8 @@
 //                   system healtcheck 
 //**************************************************************************
 
-// it seems that after a power cycle the coordinator only has to be restarted
-// with the 2600 command
 void healthCheck() {
-   // check moquitto
-//   if(Mqtt_Enabled) {
-//      if (!MQTT_Client.connected())  mqttConnect();
-//   }
-   // check if we need to get time
+//Update_Log("zigbee", "healthcheck");
    if(!timeRetrieved) getTijd();
 
     // reset the errorcode so that polling errors remain
@@ -17,28 +11,24 @@ void healthCheck() {
     if(errorCode >= 200) errorCode -= 200;
     if(errorCode >= 100) errorCode -= 100;
     
-     ZigbeePing();
+    ZigbeePing();
 
     switch(checkCoordinator() ) // send the 2700 command 
        {
         case 0:
               zigbeeUp = 1; // all oke
               break;
-//        case 1:
-//              zigbeeUp = 0;
-//              Update_Log("zigbee", "Stopped reason: Tostart");
-//              // we send the start command
-//              if (coordinatorStart() ) zigbeeUp = 1;
-//              break;
+
         case 2:
-              zigbeeUp = 0;
+              //zigbeeUp = 0;
               String term = "zb down, received : " + String(inMessage);
               Update_Log("zigbee", term);
               ws.textAll(term);
               resetCounter += 1;
               resetValues(false, false); // reset all values, no mqtt
-              if (coordinator(true) ) zigbeeUp = 1; // start the coordinator
+              if (coordinator(true) ) zigbeeUp = 1; else zigbeeUp = 0; // try to start the coordinator
         }      
+
 }
 
 
@@ -68,7 +58,8 @@ int checkCoordinator() {
 
     char checkCommand[10]; // we send 2700 to the zb
     strncpy(checkCommand, "00270027", 9);
-
+    //first clean up the serial port
+    empty_serial(); 
     // now we do this 3 times
     for (int x=1; x<4; x++)
     {
@@ -102,12 +93,6 @@ int checkCoordinator() {
               //String term = "zb up, attempts = " + String(x);
               return 0;            
             } 
-//            else
-//            {
-//              // we know that the message contains ece_id_reverse but not 0709
-//              // so the coordinator exists but is not running
-//              return 1;
-//            }
        }     
    delay(700);
    if(diagNose) ws.textAll("retrying..");
@@ -123,6 +108,8 @@ void ZigbeePing() {
     // these commands already have the length 00 and checksum 20 resp 26
     char pingCmd[20]={"00210120"}; // ping
      
+    //first make serial empty
+    empty_serial();
     #ifdef DEBUG
     Serial.println("send reset/start";
     swap_to_zb();
@@ -150,45 +137,16 @@ void ZigbeePing() {
     // we ignore the answer
 }
 
-//bool coordinatorStart() {
-//    // send the 2600 start command
-//    // this command already have the length 00 and checksum 20 resp 26
-//    char startCmd[20]={"00260026"}; // zigbee start
-//     
-//    #ifdef DEBUG
-//    Serial.println("send start cmd";
-//    swap_to_zb();
-//    #endif
-//    
-//    sendZigbee(startCmd); // answer is FE02 6101 79 07 1C
-//    
-//    if ( waitSerialAvailable() ) { readZigbee(); } else { readCounter = 0;} // when nothing available we don't read
-//    if(diagNose) ws.textAll("inMessage = " + String(inMessage) + " rc = " + String(readCounter));
-//    
-//    #ifdef DEBUG
-//    swap_to_usb();
-//    #endif
-//    // answer is FE00660066 FE0145C0098D
-//    if (strstr(inMessage, "45C0" ) == NULL) 
-//    {
-//        if(diagNose) ws.textAll("no start answer");
-//        Update_Log("zigbee", "stopped reason no start answer");
-//        return false;
-//     } else {
-//        if(diagNose) ws.textAll("zb start success");
-//        return true;
-//    }
-//}
 
 // *************************************************************************
-//                          hard reset the cc2530
+//                          hard reset the cc25xx
 // *************************************************************************
-void hardReset() 
+void ZBhardReset() 
     {
     digitalWrite(ZB_RESET, LOW);
     delay(500);
     digitalWrite(ZB_RESET, HIGH);
-    String term = "zigbee module reset" ;
+    String term = "ZBmodule hard reset" ;
     Update_Log("zigbee", term);
     ws.textAll(term);
     delay(2000); //wait for the cc2530 to reboot

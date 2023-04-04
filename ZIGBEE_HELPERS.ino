@@ -40,6 +40,7 @@ delayMicroseconds(250);
         while (Serial.available())
         {
 // here we have the danger that when readcounter reaches 512, there are 1024 bytes processed 
+// the length of a poll answer is usually not more than 223
             if (readCounter < CC2530_MAX_SERIAL_BUFFER_SIZE/2)
             {
                 processIncomingByte(Serial.read());
@@ -47,11 +48,13 @@ delayMicroseconds(250);
             }
             else
             {
-                Serial.read(); // we read from serial to empty the buffer but do not process
+                //Serial.read(); // we read from serial to empty the buffer but do not process
+                ESP.wdtFeed();
+                empty_serial(); // remove all excess data in the buffer at once
             }
             if (Serial.available() == 0) delay(120); // we wait if there comes more data
         }
-           //if we come here there is no serial data anymore
+            //if we come here there is no serial data anymore
             //if (Serial.available() == 0)  // the buffer is empty
             //{
                 //Put lower case in the message to upper

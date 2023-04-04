@@ -14,25 +14,14 @@ body {
 span {
   padding: 6px;
 }
-
 table, th, td {
-  border: 1px solid blue; font-size:14px; padding:6px;
+  border: 2px solid blue; font-size:16px; padding:6px; text-align:center; border-collapse:collapse;backgound-color:#dfff80;
   }
-#ch0, #ch1, #ch2, #ch3, #kwh { 
-  width:78px;
-  font-size:20px;
-  text-align: center;
-  color: black;
-  }
-#nameField {
-  font-weight:bold; 
-  font-size:20px'
-}
+tr {background-color:#ccffcc;}
+td { width:70px; }
 @media only screen and (max-width: 800px) {
-#ch0, #ch1, #ch2, #ch3, #kwh { 
-  width:50px;
-  font-size:16px;
-  }
+th, td { width:60px; font-size:12px; }
+tr {height:35px;} 
 }
 </style>
 <script type="text/javascript" src="JAVASCRIPT"></script>
@@ -50,22 +39,9 @@ table, th, td {
 <div id='msect'>
     <div class='divstijl' id='maindiv'>
         <center>
-        <table style = "border:none;"><tr style = "height:25px;"><td style = "border:none;">
-        <select class='sb1' id="SEL#" onchange='setKeuze()'>
-        <option value='0'>inverter 0</option>
-        <option value='1'>inverter 1</option>
-        <option value='2'>inverter 2</option>
-        <option value='3'>inverter 3</option>
-        <option value='4'>inverter 4</option>
-        <option value='5'>inverter 5</option>
-        <option value='6'>inverter 6</option>
-        <option value='7'>inverter 7</option>
-        <option value='8'>inverter 8</option>
-        </select>
-        <td style = 'border:none; font-size:22px;' id='nameField'></table>
         
         <p>polling &nbsp; from  <span id='srt'></span> to <span id='sst'></span></p>
-        <h4>INVERTER OUTPUT (WATTS) PER PANEL</h4>
+        <h4>POWER (W) AND TODAY'S ENERGY (kWh)</h4>
         
         <div id='noOutput' style='display:block'>
           <h4 style='color:red'>waiting for output</h4>
@@ -73,25 +49,28 @@ table, th, td {
         
         <div id="4channel" style='display:none;'>
           <center><table>
-          <tr style='Background-color:lightblue; font-weight:bold; font-size:14px; text-align:center;'><td>PANEL 1<td>PANEL 2<td>PANEL 3<td>PANEL 4</td></tr>
-          <tr>
-          <td><input id="ch0"></input><td><input id="ch1"></input>
-          <td><input id="ch2"></input><td><input id="ch3"></input>
-          <tr><td colspan="4" style="text-align: center;">
-            inverter generated today :&ensp;<input id="kwh"></input>&ensp;kWh 
-          </td></tr>
+          <tr style='Background-color:lightblue; font-weight:bold; text-align:center; border:4px solid black;'>
+          <td>INV<td>PANEL0<td>PANEL1<td>PANEL2<td>PANEL3<td>kWh</td></tr>
+          <tr id="r0" style="display:none;"><td id="i0"></td><td id="p00"></td><td id="p01"></td><td id="p02"></td><td id="p03"></td><td id="e0"></td></tr>
+          <tr id="r1" style="display:none;"><td id="i1"></td><td id="p10"></td><td id="p11"></td><td id="p12"></td><td id="p13"></td><td id="e1"></td></tr>
+          <tr id="r2" style="display:none;"><td id="i2"></td><td id="p20"></td><td id="p21"></td><td id="p22"></td><td id="p23"></td><td id="e2"></td></tr>        
+          <tr id="r3" style="display:none;"><td id="i3"></td><td id="p30"></td><td id="p31"></td><td id="p32"></td><td id="p33"></td><td id="e3"></td></tr>
+          <tr id="r4" style="display:none;"><td id="i4"></td><td id="p40"></td><td id="p41"></td><td id="p42"></td><td id="p43"></td><td id="e4"></td></tr>
+          <tr id="r5" style="display:none;"><td id="i5"></td><td id="p50"></td><td id="p51"></td><td id="p52"></td><td id="p53"></td><td id="e5"></td></tr>
+          <tr id="r6" style="display:none;"><td id="i6"></td><td id="p60"></td><td id="p61"></td><td id="p62"></td><td id="p63"></td><td id="e6"></td></tr>
+          <tr id="r7" style="display:none;"><td id="i7"></td><td id="p70"></td><td id="p71"></td><td id="p72"></td><td id="p73"></td><td id="e7"></td></tr>
+          <tr id="r8" style="display:none;"><td id="i8"></td><td id="p80"></td><td id="p81"></td><td id="p82"></td><td id="p83"></td><td id="e8"></td></tr>
+          <tr id="r9" style="display:none;"><td colspan="5" style="text-align:right;">total of all inverters&nbsp;</td><td id="e9"></td></tr>
         </table>
         </div>  
-        <br>
+        
         <div id="busy">
-            <br><br><span style='color:red;'><h3>Checking / initialyzing the zigbee radio...</h3></span><br>
+            <span style="color:red;"><h3>checking / initialyzing zigbee network...</h3></span><br>
         </div>
         <div id="failed" style="display:none;">
-            <br><br><span style='color:red;'><h3>The cc2530 is not working, check the log.</h3></span><br>
+            <span style='color:red;'><h3>the cc25xx is not working, check the log.</h3></span><br>
         </div>
-        <div id="sleep" style="display:none;">
-            <br><br><span style='color:red;'><h3>No inverter polling until sunrise!</h3></span><br>
-        </div>        
+      
         </center>
     </div>
 </div></body>
@@ -102,47 +81,56 @@ table, th, td {
 const char JAVA_SCRIPT[] PROGMEM = R"=====(
 
 var term;
+var table_row;
+var cnt = 9;
+var totalEn = 0;
 window.addEventListener("beforeunload", function(event) {
   console.log("UNLOAD:1");
 getTimes();
 });
 
-
 function loadScript() {
 getTimes();
-setKeuze();
-getData();
+getAll();
 }
 
-function show4() {
-document.getElementById("noOutput").style.display = "none";
-document.getElementById("4channel").style.display = "block";
-}
-function show0() {
-document.getElementById("noOutput").style.display = "block";
-document.getElementById("4channel").style.display = "none";
-}
-
-function setKeuze() {
-var a = document.getElementById("SEL#").value;
-term = "get.Power?inv=" + a;
-getData();
+function celbgc(cel) {
+//background color of the cells 
+if(cel.startsWith("e")) {
+   document.getElementById(cel).style = "background-color:#c6ff1a"; } 
+ else if(cel.startsWith("i")) {
+   document.getElementById(cel).style = "background-color:#00cc44";}
+ else {document.getElementById(cel).style = "background-color:#a6a6a6";
+ }
 }
 
 setInterval(function loadData() {
-  getData();
+getAll();
 },15000);
 
-function getData() {
+function getAll() {
+  totalEn = 0;
+  for (let i = 0; i < cnt; i++) {
+  term = "get.Power?inv=" + i;
+  table_row = "inv" + i;
+  console.log("table_row = " + table_row); 
+  console.log("term = " + term); 
+  getData(i);
+  }
+}
+
+function getData(invnr) {
+  console.log("term = " + term);
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       var antwoord = this.responseText;
+      console.log("answer = " + antwoord);
       var obj = JSON.parse(antwoord);
+      var nm = obj.nm;
       var polled = obj.polled;
       var Type = obj.type;
-      var nm = obj.nm
-      document.getElementById("nameField").innerHTML = nm;
+      
       var p0 = obj.p0;
       var p1 = obj.p1;
       var p2 = obj.p2;
@@ -150,124 +138,112 @@ function getData() {
       var st = obj.state;
       var sl = obj.sleep;
       var eN = obj.eN;
-      var eN2 = obj.eN2;
-      var ch0 = obj.ch0
-      var ch1 = obj.ch1
-      var ch2 = obj.ch2
-      var ch3 = obj.ch3                  
+      cnt = parseInt(obj.count);
+                 
       if(st == "11") {
-        document.getElementById("busy").style.display = "block";        
+        document.getElementById("busy").style.display = "block";
       } else {
         document.getElementById("busy").style.display = "none";
+        document.getElementById("failed").style.display = "none";
       }
       if(st == "0" || st == "25") {
-       document.getElementById("failed").style.display = "block"; 
+       document.getElementById("failed").style.display = "block";
        }
        var main = document.getElementById("maindiv")
        var slp = document.getElementById("sleep")      
        if(sl == "1") {
          main.style.background="grey"; 
-         slp.style.display = "block"; 
          document.getElementById("noOutput").style.display = "none";
        } else {
          main.style.background="linear-gradient(#e8edc8, #c8eaed)";
-         slp.style.display = "none";       
        }
-      var panel_0 =  document.getElementById("ch0");
+      if(nm == "N/A") {return 0;}
+      
+      var regel = "r" + String(invnr);
+      document.getElementById(regel).style.display="table-row";
+      var cel = "i" + String(invnr);
+      document.getElementById(cel).innerHTML = String(invnr);
+      celbgc(cel);
+
+      var cel = "p" + String(invnr) + "0";
       if (p0 != "n/e") {
-      panel_0.style.background="white";  
-      if (polled == "1") {
-        panel_0.value = p0; } 
+       if (polled == "1") {
+        document.getElementById(cel).innerHTML = p0; } 
         else 
         {
-        panel_0.style.color="red";
-        panel_0.value = "n/a";  
+        document.getElementById(cel).innerHTML = "n/a";
         }      
       } 
       else 
       {
-      panel_0.style.color="black";
-      panel_0.style.background="#333333";
-      panel_0.value = p0;
+      celbgc(cel);
       }
  
-      var panel_1 =  document.getElementById("ch1");
+      var cel = "p" + String(invnr) + "1";
       if (p1 != "n/e") {
-      panel_1.style.background="white";
       if (polled == "1") {
-        panel_1.value = p1; } 
+        document.getElementById(cel).innerHTML = p1; } 
         else 
         {
-        panel_1.style.color="red";
-        panel_1.value = "n/a";  
+        document.getElementById(cel).innerHTML = "n/a";; 
         }      
       } 
       else 
       {
-      panel_1.style.color="black";
-      panel_1.style.background="#333333";
-      panel_1.value = p1;
+      //document.getElementById(cel).style = "background-color:#a3c2c2";
+      celbgc(cel);
       }
 
-      var panel_2 =  document.getElementById("ch2");
+      var cel = "p" + String(invnr) + "2";
       if (p2 != "n/e") {
-      panel_2.style.background="white";
       if (polled == "1") {
-        panel_2.value = p2; } 
+        document.getElementById(cel).innerHTML = p2; } 
         else 
         {
-        panel_2.style.color="red";
-        panel_2.value = "n/a";  
+       document.getElementById(cel).innerHTML = "n/a"; 
         }      
       } 
       else 
       {
-      panel_2.style.color="black";
-      panel_2.style.background="#333333";
-      panel_2.value = p2;
-      }      
+      celbgc(cel);
+      }   
 
-      var panel_3 =  document.getElementById("ch3");
+      var cel = "p" + String(invnr) + "3";
       if (p3 != "n/e") {
-      panel_3.style.background="white";
       if (polled == "1") {
-        panel_3.value = p3; } 
+        document.getElementById(cel).innerHTML = p3; } 
         else 
         {
-        panel_3.style.color="red";
-        panel_3.value = "n/a";  
+        document.getElementById(cel).innerHTML = "n/a"; 
         }      
       } 
       else 
       {
-      panel_3.style.color="black";
-      panel_3.style.background = "#333333";
-      panel_3.value = p3;
-      }      
-      
-      var ent = document.getElementById("kwh");
+      celbgc(cel);
+      }  
+
+      var cel = "e" + String(invnr);
+      celbgc(cel);
       if (eN != "n/e") {
-      ent.style.background="white";
       if(polled == "1") {
-        ent.style.color="black";
-        ent.value=eN;
-      } else {
-        ent.style.color="red";
-        ent.value="n/a"; 
-      } 
+            document.getElementById(cel).innerHTML = eN;
+            if(cnt > 1){
+              totalEn = totalEn + parseFloat(eN);
+              celbgc("e9"); 
+              document.getElementById("r9").style.display="table-row";
+              document.getElementById("e9").innerHTML = totalEn.toFixed(2);
+              }
+         } else {
+           document.getElementById(cel).innerHTML = "n/a"; 
+         } 
       
       } else {
-        ent.style.color="black";
-        ent.style.background="#333333";
-        ent.value="n/e";
+        document.getElementById(cel).innerHTML = "n/e";
       }
-      
-      
-      //if(polled == "1") {
-      show4();
-      //} else {
-      //show0();  
-      //}
+    
+      document.getElementById("noOutput").style.display = "none";
+      document.getElementById("4channel").style.display = "block";
+
     }
   }
   xhttp.open("GET", term, true);
