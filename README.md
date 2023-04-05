@@ -12,13 +12,14 @@ You can use the provided binary but if you must compile it yourself: Use arduino
 <br>Please note: by popular demand I have published the code here but i do not feel responsible for problems as to compiling. Impossible for me to know why it doesn't compile in your situation.
 
 ## downloads
+april 5 2023: There is a new version v9_8 available, See changelog.<br>
+Download [ESP-ECU-v9_8](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_8.bin)<br>
+
 april 1 2023: There is a new experimental version [ESP-ECU_v9_7_beta](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_7_beta.bin) available. This version has output of all inverters together in the frontpage. Look [here]( https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/issues/89) for more info.
 
 march 24 2023: 18:00hr There is a recompiled version v9_6c available, See changelog.<br>
 Download [ESP-ECU-v9_6c](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_6c.bin)<br>
 
-sep 20 2022: There is a new version v9_5 available, See changelog.<br>
-Download [ESP-ECU-v9_5](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_5.zip) <br>
 <br>In case someone wants to print the housing, here is an [stl file](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-housing.zip)
 This is for a nodemcu board 31x58mm.
 
@@ -51,14 +52,18 @@ The interesting values are send via mqtt and displayed on the main page.
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
 ## changelog ##
+version ESP-ECU_V9_8:
+- fix for the zigbee crashes
+- improved frontpage with buttons to see details.
+
 version ESP-ECU_V9_6c:
 - fixed a typo in the help page of mosquitto settings
 - added 2 mqtt json formats, numeric values are included as float now.
 - added the retain flag to mqtt formats 3 and 4
 - changed the format of the returned json when http request.
 - added an option to have an mqtt topic for each inverter.
-- some changes to improve the polling provess
-- a forced zigbee reset every midnight.
+- some changes to improve the polling process
+- added a forced zigbee reset every midnight.
 
 version ESP-ECU_V9_5:
 - added a mqtt command for polling all inverters
