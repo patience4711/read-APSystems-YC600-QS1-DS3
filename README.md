@@ -5,6 +5,8 @@ See the <a href='https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/wi
 
 See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
 
+This program runs on different platforms, there is [ESP32-ECU](https://github.com/patience4711/ESP32-read-APS-inverters) and [RPI-ECU](https://github.com/patience4711/RPI-APS-inverters) that runs on a Raspberry (Zero). Each have its advantages over the others. If you have many inverters you are probably better off with the raspberry implementation.
+
 ## compile this sketch
 You can use the provided binary but if you must compile it yourself: Use arduino ide with the esp822 version 2.7.1 installed under boardmanager. The ota updates won't work with other versons.
 <br>Please note: by popular demand I have published the code here but i do not feel responsible for problems as to compiling. Impossible for me to know why it doesn't compile in your situation.
