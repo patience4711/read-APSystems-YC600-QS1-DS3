@@ -3,7 +3,7 @@ This project is for reading APS Systems inverters. The program can pair and poll
 The program has a lot of smart features. All settings can be done via the webinterface. It has a console that can be used for debugging and sending/receiving zigbee messages.<br>
 See the <a href='https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/wiki'>WIKI</a> for information on building it, the working, etc. 
 
-See it in action on youtube: https://youtu.be/7ZOAcrYXxbM
+See it in action on [youtube](https://youtu.be/WKFVQ6d8KhQ)
 
 This program runs on different platforms, there is [ESP32-ECU](https://github.com/patience4711/ESP32-read-APS-inverters) and [RPI-ECU](https://github.com/patience4711/RPI-APS-inverters) that runs on a Raspberry (Zero). Each have its advantages over the others. If you have many inverters you are probably better off with the raspberry implementation.
 
