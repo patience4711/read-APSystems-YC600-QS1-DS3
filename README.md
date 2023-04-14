@@ -12,8 +12,8 @@ You can use the provided binary but if you must compile it yourself: Use arduino
 <br>Please note: by popular demand I have published the code here but i do not feel responsible for problems as to compiling. Impossible for me to know why it doesn't compile in your situation.
 
 ## downloads
-april 5 2023: There is a new version v9_8 available, See changelog.<br>
-Download [ESP-ECU-v9_8](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_8.bin)<br>
+april 14 2023: There is a new version v9_8b available, See changelog.<br>
+Download [ESP-ECU-v9_8](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP_ECU_v9-8b.zip)<br>
 
 april 1 2023: There is a new experimental version [ESP-ECU_v9_7_beta](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_7_beta.bin) available. This version has output of all inverters together in the frontpage. Look [here]( https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/issues/89) for more info.
 
@@ -54,6 +54,7 @@ The interesting values are send via mqtt and displayed on the main page.
 version ESP-ECU_V9_8:
 - fix for the zigbee crashes
 - improved frontpage with buttons to see details.
+- fixed memory issues, more free heap.
 
 version ESP-ECU_V9_6c:
 - fixed a typo in the help page of mosquitto settings
