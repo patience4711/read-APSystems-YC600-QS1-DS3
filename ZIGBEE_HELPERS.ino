@@ -96,19 +96,13 @@ void cleanIncoming() {
 //                               data converters
 // **************************************************************************
 
-// calculate and return the length of the message
+/** calculate and return the length of a message in hex as string */
 char *sLen(char Command[])  
 {
 char bufferSln[254];
-    sprintf(bufferSln, "%02x", (strlen(Command) / 2 - 2));
+    sprintf(bufferSln, "%02X", (strlen(Command) / 2 - 2));
     delayMicroseconds(250); //give memset a little bit of time to empty all the buffers
 
-    uint8_t iToUpper = 0;
-    while (bufferSln[iToUpper])
-    {
-        bufferSln[iToUpper] = toupper(bufferSln[iToUpper]);
-        iToUpper++;
-    }
     return bufferSln;
 }
 
@@ -125,14 +119,8 @@ char bufferCRCdiezweite[254] = {0};
     {
         strncpy(bufferCRCdiezweite, Command + i * 2, 2); //use every iteration the next two chars starting with char 2+3
         delayMicroseconds(250);                          //give memset a little bit of time to empty all the buffers
-        sprintf(bufferCRC, "%02x", StrToHex(bufferCRC) ^ StrToHex(bufferCRCdiezweite));
+        sprintf(bufferCRC, "%02X", StrToHex(bufferCRC) ^ StrToHex(bufferCRCdiezweite));
         delayMicroseconds(250); //give memset a little bit of time to empty all the buffers
-    }
-    uint8_t iToUpper = 0;
-    while (bufferCRC[iToUpper])
-    {
-        bufferCRC[iToUpper] = toupper(bufferCRC[iToUpper]);
-        iToUpper++;
     }
     return bufferCRC;
 }
