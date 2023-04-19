@@ -75,7 +75,6 @@ int testCounter = 0;
   bool dayTime=true;
 
   byte mDay = 0;
-  String  maan = "";
   int actionFlag = 0;
 
  // variables wificonfig
