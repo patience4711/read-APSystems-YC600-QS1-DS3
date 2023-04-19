@@ -148,7 +148,6 @@ int event = 0;
 
   int dst;
   int iKeuze;
-  int inverterTopoll = 0;
   bool timeRetrieved = false;
   int networksFound = 0; // used in the portal
   int datum = 0; //
@@ -167,8 +166,6 @@ int event = 0;
 String toSend = "";
  
 int value = 0; 
-//int pollCounter =0;
-int aantal = 0;
 int resetCounter=0;
 
 // *******************************  log *************************************
