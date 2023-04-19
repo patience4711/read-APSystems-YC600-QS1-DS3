@@ -115,7 +115,7 @@ typedef struct{
   int  invIdx          = 0;
   bool conPanels[4]    = {true,true,true,true};
 } inverters; 
-inverters Inv_Prop[9]; 
+inverters Inv_Prop[YC600_MAX_NUMBER_OF_INVERTERS];
 
 typedef struct{ 
 char freq[5] = "00.0";
@@ -127,10 +127,10 @@ char dcv[4][5] = {"00.0", "00.0", "00.0", "00.0"};              // volt <100
 char power[5][6]={"000.0", "000.0", "000.0", "000.0", "000.0"}; //watt < 1000
 float en_total = 0;
 } inverterdata;
-inverterdata Inv_Data[9];
+inverterdata Inv_Data[YC600_MAX_NUMBER_OF_INVERTERS];
   
  
- bool polled[9]={false,false,false,false,false,false,false,false,false};
+ bool polled[YC600_MAX_NUMBER_OF_INVERTERS]={false,false,false,false,false,false,false,false,false};
  uint8_t zigbeeUp = 11; // initial allways initializing, this changes to 1 = up or 0 not up after initial healthcheck
  int pollOffset = 0;
  int inverterKeuze=0;
