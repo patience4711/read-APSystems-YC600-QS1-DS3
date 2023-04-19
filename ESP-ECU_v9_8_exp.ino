@@ -94,11 +94,10 @@ int testCounter = 0;
 #define YC600_MAX_NUMBER_OF_INVERTERS 9
 char inMessage[CC2530_MAX_SERIAL_BUFFER_SIZE] = {0};
 int readCounter = 0;
-char messageHead[5];
+
 bool diagNose=false;
 bool Polling = true; // when true we have automatic polling
 int errorCode=10;
-int recovered = 0;
 
   int t_saved[YC600_MAX_NUMBER_OF_INVERTERS] = {0};
   float en_saved[YC600_MAX_NUMBER_OF_INVERTERS][4] = {0};
