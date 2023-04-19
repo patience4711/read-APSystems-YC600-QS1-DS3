@@ -74,8 +74,7 @@ int testCounter = 0;
   time_t switchonTime = 0;
   bool dayTime=true;
 
-  byte mDay = 0;
-  int actionFlag = 0;
+  uint8_t actionFlag = 0;
 
  // variables wificonfig
   char pswd[11] = "0000";
