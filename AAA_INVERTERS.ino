@@ -203,7 +203,7 @@ void handleInverterconfig(AsyncWebServerRequest *request)
    dag = request->arg("pan4");  // mqselect
    if ( dag == "on") { Inv_Prop[iKeuze].conPanels[3] = true;}    
    }
-   Serial.println("checked panels are : " + String(Inv_Prop[iKeuze].conPanels[0])+ String(Inv_Prop[iKeuze].conPanels[2])+ String(Inv_Prop[iKeuze].conPanels[2])+ String(Inv_Prop[iKeuze].conPanels[3]));
+   //Serial.println("checked panels are : " + String(Inv_Prop[iKeuze].conPanels[0])+ String(Inv_Prop[iKeuze].conPanels[2])+ String(Inv_Prop[iKeuze].conPanels[2])+ String(Inv_Prop[iKeuze].conPanels[3]));
    //is this a addition?
    String bestand = "/Inv_Prop" + String(iKeuze) + ".str"; // /Inv_Prop0.str
    //Serial.println("going to write " + bestand ); 
@@ -265,14 +265,14 @@ void handleInverterdel(AsyncWebServerRequest *request)
 }
 
 void printInverters() {      
-      Serial.println(" ****** excisting inverter files ******");
+      Serial.println(F(" ****** excisting inverter files ******"));
       for (int x=0; x < inverterCount+1; x++) 
       {
       String bestand = "/Inv_Prop" + String(x) + ".str";
       
       if(LittleFS.exists(bestand)) 
           {
-              Serial.println("filename: " + bestand);
+              Serial.print(F("filename: ")); Serial.println(bestand);
               printStruct(bestand);
           }
       }

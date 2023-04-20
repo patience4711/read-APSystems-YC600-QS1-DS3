@@ -57,12 +57,7 @@ void start_portal() {
   }
   yield();
   if (tryConnectFlag) { // there are credentials provided
-      if (wifiConnect())  {
-        // if true we are connected else not
-        }  else {
-        } // what to do now
-   // we try to connect once so make the  flag false
-   // tryConnectFlag = false; is done in wifiConnect   
+      wifiConnect();
   }
 //  
 //  if(Serial.available()) { // make the serial monitor work
@@ -265,7 +260,7 @@ void eraseStatic(AsyncWebServerRequest *request) {
 //**********************************************************************
 //      try to connect
 // **********************************************************************
-bool wifiConnect() {
+void wifiConnect() {
   // we are here because bool tryConnectFlag was true in the loop
       digitalWrite(led_onb, LED_UIT);
        tryConnectFlag=false;

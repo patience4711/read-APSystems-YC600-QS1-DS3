@@ -1,7 +1,15 @@
 void start_asyserver() {
 DebugPrintln("starting server");
 //server.addHandler(&ws);
-  server.on("/CONSOLE", HTTP_GET, [](AsyncWebServerRequest *request){
+
+server.on("/details", HTTP_GET, [](AsyncWebServerRequest *request) {
+int i = atoi(request->arg("inv").c_str()) ;
+requestUrl = request->url();
+sendPageDetails(i);
+request->send(200, "text/html", toSend);
+});
+
+server.on("/CONSOLE", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/html", CONSOLE_HTML);
   });
 // Simple Firmware Update
@@ -12,7 +20,7 @@ DebugPrintln("starting server");
     });
   server.on("/handleFwupdate", HTTP_POST, [](AsyncWebServerRequest *request){
     swap_to_usb(); // this should work now
-    Serial.println("FWUPDATE requested");
+    Serial.println(F("FWUPDATE requested"));
     if( !Update.hasError() ) {
     toSend="<br><br><center><h2>UPDATE SUCCESS !!</h2><br><br>";
     toSend +="click here to reboot<br><br><a href='/REBOOT'><input style='font-size:3vw;' type='submit' value='REBOOT'></a>";
@@ -45,7 +53,7 @@ DebugPrintln("starting server");
     if(!Update.hasError()){
       if(Update.write(data, len) != len){
         //#ifdef DEBUG
-          Serial.println("update failed with error: " );
+          Serial.println(F("update failed with error: " ));
           Update.printError(Serial);
         //#endif
       }
@@ -80,6 +88,16 @@ server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
     DebugPrintln("send Homepage");
     request->send_P(200, "text/html", ECU_HOMEPAGE);
 });
+//server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+//    loginBoth(request, "both");
+//    //sendHomepage();
+//    respond (request);   
+//    DebugPrintln("send Homepage");
+//
+//});
+
+
+
 
 server.on("/STYLESHEET", HTTP_GET, [](AsyncWebServerRequest *request) {
    request->send_P(200, "text/css", STYLESHEET);
@@ -99,9 +117,10 @@ server.on("/favicon.ico", HTTP_GET, [](AsyncWebServerRequest *request) {
 
 server.on("/MENU", HTTP_GET, [](AsyncWebServerRequest *request) {
 loginBoth(request, "admin");
-toSend = FPSTR(HTML_HEAD);
-toSend += FPSTR(MENUPAGE);
-request->send(200, "text/html", toSend);
+//toSend = FPSTR(HTML_HEAD);
+//toSend += FPSTR(MENUPAGE);
+//request->send(200, "text/html", toSend);
+request->send_P(200, "text/html", MENUPAGE);
 });
 
 // ***********************************************************************************

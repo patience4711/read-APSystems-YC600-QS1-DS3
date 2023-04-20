@@ -4,11 +4,11 @@ void pairOnActionflag() {
    
    String term = "start pairing inverter sn " + String(Inv_Prop[iKeuze].invSerial);
    Update_Log("pairing", term);
-    if( !coordinator_init() ) {
+    if( !coordinator(false) ) {
       term="pairing failed, zb system down";
       Update_Log("pairing", term);
       ws.textAll(term);
-       return;
+      return;
     }
 
   ws.textAll("trying pair inv " + String(iKeuze));
@@ -45,15 +45,15 @@ void handlePair(AsyncWebServerRequest *request) {
 }
 
 bool pairing(int which) {
-// we call this function when coordinator is up for pairing
-
-char pairCmd[254]={0};
-char ecu_id_reverse[13]; //= {ECU_REVERSE()}; // 
-ECU_REVERSE().toCharArray(ecu_id_reverse, 13);
-//char short_ecu_id_reverse
-char infix[] = "FFFF10FFFF";
-char outfix[] = "10FFFF";
-String toLog ="";
+    // we call this function when coordinator is up for pairing
+    
+    char pairCmd[254]={0};
+    char ecu_id_reverse[13]; //= {ECU_REVERSE()}; // 
+    ECU_REVERSE().toCharArray(ecu_id_reverse, 13);
+    //char short_ecu_id_reverse
+    char infix[] = "FFFF10FFFF";
+    char outfix[] = "10FFFF";
+    String toLog ="";
 //    String pcmd[6] = {
 //    "5",
 //    "6700",
@@ -73,83 +73,73 @@ String toLog ="";
 // should be 24020FFFFFFFFFFFFFFFFF14FFFF14 010103000F0600 80971B01A3D8
 // construct 24020FFFFFFFFFFFFFFFFF14FFFF14 010103000F0600 80971B01A3D8 OK
 
-char pairBaseCommand[][254] = {
-    "5", // not a command but the total commands
-    "2700", // was 67
-    "24020FFFFFFFFFFFFFFFFF14FFFF140D0200000F1100", // + String(inv_sn) + "FFFF10FFFF" + ecu_id_reverse,
-    "24020FFFFFFFFFFFFFFFFF14FFFF140C0201000F0600",  // + String(inv_sn),
-    "24020FFFFFFFFFFFFFFFFF14FFFF140F0102000F1100",  // + String(inv_sn) + ecu_id.substring(2,4) + ecu_id.substring(0,2) + "10FFFF" + ecu_id_reverse,
-    "24020FFFFFFFFFFFFFFFFF14FFFF14010103000F0600",  // + ecu_id_reverse
-
-};
+  char pairBaseCommand[][254] = {
+      "5", // not a command but the total commands
+      "2700", // was 67
+      "24020FFFFFFFFFFFFFFFFF14FFFF140D0200000F1100", // + String(inv_sn) + "FFFF10FFFF" + ecu_id_reverse,
+      "24020FFFFFFFFFFFFFFFFF14FFFF140C0201000F0600",  // + String(inv_sn),
+      "24020FFFFFFFFFFFFFFFFF14FFFF140F0102000F1100",  // + String(inv_sn) + ecu_id.substring(2,4) + ecu_id.substring(0,2) + "10FFFF" + ecu_id_reverse,
+      "24020FFFFFFFFFFFFFFFFF14FFFF14010103000F0600",  // + ecu_id_reverse
+  
+  };
 
 //now build the commands
 
 // ***************************** command 2 ********************************************
 // now build command 2 this is prefix + "0D0200000F1100" + String(invSerial) + "FFFF10FFFF" + ecu_id_reverse,
 // add the inverter serial;
-strncat(pairBaseCommand[2], Inv_Prop[which].invSerial, sizeof(Inv_Prop[which].invSerial)); 
-delayMicroseconds(250);
-//now add the "FFF10FFF"
-strncat( pairBaseCommand[2], infix, sizeof(infix) );
-//now add ecu_id_reverse 
-strncat(pairBaseCommand[2], ecu_id_reverse, sizeof(ecu_id_reverse));
-// Serial.println("Cmd 2 constructed = " + String(pairBaseCommand[2]));  // ok
+    strncat(pairBaseCommand[2], Inv_Prop[which].invSerial, sizeof(Inv_Prop[which].invSerial)); 
+    delayMicroseconds(250);
+    //now add the "FFF10FFF"
+    strncat( pairBaseCommand[2], infix, sizeof(infix) );
+    //now add ecu_id_reverse 
+    strncat(pairBaseCommand[2], ecu_id_reverse, sizeof(ecu_id_reverse));
+    // Serial.println("Cmd 2 constructed = " + String(pairBaseCommand[2]));  // ok
 
-// now build command 3 this is prefix + "0C0201000F0600"  + inv serial,
-// add the inverter serial;
-//Serial.println("Cmd 3 initial = " + String(pairBaseCommand[3]));
-strncat(pairBaseCommand[3], Inv_Prop[which].invSerial,  sizeof(Inv_Prop[which].invSerial));
-//Serial.println("Cmd 3 constructed = " + String(pairBaseCommand[3]));  // ok
+    // now build command 3 this is prefix + "0C0201000F0600"  + inv serial,
+    // add the inverter serial;
+    //Serial.println("Cmd 3 initial = " + String(pairBaseCommand[3]));
+    strncat(pairBaseCommand[3], Inv_Prop[which].invSerial,  sizeof(Inv_Prop[which].invSerial));
+    //Serial.println("Cmd 3 constructed = " + String(pairBaseCommand[3]));  // ok
 
-// now build command 4 this is prefix + "0F0102000F1100"  + invSerial + short ecu_id_reverse, + 10FFF + ecu_id_reverse
-// add the inverter serial;
-//Serial.println("Cmd 4 initial = " + String(pairBaseCommand[4]));
-strncat(pairBaseCommand[4], Inv_Prop[which].invSerial,  sizeof(Inv_Prop[which].invSerial));
-strncat(pairBaseCommand[4], ECU_ID + 2, 2); // D8A3011B9780 must be A3D8
-strncat(pairBaseCommand[4], ECU_ID, 2);
-strncat(pairBaseCommand[4], outfix, sizeof(outfix) );
-strncat(pairBaseCommand[4], ecu_id_reverse, sizeof(ecu_id_reverse));
-//Serial.println("Cmd 4 constructed = " + String(pairBaseCommand[4]));  // ok
+    // now build command 4 this is prefix + "0F0102000F1100"  + invSerial + short ecu_id_reverse, + 10FFF + ecu_id_reverse
+    // add the inverter serial;
+    //Serial.println("Cmd 4 initial = " + String(pairBaseCommand[4]));
+    strncat(pairBaseCommand[4], Inv_Prop[which].invSerial,  sizeof(Inv_Prop[which].invSerial));
+    strncat(pairBaseCommand[4], ECU_ID + 2, 2); // D8A3011B9780 must be A3D8
+    strncat(pairBaseCommand[4], ECU_ID, 2);
+    strncat(pairBaseCommand[4], outfix, sizeof(outfix) );
+    strncat(pairBaseCommand[4], ecu_id_reverse, sizeof(ecu_id_reverse));
 
-//// now build command 5 this is prefix  + "010103000F0600" + ecu_id_reverse,
-//Serial.println("Cmd 5 initial = " + String(pairBaseCommand[5]));
-strncat(pairBaseCommand[5], ecu_id_reverse, sizeof(ecu_id_reverse));
-//Serial.println("Cmd 5 constructed = " + String(pairBaseCommand[5]));  // ok
+    // now build command 5 this is prefix  + "010103000F0600" + ecu_id_reverse,
+    strncat(pairBaseCommand[5], ecu_id_reverse, sizeof(ecu_id_reverse));
 
-// now send the  5 commands
-// the first command is the healtcheck so we could do checkZigbeeRadio and if this failes break
-// the radiocheck is done already so we can skip cmd 1    
+    // now send these  5 commands
+    // the first command is the healtcheck so we could do checkZigbeeRadio and if this failes break
+    // the radiocheck is done already so we can skip cmd 1    
     bool success = false;
     for (int y = 2; y < 6; y++) 
     {
-      //cmd 0 tm / 9 alles ok
+      //cmd 0 to 9 all ok
 
       strncpy(pairCmd, pairBaseCommand[y], sizeof(pairBaseCommand[y] ));
       //add sln 
-      strcpy(pairCmd, strncat(sLen(pairCmd), pairCmd, sizeof(sLen(pairCmd)) + sizeof(pairCmd))); 
+      //strcpy(pairCmd, strncat(sLen(pairCmd), pairCmd, sizeof(sLen(pairCmd)) + sizeof(pairCmd))); 
+      strcpy(pairCmd, strcat(sLen(pairCmd), pairCmd));
       delayMicroseconds(250);
-      // add CRC at the end 
-      strcpy(pairCmd, strncat(pairCmd, checkSum(pairCmd), sizeof(pairCmd) + sizeof(checkSum(pairCmd))));
-      delayMicroseconds(250);
+      
+      // add CRC at the end now in sendZigbee 
+
       // send and read
       if(diagNose)ws.textAll("pair command = " + String(pairCmd));      
       ws.textAll("sending paircmd " + String(y));
-      //toLog="sending cmd " + String(y);
-      //if(Log) Update_Log("pair", toLog);
-      #ifdef DEBUG
-      Serial.println("pair swap zb");
-      swap_to_zb(); // set serial to zb  
-      #endif 
+
       sendZigbee(pairCmd);
       delay(1500); // give the inverter the chance to answer
-      //waitSerialAvailable();
+
       //check if anything was received
       readZigbee();
-      #ifdef DEBUG
-      swap_to_usb(); // set serial to zb  
-      Serial.println("pair swap usb");
-      #endif
+
       if(diagNose) ws.textAll("received : " + String(inMessage) );
       // after sending cmd 3 or 4 we can expect an answer to decode
       if(y == 3 || y == 4) {
@@ -164,20 +154,20 @@ strncat(pairBaseCommand[5], ecu_id_reverse, sizeof(ecu_id_reverse));
 
 bool decodePairMessage(int which)
 {
-// we need the fullincomingMessge and the invSns  invSns = inverterSerial
-char messageToDecode[CC2530_MAX_SERIAL_BUFFER_SIZE] = {0};
-char _CC2530_answer_string[] = "44810000";
-char _noAnswerFromInverter[32] = "FE0164010064FE034480CD14011F";
-char * result;                                 
-char temp[13];
+    // we need the fullincomingMessge and the invSns  invSns = inverterSerial
+    char messageToDecode[CC2530_MAX_SERIAL_BUFFER_SIZE] = {0};
+    char _CC2530_answer_string[] = "44810000";
+    char _noAnswerFromInverter[32] = "FE0164010064FE034480CD14011F";
+    char * result;                                 
+    char temp[13];
 
-//received message with inverter id like : 
-//for testing
-//strncpy(messageToDecode, "FE1C4481000001013A101414003400622305000008FF1A4080001582153A100E08", 66);
-//                          
-//                         FE1C 4481000001013A101414002700321401000008FFFF4080001582153A100E9D
-//  FE0164020067 FE25448100000F0100001414013100204D03000011408000158215A3D610FFFF80971B01A3D63A100DD9FE1C4481000001013A1014140031007D5003000008FFFF4080001582153A100E82
-// the 2nd message is shorter 2524020FFFFFFFFFFFFFFFFF14FFFF140F0102000F1100408000157673A3D810FFFF80971B01A3D8D3
+    //received message with inverter id like : 
+    //for testing
+    //strncpy(messageToDecode, "FE1C4481000001013A101414003400622305000008FF1A4080001582153A100E08", 66);
+    //                          
+    //                         FE1C 4481000001013A101414002700321401000008FFFF4080001582153A100E9D
+    //  FE0164020067 FE25448100000F0100001414013100204D03000011408000158215A3D610FFFF80971B01A3D63A100DD9FE1C4481000001013A1014140031007D5003000008FFFF4080001582153A100E82
+    // the 2nd message is shorter 2524020FFFFFFFFFFFFFFFFF14FFFF140F0102000F1100408000157673A3D810FFFF80971B01A3D8D3
 
     //Serial.println("inMessage = " + String(inMessage));
     strncpy(messageToDecode, inMessage, strlen(inMessage));  // get rid of the preceeding FE0164020067
@@ -198,42 +188,34 @@ char temp[13];
     }
 // the message is shorter so continueing    
 
- if (!strstr(messageToDecode, Inv_Prop[which].invSerial)) {
-    ws.textAll("not found serialnr, returning");
-    return false;
- }
+   if (!strstr(messageToDecode, Inv_Prop[which].invSerial)) {
+      ws.textAll("not found serialnr, returning");
+      return false;
+   }
 
-  if ( strstr(messageToDecode, Inv_Prop[which].invSerial) ) { 
-  result = split(messageToDecode, Inv_Prop[which].invSerial);
-  }
-//  Serial.println("result after 1st splitting = " + String(result));
-// now we keep splitting as long as result contains the serial
-  while ( strstr(result, Inv_Prop[which].invSerial) ) 
-  { 
-  result = split(result, Inv_Prop[which].invSerial);
-  }
-//  Serial.println("result after splitting = " + String(result));
+    if ( strstr(messageToDecode, Inv_Prop[which].invSerial) ) { 
+    result = split(messageToDecode, Inv_Prop[which].invSerial);
+    }
+    //  Serial.println("result after 1st splitting = " + String(result));
+    // now we keep splitting as long as result contains the serial
+    while ( strstr(result, Inv_Prop[which].invSerial) ) 
+    { 
+    result = split(result, Inv_Prop[which].invSerial);
+    }
 
-// now we know that it is what we expect so do the next test
-
-strncpy(temp, result, 4);
-temp[4]='\0';
-//Serial.println("found invID on MessageToDecode" + String(temp));
-memset(&Inv_Prop[which].invID, 0, sizeof(Inv_Prop[which].invID)); //zero out the 
-delayMicroseconds(250);  
-strncpy(Inv_Prop[which].invID, "0x", 2);
-strncat(Inv_Prop[which].invID, temp + 2, 2);
-strncat(Inv_Prop[which].invID, temp, 2);
-Inv_Prop[which].invID[6] = '\0';
-if ( String(temp) == "0000" ) {
-//String term = "pairing failed, returning false";
-//Update_Log("pairing" , term);
-//ws.textAll(term);
-//Serial.println("temp = " + String(temp));
-return false;    
-}
-//String term = "success, got invID";
-//Update_Log("pairing" , term);
-//ws.textAll(term);
-return true;
+    // now we know that it is what we expect so we do the next test
+    
+    strncpy(temp, result, 4);
+    temp[4]='\0';
+    //Serial.println("found invID on MessageToDecode" + String(temp));
+    memset(&Inv_Prop[which].invID, 0, sizeof(Inv_Prop[which].invID)); //zero out the 
+    delayMicroseconds(250);  
+    strncpy(Inv_Prop[which].invID, "0x", 2);
+    strncat(Inv_Prop[which].invID, temp + 2, 2);
+    strncat(Inv_Prop[which].invID, temp, 2);
+    Inv_Prop[which].invID[6] = '\0';
+    if ( String(temp) == "0000" ) {
+        return false;    
+    }
+    return true;
 } 

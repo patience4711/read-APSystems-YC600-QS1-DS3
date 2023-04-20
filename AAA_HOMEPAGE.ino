@@ -19,9 +19,19 @@ table, th, td {
   }
 tr {background-color:#ccffcc;}
 td { width:70px; }
+.btn {
+  background-color: #199319;
+  color: white;
+  padding: 5px 22px;
+  border-radius:6px;
+}
+
+.btn:hover {background: #eeeF; color:black;}
+
 @media only screen and (max-width: 800px) {
 th, td { width:60px; font-size:12px; }
 tr {height:35px;} 
+.btn { padding: 5px 18px; font-size:10px;}
 }
 </style>
 <script type="text/javascript" src="JAVASCRIPT"></script>
@@ -96,10 +106,10 @@ getAll();
 
 function celbgc(cel) {
 //background color of the cells 
-if(cel.startsWith("e")) {
+if(cel.startsWith("e") || cel.startsWith("i")) {
    document.getElementById(cel).style = "background-color:#c6ff1a"; } 
- else if(cel.startsWith("i")) {
-   document.getElementById(cel).style = "background-color:#00cc44";}
+// else if(cel.startsWith("i")) {
+//   document.getElementById(cel).style = "background-color:#00cc44";}
  else {document.getElementById(cel).style = "background-color:#a6a6a6";
  }
 }
@@ -162,8 +172,8 @@ function getData(invnr) {
       var regel = "r" + String(invnr);
       document.getElementById(regel).style.display="table-row";
       var cel = "i" + String(invnr);
-      document.getElementById(cel).innerHTML = String(invnr);
-      celbgc(cel);
+      document.getElementById(cel).innerHTML = "<a href='/details/?inv=" + String(invnr) + "'><button class='btn'>" + String(invnr) + "</button</a>";
+      //celbgc(cel);
 
       var cel = "p" + String(invnr) + "0";
       if (p0 != "n/e") {
@@ -270,7 +280,7 @@ function getTimes() {
 
 
 
-void sendHomepage() {
-    toSend = FPSTR(ECU_HOMEPAGE);
-    toSend.replace("#ID",String(ECU_ID));
-  }
+//void sendHomepage() {
+//    toSend = FPSTR(ECU_HOMEPAGE);
+//    toSend.replace("#ID",String(ECU_ID));
+//  }

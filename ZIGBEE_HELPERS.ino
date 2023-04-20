@@ -4,7 +4,9 @@
 // *****************************************************************************
 void sendZigbee(char printString[])
 {
-//char bufferSend[254];
+    // first we add crc
+    strcat(printString, checkSum(printString));
+    //char bufferSend[254];
     char bufferSend[3];
 
     if (Serial.availableForWrite() > (uint8_t)strlen(printString))
@@ -18,11 +20,6 @@ void sendZigbee(char printString[])
             Serial.write(StrToHex(bufferSend));        //turn the two chars to a byte and send this
         }
             Serial.flush(); //wait till the full command was sent
-
-        // not good as it comes too fast after the other states so that only this one was visible
-        // _actualState = 16; //we send a new string to the CC2530
-
-//        _waiting_for_response = true;
     }
 }
 
@@ -93,22 +90,16 @@ void cleanIncoming() {
 }
 
 // **************************************************************************
-//                               data converters
+//                   length and checksum
 // **************************************************************************
 
 // calculate and return the length of the message
 char *sLen(char Command[])  
 {
 char bufferSln[254];
-    sprintf(bufferSln, "%02x", (strlen(Command) / 2 - 2));
+    sprintf(bufferSln, "%02X", (strlen(Command) / 2 - 2));
     delayMicroseconds(250); //give memset a little bit of time to empty all the buffers
 
-    uint8_t iToUpper = 0;
-    while (bufferSln[iToUpper])
-    {
-        bufferSln[iToUpper] = toupper(bufferSln[iToUpper]);
-        iToUpper++;
-    }
     return bufferSln;
 }
 
@@ -116,26 +107,24 @@ char bufferSln[254];
 char *checkSum(char Command[])
 {
 char bufferCRC[254] = {0};
-char bufferCRCdiezweite[254] = {0};
+char bufferCRC_2[254] = {0};
 
     strncpy(bufferCRC, Command, 2); //as starting point perhaps called "seed" use the first two chars from "Command"
     delayMicroseconds(250);         //give memset a little bit of time to empty all the buffers
 
     for (uint8_t i = 1; i <= (strlen(Command) / 2 - 1); i++)
     {
-        strncpy(bufferCRCdiezweite, Command + i * 2, 2); //use every iteration the next two chars starting with char 2+3
+        strncpy(bufferCRC_2, Command + i * 2, 2); //use every iteration the next two chars starting with char 2+3
         delayMicroseconds(250);                          //give memset a little bit of time to empty all the buffers
-        sprintf(bufferCRC, "%02x", StrToHex(bufferCRC) ^ StrToHex(bufferCRCdiezweite));
+        sprintf(bufferCRC, "%02X", StrToHex(bufferCRC) ^ StrToHex(bufferCRC_2));
         delayMicroseconds(250); //give memset a little bit of time to empty all the buffers
     }
-    uint8_t iToUpper = 0;
-    while (bufferCRC[iToUpper])
-    {
-        bufferCRC[iToUpper] = toupper(bufferCRC[iToUpper]);
-        iToUpper++;
-    }
+
     return bufferCRC;
 }
+// **************************************************************************
+//                               data converters
+// **************************************************************************
 
 // convert a char to Hex ******************************************************
 int StrToHex(char str[])
@@ -180,7 +169,7 @@ ws.textAll("the resetCmd = " + String(resetCmd));
 // calculate length 
 strcpy(resetCmd, strncat(sLen(resetCmd), resetCmd, sizeof(sLen(resetCmd)) + sizeof(resetCmd))); //build command plus sln at the beginning
 // put in the CRC at the end of the command
-strcpy(resetCmd, strncat(resetCmd, checkSum(resetCmd), sizeof(resetCmd) + sizeof(checkSum(resetCmd))));
+//strcpy(resetCmd, strncat(resetCmd, checkSum(resetCmd), sizeof(resetCmd) + sizeof(checkSum(resetCmd))));
 
 ////commented out while testing
 //swap_to_zb(); // set serial to the cc2530

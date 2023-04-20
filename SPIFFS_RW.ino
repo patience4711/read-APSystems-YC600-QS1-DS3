@@ -50,7 +50,7 @@ bool leesStruct(String whichfile) {
       File configFile = LittleFS.open(whichfile, "r");
       int ivn = whichfile.substring(9,10).toInt();
 
-      Serial.println( "leesStruct ivn = " + String(ivn) );  
+      Serial.print(F( "leesStruct ivn = ")); Serial.println( String(ivn) );  
         if (!configFile)
            {
               Serial.print(F("Failed to open for read")); Serial.println(whichfile);
@@ -90,7 +90,7 @@ void wifiConfigsave() {
     #ifdef DEBUG 
 //    json.printTo(Serial);
     serializeJson(json, Serial);
-    Serial.println(""); 
+    Serial.println(F("")); 
     #endif
     serializeJson(json, configFile);
     configFile.close();
@@ -115,7 +115,7 @@ void basisConfigsave() {
     DebugPrintln("inverterconfig.json written");
     #ifdef DEBUG 
     serializeJson(json, Serial);
-    Serial.println("");     
+    Serial.println(F(""));     
     #endif
     serializeJson(json, configFile);
     configFile.close();
@@ -142,7 +142,7 @@ void mqttConfigsave() {
     DebugPrintln("mqttconfig.json written");
     #ifdef DEBUG
     serializeJson(json, Serial);
-    Serial.println(""); 
+    Serial.println(F("")); 
     #endif
     serializeJson(json, configFile);
     configFile.close();
@@ -151,12 +151,14 @@ void mqttConfigsave() {
 
 bool file_open_for_read(String bestand) {
       //DebugPrint("we are in file_open_for_read, bestand = "); //DebugPrintln(bestand); 
-      if (LittleFS.exists(bestand)) {
+      if (!LittleFS.exists(bestand)) return false;
+      
       //file exists, reading and loading
       //DebugPrintln("bestand bestaat");
         File configFile = LittleFS.open(bestand, "r");
-        if (configFile) {
-           //DebugPrint("opened config file"); //DebugPrintln(bestand);
+        if (!configFile) return false;
+        
+        //DebugPrint("opened config file"); //DebugPrintln(bestand);
            size_t size = configFile.size();
           // Allocate a buffer to store contents of the file.
            std::unique_ptr<char[]> buf(new char[size]);
@@ -164,9 +166,9 @@ bool file_open_for_read(String bestand) {
            DynamicJsonDocument doc(1024);
            auto error = deserializeJson(doc, buf.get());
            #ifdef DEBUG 
-           serializeJson(doc, Serial); Serial.println("");
+           serializeJson(doc, Serial); Serial.println(F(""));
            #endif
-             if (!error) {
+             if (error) return false; 
               //DebugPrintln("parsed json");
               String jsonStr = ""; // we printen het json object naar een string
             // nu kunnen we eerst controleren of een bepaalde entry bestaat
@@ -205,17 +207,14 @@ bool file_open_for_read(String bestand) {
             
             }
              return true;
-           } else {
-            return false;
-           }
-       }
-   }
-}
+ }
+
 // we do this before swap_to_zigbee
 void printStruct( String bestand ) {
 //input String bestand = "/Inv_Prop" + String(x) + ".str";
       //String bestand = bestand + String(i) + ".str"
       //leesStruct(bestand); is done at boottime
+      #ifdef DEBUG
       int ivn = bestand.substring(9,10).toInt();
       Serial.println("Inv_Prop[" + String(ivn) + "].invLocation = " + String(Inv_Prop[ivn].invLocation));     
       Serial.println("Inv_Prop[" + String(ivn) + "].invSerial = " + String(Inv_Prop[ivn].invSerial));
@@ -225,5 +224,5 @@ void printStruct( String bestand ) {
       Serial.println("Inv_Prop[" + String(ivn) + "].conPanels = " + String(Inv_Prop[ivn].conPanels[0])  + String(Inv_Prop[ivn].conPanels[1]) + String(Inv_Prop[ivn].conPanels[2]) + String(Inv_Prop[ivn].conPanels[3]));      
       Serial.println("");
       Serial.println("****************************************");
-      
+      #endif
 }

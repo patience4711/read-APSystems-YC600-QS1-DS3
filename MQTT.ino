@@ -1,12 +1,17 @@
 bool mqttConnect() {   // MQTT connection (documented way from AutoConnect : https://github.com/Hieromon/AutoConnect/tree/master/examples/mqttRSSI_NA)
     if ( Mqtt_Broker[0] == '\0' || Mqtt_Broker[0] == '0'  ) 
     {
-      Mqtt_Format = 0; // we proberen het niet opnieuw
+      Mqtt_Format = 0; // so we don't try again
       //DebugPrintln("no broker, cancelling");
       return false;
     }
     //DebugPrint("going to connect to mqtt broker "); DebugPrint(String(Mqtt_Broker));
     //DebugPrintln("connecting to mqtt");
+    if(MQTT_Client.connected()) {
+     Update_Log("mqtt", "healty");
+     return true; 
+    }
+    
     if (Mqtt_Port == "" ) Mqtt_Port = "1883";   // just in case ....
     uint8_t retry = 3;
     String clientId = String(ESP.getChipId());

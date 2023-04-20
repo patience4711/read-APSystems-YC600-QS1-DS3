@@ -133,8 +133,8 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
   txBuffer[len]='\0'; // terminate the array
   //ws.textAll("length data = " + String(strlen((char*)data)));
   #ifdef DEBUG
-  Serial.println("len = " + String(len));
-  Serial.println("txBuffer = " + String(txBuffer));
+  Serial.print(F("len = ")); Serial.println(String(len));
+  Serial.print(F("txBuffer = ")); Serial.println(String(txBuffer));
   ws.textAll("length data = " + String(len));
   ws.textAll("txBuffer = " + String(txBuffer));
   #endif
@@ -229,8 +229,20 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
               return;             
           
           } else 
+// ********************** heap sensor **************************************
+           if (strncasecmp(txBuffer+3,"DOMIDX=",6) == 0) {  
+            //input can be 10;POLL=0; 
+            //ws.textAll("received " + String( (char*)data) + "<br>"); 
+              int kz = String(txBuffer[10]).toInt()*100;
+              kz+=String(txBuffer[11]).toInt()*10;
+              kz+=String(txBuffer[12]).toInt();
  
- 
+              domIdx=kz; // max 450
+              ws.textAll("domIdx = " + String(domIdx) + "<br>");
+              
+              return;
+          } else 
+
  // ********************** zigbee test new*****************************          
            if (strncasecmp(txBuffer+3,"ZBT=",4) == 0) {  
               ws.textAll("going to send a teststring, len=" + String(len));

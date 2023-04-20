@@ -71,21 +71,19 @@ DebugPrint("len of txBuffer :  "); DebugPrintln(String(txBuffer));
       }
         
        //len at the begin
-       strcpy(sendCmd, strncat(sLen(sendCmd), sendCmd, sizeof(sLen(sendCmd)) + sizeof(sendCmd))); //build command plus sln at the beginning
-       // CRC at the end 
-       strcpy(sendCmd, strncat(sendCmd, checkSum(sendCmd), sizeof(sendCmd) + sizeof(checkSum(sendCmd))));
-       ws.textAll("sendCmd = FE" + String(sendCmd));
+       strcpy(sendCmd, strcat(sLen(sendCmd), sendCmd)); //build command plus sln at the beginning
+       //strcpy(sendCmd, strncat(sLen(sendCmd), sendCmd, sizeof(sLen(sendCmd)) + sizeof(sendCmd))); //build command plus sln at the beginning
+       // CRC at the end done by sendZigbee
+
+       ws.textAll("sendCmd (ex crc) = FE" + String(sendCmd));
        //now we send this command
-       #ifdef DEBUG
-       Serial.println("sendCmd = " + String(sendCmd));
-       swap_to_zb();
-       #endif
+
        sendZigbee(sendCmd);
        if ( waitSerialAvailable() ) { readZigbee(); } else { readCounter = 0;}
-       #ifdef DEBUG
-       swap_to_usb();
-       Serial.println("received : " + String(inMessage));
-       #endif
+//       #ifdef DEBUG
+//       swap_to_usb();
+//       Serial.println("received : " + String(inMessage));
+//       #endif
        ws.textAll("answer " + String(inMessage));
 }
 
