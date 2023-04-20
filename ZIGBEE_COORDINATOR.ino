@@ -21,35 +21,36 @@ bool coordinator(bool normal) { // if true we send the extra command for normal 
 }
 
 void coordinator_init() {
-ws.textAll("init zb coordinator");
-zigbeeUp = 11; //initial it is initializing 11, 0=down 1=up
-yield();
-
-// init the coordinator takes the following procedure
-// 1st we send a resetcommand 4 times Sent=FE0141000040
-// then we send the following commands
-//34:  0 Sent=FE03260503010321
-//35: Received=FE0166050062
-//39:  1 Sent=FE0141000040
-//40: Received=FE064180020202020702C2
-//44:  2 Sent=FE0A26050108FFFF80971B01A3D856
-//45: Received=FE0166050062
-//49:  3 Sent=FE032605870100A6
-//50: Received=FE0166050062
-//54:  4 Sent=FE 04 26058302 D8A3 DD  should be ecu_id the fst 2 bytes
-//55: Received=FE0166050062
-//59:  5 Sent=FE062605840400000100A4
-//60: Received=FE0166050062
-//64:  6 Sent=FE0D240014050F0001010002000015000020
-//65: Received=FE0164000065
-//69:  7 Sent=FE00260026
-//74:  8 Sent=FE00670067
-//75:  Received=FE0145C0098D
-// received FE00660066 FE0145C0088C FE0145C0098D F0F8FE0E670000FFFF80971B01A3D8000007090011
-//     9 for normal operastion we send cmd 9
-//79: Finished. Heap=26712
-//now we can pair if we want to or else an extra command for retrieving data
-
+/*
+* init the coordinator takes the following procedure
+* 1st we send a resetcommand 4 times Sent=FE0141000040
+* then we send the following commands
+*  0 Sent=FE03260503010321
+*  Received=FE0166050062
+*  1 Sent=FE0141000040
+*  Received=FE064180020202020702C2
+*  2 Sent=FE0A26050108FFFF80971B01A3D856
+*  Received=FE0166050062
+*  3 Sent=FE032605870100A6
+*  Received=FE0166050062
+*  4 Sent=FE 04 26058302 D8A3 DD  should be ecu_id the fst 2 bytes
+*  Received=FE0166050062
+*  5 Sent=FE062605840400000100A4
+*  Received=FE0166050062
+*  6 Sent=FE0D240014050F0001010002000015000020
+*  Received=FE0164000065
+*  7 Sent=FE00260026
+*  8 Sent=FE00670067
+*  Received=FE0145C0098D
+*  received FE00660066 FE0145C0088C FE0145C0098D F0F8FE0E670000FFFF80971B01A3D8000007090011
+*  now we can pair if we want to or else an extra command for retrieving data (normal operation)
+*  9 for normal operation we send cmd 9
+*  Finished. Heap=26712
+*  
+*/
+  ws.textAll("init zb coordinator");
+  zigbeeUp = 11; //initial it is initializing 11, 0=down 1=up
+  yield();
   char ecu_id_reverse[13]; //= {ECU_REVERSE()};
   ECU_REVERSE().toCharArray(ecu_id_reverse, 13);
   char initCmd[254]={0};
@@ -66,11 +67,9 @@ yield();
     "240014050F00010100020000150000",  //AF_REGISTER register an application’s endpoint description
     "2600", //ok ZB_START_REQUEST
   };
-    //  "6700", // the checkZigbeeRadio we can skip this, instead do checkZigbeeRadio
-    
-    // we start with a hard reset of the zb module
-    ZBhardReset();
-    delay(500);
+  // we start with a hard reset of the zb module
+  ZBhardReset();
+  delay(500);
 
   // construct some of the commands
   // ***************************** command 2 ********************************************
@@ -91,10 +90,11 @@ yield();
   {
     //cmd 0 t0 9 all ok
     strcpy(initCmd, initBaseCommand[y]);
+  
     //add sln at the beginning
     strcpy(initCmd, strcat(sLen(initCmd), initCmd));
-    //strcpy(initCmd, strncat(sLen(initCmd), initCmd, sizeof(sLen(initCmd)) + sizeof(initCmd))); 
     delayMicroseconds(250);
+
     // CRC at the end of the command now within sendZigbee
 
     sendZigbee(initCmd);
@@ -105,12 +105,13 @@ yield();
     readZigbee();
     if(diagNose) ws.textAll("inMessage = " + String(inMessage) + " rc = " + String(readCounter));
   }
+
   // now all the commands are send 
   //first clean (zero out) initCmd
   
-  memset(&initCmd, 0, sizeof(initCmd)); //zero out all buffers we could work with "messageToDecode"
+  memset(&initCmd, 0, sizeof(initCmd)); //zero out 
   delayMicroseconds(250);
-  memset(&initBaseCommand, 0, sizeof(&initBaseCommand)); //zero out all buffers we could work with "messageToDecode"
+  memset(&initBaseCommand, 0, sizeof(&initBaseCommand)); //zero out 
   delayMicroseconds(250);    
  
 }
@@ -118,25 +119,16 @@ yield();
 //                the extra command for normal operations
 // **************************************************************************************
 void sendNO() {
-    char initCmd[254] ={0} ;   //  we have to send the 10th command
+    char noCmd[90] ={0} ;   //  we have to send the 10th command
     char ecu_id_reverse[13]; //= {ECU_REVERSE()};
     ECU_REVERSE().toCharArray(ecu_id_reverse, 13);
 
-    char lastCmd[][100] = {
-    "2401FFFF1414060001000F1E",
-    "FBFB1100000D6030FBD3000000000000000004010281FEFE",       
-    };
-    //Serial.println("free heap after lastCmd : " + String(ESP.getFreeHeap()));
     //// ***************************** command 9 ********************************************
     //// now send command 9 this is "2401FFFF1414060001000F1E", + ecu_id_reverse + FBFB1100000D6030FBD3000000000000000004010281FEFE"
-    strncat(lastCmd[0], ecu_id_reverse, sizeof(ecu_id_reverse));
-    //Serial.println("initCmd 9 after ecu_reverse = " + String(initCmd));
-    strncat(lastCmd[0], lastCmd[1], sizeof(lastCmd[1]));
-    delayMicroseconds(250);
-    strcpy(initCmd, lastCmd[0]);
-    //add sln at the beginning
-    //strcpy(initCmd, strncat(sLen(initCmd), initCmd, sizeof(sLen(initCmd)) + sizeof(initCmd))); 
-    strcpy(initCmd, strcat(sLen(initCmd), initCmd));
+    snprintf(noCmd, sizeof(noCmd), "2401FFFF1414060001000F1E%sFBFB1100000D6030FBD3000000000000000004010281FEFE", ecu_id_reverse);
+
+    //put sln at the beginning
+    strcpy(noCmd, strcat(sLen(noCmd), noCmd));
     delayMicroseconds(250);
 
     // put in the CRC at the end of the command now done by sendZigbee()
@@ -144,8 +136,8 @@ void sendNO() {
     ws.textAll("sending N.O. cmd");
     Serial.flush();
 
-    sendZigbee(initCmd);
-    //delay(1000); // give the inverter the chance to answer
+    sendZigbee(noCmd);
+
     //check if anything was received
     waitSerialAvailable();
     readZigbee();
@@ -153,8 +145,6 @@ void sendNO() {
     if(diagNose) ws.textAll("inMessage = " + String(inMessage) + " rc = " + String(readCounter));
 
     //zero out 
-    memset(&initCmd, 0, sizeof(initCmd)); //zero out all buffers we could work with "messageToDecode"
-    delayMicroseconds(250);    
-    memset(&lastCmd, 0, sizeof(lastCmd)); //zero out all buffers we could work with "messageToDecode"
+    memset(&noCmd, 0, sizeof(noCmd)); //zero out all buffers we could work with "messageToDecode"
     delayMicroseconds(250);
 }
