@@ -51,10 +51,11 @@ The interesting values are send via mqtt and displayed on the main page.
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
 ## changelog ##
-version ESP-ECU_V9_8:
+version ESP-ECU_V9_9:
 - fix for the zigbee crashes
 - improved frontpage with buttons to see details.
 - fixed memory issues, more free heap.
+- cleaned up and streamlined the code with help of @fwolfst
 
 version ESP-ECU_V9_6c:
 - fixed a typo in the help page of mosquitto settings
