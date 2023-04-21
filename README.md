@@ -1,11 +1,11 @@
 # read APS inverters
-This project is for reading APS Systems inverters. The program can pair and poll YC600 QS1 and DS3 inverters, up to 9 pieces. The read values are displayed on a web page and sent via mosquitto in a Json format.
+The purpose of this project is to read data via Zigbee from APS Systems inverters. The program can pair and poll YC600 QS1 and DS3 inverters, up to 9 pieces. The read values are displayed on a web page and sent via mosquitto in a user-defined Json format.
 The program has a lot of smart features. All settings can be done via the webinterface. It has a console that can be used for debugging and sending/receiving zigbee messages.<br>
 See the <a href='https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/wiki'>WIKI</a> for information on building it, the working, etc. 
 
 See it in action on [YouTube](https://youtu.be/WKFVQ6d8KhQ)
 
-This program runs on different platforms, there is [ESP32-ECU](https://github.com/patience4711/ESP32-read-APS-inverters) and [RPI-ECU](https://github.com/patience4711/RPI-APS-inverters) that runs on a Raspberry (Zero). Each have its advantages over the others. If you have many inverters you are probably better off with the raspberry implementation.
+This program runs on different platforms, there is [ESP32-ECU](https://github.com/patience4711/ESP32-read-APS-inverters) and [RPI-ECU](https://github.com/patience4711/RPI-APS-inverters) that runs on a Raspberry (Zero). Each have its advantages over the others. If you have many inverters you are probably better off with the ESP32 or Raspberry implementation.
 
 ## compile this sketch
 You can use the provided binary but if you must compile it yourself: Use arduino ide with the esp822 version 2.7.1 installed under boardmanager. The ota updates won't work with other versons.
