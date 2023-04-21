@@ -47,7 +47,8 @@ The ESP communicates with the zigbee module through the alternative serial port 
 The ESP-ECU starts a coordinator (an entity that can start a zigbee network). The coordinator binds the inverters and sends the poll requests to them.
 The interesting values are send via mqtt and displayed on the main page.
 
-![frontpage](https://user-images.githubusercontent.com/12282915/138686152-3b065a7c-88f8-49d6-bf89-c512f82fd562.jpg)
+![front](https://user-images.githubusercontent.com/12282915/233657814-5f8aa18a-aff9-4668-9dec-7d6cc55f6f1c.jpg)
+
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
 ## changelog ##
