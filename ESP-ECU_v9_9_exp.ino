@@ -1,14 +1,5 @@
-/* implementation of the improvements from felix:
- *  the uppercase function in crc snd len
- *  the bool coordinatorinit changed in void
- *  the bool connectWifi canged in void
- *  the returns in bool file_open_for_read rearranged
- *  crc addition only in sendZigbee
- *  the original bin filesize = 480kb
- *  after using implementation of zigbee.h and appendcrc in sendZigbee 479 
- */
-// arduino version 2.7.1 
-#define VERSION  "ESP-ECU_v9_9a"
+
+#define VERSION  "ESP-ECU_v9_9_exp"
 
 #include <TimeLib.h>
 #include <time.h>
@@ -40,6 +31,7 @@ DNSServer dnsServer;
 #include "AAA_MENUPAGE.H"
 #include "PORTAL_HTML.H"
 //#include "AAA_HOMEPAGE.H"
+
 
 /*
  * if we define TEST we have a special environment to test the decoding of a string
@@ -81,9 +73,6 @@ int testCounter = 0;
   time_t switchoffTime = 0;
   time_t switchonTime = 0;
   bool dayTime=true;
-
-//  byte mDay = 0;
-//  String  maan = "";
   uint8_t actionFlag = 0;
 
  // variables wificonfig
@@ -104,11 +93,11 @@ int testCounter = 0;
 #define YC600_MAX_NUMBER_OF_INVERTERS 9
 char inMessage[CC2530_MAX_SERIAL_BUFFER_SIZE] = {0};
 int readCounter = 0;
-//char messageHead[5];
+
 bool diagNose=false;
 bool Polling = true; // when true we have automatic polling
 int errorCode=10;
-//int recovered = 0;
+
 
   int t_saved[YC600_MAX_NUMBER_OF_INVERTERS] = {0};
   float en_saved[YC600_MAX_NUMBER_OF_INVERTERS][4] = {0};
@@ -155,11 +144,14 @@ String  Mqtt_Username;
 String  Mqtt_Password;
 String  Mqtt_Port =     "1883";
 int     Mqtt_Format = 0;  
+
+long    mqtt_lastConnect = 0;
+
 int event = 0;
 
   int dst;
   int iKeuze;
-//  int inverterTopoll = 0;
+  int inverterTopoll = 0;
   bool timeRetrieved = false;
   int networksFound = 0; // used in the portal
   int datum = 0; //
@@ -179,7 +171,7 @@ String toSend = "";
  
 int value = 0; 
 //int pollCounter =0;
-//int aantal = 0;
+int aantal = 0;
 int resetCounter=0;
 
 // *******************************  log *************************************
@@ -364,7 +356,7 @@ void loop() {
    {
          lastCheck += 1000UL * 600;
          //we dont do healtcheck when stopped
-         healthCheck(); // checks zb radio and time.
+         healthCheck(); // checks zb radio, mqtt and time, when false only message if error
    }
 //// ******************************************************************
 ////              healthcheck every 60 minutes
@@ -373,7 +365,7 @@ void loop() {
 //   if (nu - lastCheck >= 1000UL * 3600) // was 600=10min*6=3600
 //   {
 //         lastCheck += 1000UL * 3600;
-//         //we don't do healtcheck when stopped
+//         //we dont do healtcheck when stopped
 //         healthCheck(); // checks zb radio, mqtt and time, when false only message if error
 //   }
 
@@ -388,10 +380,22 @@ void loop() {
   }
  
   //check mqtt is connected when it should
-  //when the coordinator is started the mqtt connection times out
+  // this way it can't block the loop
   if(Mqtt_Format != 0) 
   {
-   if(!MQTT_Client.loop()) mqttConnect();
+      if (!MQTT_Client.connected()) {
+        long now = millis();
+        if (now - mqtt_lastConnect > 5000) {
+          mqtt_lastConnect = now;
+          // Attempt to connect
+          if (mqttConnect()) {
+             mqtt_lastConnect = 0;
+          }
+        }
+      } else {
+        // Client connected
+        MQTT_Client.loop();
+      }
   }
    
   //*********************************************************************
@@ -404,9 +408,9 @@ void loop() {
         resetValues(true, true); //set all values to zero and sent mqtt
         Update_Log("system", "all values reset");
         actionFlag = 0; // to prevent repetition
-        //ZBhardReset(); // reset the zigbeemodule
-        //healthCheck(); // this increases the resetcounter so we decrease it
-        //resetCounter--; // so that this reset is not counted
+        ZBhardReset(); // reset the zigbeemodule
+        healthCheck(); // this increases the resetcounter so we decrease it
+        resetCounter--; // so that this reset is not counted
        }
   }
   
@@ -525,7 +529,7 @@ EEPROM.commit();
 //    }
 #ifdef TEST
     if (actionFlag == 122) {
-      actionFlag= 0; //reset the actionflag
+      actionFlag = 0; //reset the actionflag
       if(testCounter > 1) { 
         testCounter=0; // reset testcounter
         // make all values null
