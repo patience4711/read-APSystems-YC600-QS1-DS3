@@ -1,3 +1,4 @@
+
 const char CONSOLE_HTML[] PROGMEM = R"=====(
 <!DOCTYPE html><html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -87,8 +88,11 @@ document.getElementById("help").style.display = "none";
   function onMessage(event) {
     //var message = event.data;
     field.insertAdjacentHTML('beforeend', "<tr><td>" + event.data );
-    if (field.rows.length > 22) { field.deleteRow(0); }
-    if (event.data == "clearWindow") {alert("clear window?") 
+    if (field.rows.length > 22) {
+    var rtm = field.rows.length - 22;
+    for (let x=0; x<rtm; x++) { field.deleteRow(0); }
+  }
+    if (event.data == "clearWindow") { 
     for (let i = 0; i < 22; i++) {
         field.deleteRow(0); }
     }

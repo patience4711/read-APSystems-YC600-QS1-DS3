@@ -2,11 +2,17 @@ void start_asyserver() {
 DebugPrintln("starting server");
 //server.addHandler(&ws);
 
+//server.on("/details", HTTP_GET, [](AsyncWebServerRequest *request) {
+//int i = atoi(request->arg("inv").c_str()) ;
+//requestUrl = request->url();
+//sendPageDetails(i);
+//request->send(200, "text/html", toSend);
+//});
 server.on("/details", HTTP_GET, [](AsyncWebServerRequest *request) {
-int i = atoi(request->arg("inv").c_str()) ;
+iKeuze = atoi(request->arg("inv").c_str()) ; // so we know for which inverter
 requestUrl = request->url();
-sendPageDetails(i);
-request->send(200, "text/html", toSend);
+//sendPageDetails(i);
+request->send_P(200, "text/html", DETAILSPAGE);
 });
 
 server.on("/CONSOLE", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -338,29 +344,51 @@ server.on("/get.Times", HTTP_GET, [](AsyncWebServerRequest *request) {
 //     json = String();
 //});
 
-server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) {     
+server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) { 
+// this is used by the detailspage and for http requests      
 // set the array into a json object
   String json;
-  int panelCount=2;
-  int i = (request->arg("inv").toInt()) ;
+//  int panelCount=4;
+  int i;
+  if (request->hasArg("inv")) {
+  i = (request->arg("inv").toInt()) ;
+  } else {
+  i = iKeuze;
+  //request->send(200, "text/plain", "no argument provided");
+  }
   //Serial.println("i = " + String(i));
   if( i < inverterCount) {
       json="{";
 
-      if(Inv_Prop[i].invType == 1) panelCount=4;
+//      if(Inv_Prop[i].invType == 1) panelCount=4;
+      json += "\"inv\":\"" + String(i) + "\"";
+      json += ",\"polled\":\"" + String(polled[i]) + "\"";
+      json += ",\"serial\":\"" + String(Inv_Prop[i].invSerial)  + "\"";      
+      json += ",\"sid\":\""  + String(Inv_Prop[i].invID) + "\""; //freq = a char
+      json += ",\"type\":\"" + String(Inv_Prop[i].invType) + "\"";
       
-      json += "\"serial\":\"" + String(Inv_Prop[i].invSerial)  + "\"";      
       json += ",\"freq\":"  + String(atof(Inv_Data[i].freq)); //freq = a char    
       json += ",\"temp\":"  + String(atof(Inv_Data[i].heath));
       json += ",\"acv\":"   + String(atof(Inv_Data[i].acv));
-
-      for(int z = 0; z < panelCount; z++ ) 
+      json += ",\"sq\":" + String(atof(Inv_Data[i].sigQ));
+      
+// we need to provide values foar all panel so when connected this is n/e
+      for(int z = 0; z < 4; z++ ) 
       {
-        json += ",\"dcv" + String(z) + "\":" + String(atof(Inv_Data[i].dcv[z]));
-        json += ",\"dcc" + String(z) + "\":" + String(atof(Inv_Data[i].dcc[z]));
-        json += ",\"pow" + String(z) + "\":" + String(atof(Inv_Data[i].power[z]));
-        json += ",\"en" + String(z) + "\":" + String(en_saved[i][z], 2);
+         if(Inv_Prop[i].conPanels[z]) // is this panel connected?
+         {
+            json += ",\"dcv" + String(z) + "\":" + String(atof(Inv_Data[i].dcv[z]));
+            json += ",\"dcc" + String(z) + "\":" + String(atof(Inv_Data[i].dcc[z]));
+            json += ",\"pow" + String(z) + "\":" + String(atof(Inv_Data[i].power[z]));
+            json += ",\"en" + String(z) + "\":" + String(en_saved[i][z], 2);  
+         }   else {
+             json += ",\"dcv" + String(z) + "\":\"n/e\"";
+             json += ",\"dcc" + String(z) + "\":\"n/e\"";
+             json += ",\"pow" + String(z) + "\":\"n/e\"";
+             json += ",\"en" + String(z) +  "\":\"n/e\"";
+         }
       }
+      
       json += ",\"power\":" + String(atof(Inv_Data[i].power[4]));
       json += ",\"energy\":" + String(Inv_Data[i].en_total, 2);
       json += "}";     

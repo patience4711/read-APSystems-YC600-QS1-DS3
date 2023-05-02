@@ -9,12 +9,7 @@ float en_total = 0;
 dtostrf(float_value, min_width, num_digits_after_decimal, where_to_store_string)
 
 */
-void force_values() {
-  for(int z=0; z<inverterCount; z++) { // for all inverters
-  int q=2; // count of panels 
-  if(Inv_Prop[z].invType == 1) q = 4;
-  polled[z] = true;
-  }
+
 /*  strcpy(Inv_Data[z].acv, "220.1");
   strcpy(Inv_Data[z].heath, "16.2");  
 
@@ -39,4 +34,4 @@ void force_values() {
   Inv_Data[z].en_total = 407.0;    
   }
 */
-}
+//}

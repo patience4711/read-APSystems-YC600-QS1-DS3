@@ -1,4 +1,6 @@
 bool mqttConnect() {   // MQTT connection (documented way from AutoConnect : https://github.com/Hieromon/AutoConnect/tree/master/examples/mqttRSSI_NA)
+    // we are here because w'r not connected. Signal with the LED
+    ledblink(2,70);
     if ( Mqtt_Broker[0] == '\0' || Mqtt_Broker[0] == '0'  ) 
     {
       Mqtt_Format = 0; // we do not try again

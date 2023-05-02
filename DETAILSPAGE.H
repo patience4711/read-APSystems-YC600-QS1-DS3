@@ -96,7 +96,7 @@ function loadData() {
 <colgroup><col span='1' style='background:#00cc66; width:80px;'><col span='4' style='background:#99ffcc; width:80px;'></colgroup>
 <tr><td>dc voltage<td id="v0">n/a</td><td id="v1">n/a</td>
 <td id="v2">n/a</td><td id="v3">n/a</td></tr>
-<tr><td>dc voltage<td id="c0">n/a</td><td id="c1">n/a</td>
+<tr><td>dc current<td id="c0">n/a</td><td id="c1">n/a</td>
 <td id="c2">n/a</td><td id="c3">n/a</td></tr>
 </table></div>
 

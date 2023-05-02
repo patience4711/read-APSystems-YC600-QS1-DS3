@@ -48,103 +48,88 @@ void coordinator_init() {
 *  Finished. Heap=26712
 *  
 */
-  ws.textAll("init zb coordinator");
-  zigbeeUp = 11; //initial it is initializing 11, 0=down 1=up
-  yield();
-  char ecu_id_reverse[13]; //= {ECU_REVERSE()};
-  ECU_REVERSE().toCharArray(ecu_id_reverse, 13);
-  char initCmd[254]={0};
-  
-  
-  // commands for setting up coordinater
-  char initBaseCommand[][254] = {
-    "2605030103", // ok   this is a ZB_WRITE_CONFIGURATION CMD //changed to 01
-    "410000",     // ok   ZB_SYS_RESET_REQ
-    "26050108FFFF", // + ecu_id_reverse,  this is a ZB_WRITE_CONFIGURATION CMD
-    "2605870100",  //ok 
-    "26058302",  // + ecu_id.substring(0,2) + ecu_id.substring(2,4),
-    "2605840400000100", //ok
-    "240014050F00010100020000150000",  //AF_REGISTER register an application’s endpoint description
-    "2600", //ok ZB_START_REQUEST
-  };
-  // we start with a hard reset of the zb module
-  ZBhardReset();
-  delay(500);
+    ws.textAll("init zb coordinator");
+    zigbeeUp = 11; //initial it is initializing 11, 0=down 1=up
+    yield();
 
-  // construct some of the commands
-  // ***************************** command 2 ********************************************
-  // command 2 this is 26050108FFFF we add ecu_id reversed
-  strncat(initBaseCommand[2], ecu_id_reverse, sizeof(ecu_id_reverse)); 
-  delayMicroseconds(250);
-  //Serial.println("initCmd 2 constructed = " + String(initBaseCommand[2]));  // ok
-  
-  // ***************************** command 4 ********************************************
-  // command 4 this is 26058302 + ecu_id_short 
-  strncat(initBaseCommand[4], ECU_ID, 2);
-  strncat(initBaseCommand[4], ECU_ID + 2, 2);
-  delayMicroseconds(250);
-  //Serial.println("initCmd 4 constructed = " + String(initBaseCommand[4]));
-  
-  // send the rest of the commands
-  for (int y = 0; y < 8; y++) 
-  {
-    //cmd 0 t0 9 all ok
-    strcpy(initCmd, initBaseCommand[y]);
-  
-    //add sln at the beginning
-    strcpy(initCmd, strcat(sLen(initCmd), initCmd));
+    char ecu_id_reverse[13]; //= {ECU_REVERSE()};
+    ECU_REVERSE().toCharArray(ecu_id_reverse, 13);
+    char initCmd[254]={0};
+
+    // commands for setting up coordinater
+    char initBaseCommand[][254] = {
+      "2605030103", // ok   this is a ZB_WRITE_CONFIGURATION CMD //changed to 01
+      "410000",     // ok   ZB_SYS_RESET_REQ
+      "26050108FFFF", // + ecu_id_reverse,  this is a ZB_WRITE_CONFIGURATION CMD
+      "2605870100",  //ok 
+      "26058302",  // + ecu_id.substring(0,2) + ecu_id.substring(2,4),
+      "2605840400000100", //ok
+      "240014050F00010100020000150000",  //AF_REGISTER register an application’s endpoint description
+      "2600", //ok ZB_START_REQUEST
+    };
+
+
+    // we start with a hard reset of the zb module
+    ZBhardReset();
+    delay(500);
+
+    // construct some of the commands
+    // ***************************** command 2 ********************************************
+    // command 2 this is 26050108FFFF we add ecu_id reversed
+    strncat(initBaseCommand[2], ecu_id_reverse, sizeof(ecu_id_reverse)); 
     delayMicroseconds(250);
+    
+    // ***************************** command 4 ********************************************
+    // command 4 this is 26058302 + ecu_id_short 
+    strncat(initBaseCommand[4], ECU_ID, 2);
+    strncat(initBaseCommand[4], ECU_ID + 2, 2);
+    delayMicroseconds(250);
+    
+    // send the rest of the commands
+    for (int y = 0; y < 8; y++) 
+    {
+      //cmd 0 tm / 9 alles ok
+      strcpy(initCmd, initBaseCommand[y]);
 
-    // CRC at the end of the command now within sendZigbee
+      // CRC at the end of the command done in sendZigbee
+      sendZigbee(initCmd);
+      ledblink(1,50);
+      // read the answer , we don't do anything with that
+      char s_d[150]={0};
+      char * inMessage = readZigbee(s_d);
 
-    sendZigbee(initCmd);
-    ledblink(1,50);
-
-    //check if anything was received
-    waitSerialAvailable();
-    readZigbee();
-    if(diagNose) ws.textAll("inMessage = " + String(inMessage) + " rc = " + String(readCounter));
-  }
-
-  // now all the commands are send 
-  //first clean (zero out) initCmd
-  
-  memset(&initCmd, 0, sizeof(initCmd)); //zero out 
-  delayMicroseconds(250);
-  memset(&initBaseCommand, 0, sizeof(&initBaseCommand)); //zero out 
-  delayMicroseconds(250);    
+      //if(diagNose) ws.textAll("inMessage = " + String(inMessage) + " rc = " + String(readCounter));
+    }
+    // now all the commands are send 
+    //first clean (zero out) initCmd
+    
+    memset(&initCmd, 0, sizeof(initCmd)); //zero out 
+    delayMicroseconds(250);
+    memset(&initBaseCommand, 0, sizeof(initBaseCommand)); //zero out 
+    delayMicroseconds(250);    
  
 }
-// **************************************************************************************
-//                the extra command for normal operations
-// **************************************************************************************
+
 void sendNO() {
-    char noCmd[90] ={0} ;   //  we have to send the 10th command
+    char noCmd[120] ={0} ;   //  we have to send the 10th command
     char ecu_id_reverse[13]; //= {ECU_REVERSE()};
     ECU_REVERSE().toCharArray(ecu_id_reverse, 13);
 
-    //// ***************************** command 9 ********************************************
-    //// now send command 9 this is "2401FFFF1414060001000F1E", + ecu_id_reverse + FBFB1100000D6030FBD3000000000000000004010281FEFE"
+    // ***************************** command 9 ********************************************
+    // now send command 9 this is "2401FFFF1414060001000F1E", + ecu_id_reverse + FBFB1100000D6030FBD3000000000000000004010281FEFE"
     snprintf(noCmd, sizeof(noCmd), "2401FFFF1414060001000F1E%sFBFB1100000D6030FBD3000000000000000004010281FEFE", ecu_id_reverse);
-
-    //put sln at the beginning
-    strcpy(noCmd, strcat(sLen(noCmd), noCmd));
-    delayMicroseconds(250);
-
+    
     // put in the CRC at the end of the command now done by sendZigbee()
 
     ws.textAll("sending N.O. cmd");
-    Serial.flush();
 
     sendZigbee(noCmd);
 
-    //check if anything was received
-    waitSerialAvailable();
-    readZigbee();
-
-    if(diagNose) ws.textAll("inMessage = " + String(inMessage) + " rc = " + String(readCounter));
+      // read the answer , we don't do anything with that
+      char s_d[150];
+      char * inMessage = readZigbee(s_d);
 
     //zero out 
-    memset(&noCmd, 0, sizeof(noCmd)); //zero out all buffers we could work with "messageToDecode"
+    memset(&noCmd, 0, sizeof(noCmd)); //zero out 
     delayMicroseconds(250);
 }

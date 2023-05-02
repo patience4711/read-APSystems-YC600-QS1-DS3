@@ -43,11 +43,11 @@ void getTijd() {
   
 ntpUDP.stop();
 //
-//  // the time now is retrieved and put in setTime
-//  // so now we van do all calculations
+//  // de tijd is nu opgehaald en in setTime gestopt
+//  // dus met de tijden die met setTime zijn opgeslagen gaan we  alle berekeningen doen
 //  
-//DebugPrint("the hour is ");  //DebugPrint(hour());
-//DebugPrint("   # minutes "); //DebugPrintln(minute());
+//DebugPrint("het uur is ");  //DebugPrint(hour());
+//DebugPrint("   aantal minuten "); //DebugPrintln(minute());
 datum = day();
 //
 //yield();

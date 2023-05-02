@@ -1,3 +1,20 @@
+//var interval = 60000;
+//setInterval(function loadTime() {
+//  var xhttp = new XMLHttpRequest();
+//  xhttp.onreadystatechange = function() {
+//    if (this.readyState == 4 && this.status == 200) {
+//      var antwoord = this.responseText;
+//      var obj = JSON.parse(antwoord);
+//      var hr = obj.uur;
+//      var mn = obj.min;
+//      var tijd= hr + ":" + mn;
+//      document.getElementById('tijdveld').innerHTML=tijd;
+//      }
+//  };
+//  xhttp.open("GET", "get.currentTime", true);
+//  xhttp.send();
+//  interval=60000;
+//},interval);
 
 const char INFOPAGE [] PROGMEM = R"=====(
 <!DOCTYPE html><html><head>
@@ -10,6 +27,11 @@ table, th, td {border: 1px solid blue; width:font-size:12px;}
 body {margin:10px 10px 0px 20px; font-family:'lato',Verdana,Sans-serif;font-size:12px;}
 </style>
 <script>
+//var interval = 60000;
+
+//setInterval(function loadData() {
+//loadTime()();
+//},15000);
 
 function loadTime() {
   var xhttp = new XMLHttpRequest();
@@ -81,34 +103,22 @@ if ( Mqtt_Format != 0 ) { //bool == y en er is een mqtt adres, ja kijk dan of er
   toSend += F("current errorCode = "); toSend += String(errorCode) + F("<br>"); 
 
 
-//toSend += "<h4>PAIRED INVERTERS</h4>";
-//for(int x=0;x<inverterCount;x++) {
-//    if(String(Inv_Prop[x].invID) != "0x0000" ) {
-//      toSend += "inverter " + String(x) + " serialnr " + String(Inv_Prop[x].invSerial) + "  ID = " + String(Inv_Prop[x].invID) + "  signal quality: "; 
-//      if (polled[x] )
-//        { 
-//        toSend += String(Inv_Data[x].sigQ) + "%<br>";  
-//        } else {
-//        toSend += "n/a <br>";
-//        } 
-//      }
-//}
-
-
 toSend += F("<br><br><table><tr><TH> ESP INFORMATION</th></tr>");
 toSend += F("<tr><td>ESP CHIP ID nr: <td>"); toSend += String(ESP.getChipId());
 toSend += F("<td>Flash Chip ID nr: <td>"); toSend += String(ESP.getFlashChipId()) + F("</tr>");
 toSend += F("<tr><td>IDE Flash size: <td>"); toSend += String(ESP.getFlashChipSize()) + F(" bytes");
-toSend += F("<td>Free stack<td>"); toSend += String(ESP.getFreeContStack()) + F(" bytes</tr>");
+//toSend += F("<td>Real Flash size<td>"); toSend += String(ESP.getFlashChipRealSize()) + F(" bytes</tr>");
+toSend += F("<td>stack size<td>"); toSend += String( stack_size() ) + F(" bytes</tr>");
 toSend += F("<tr><td>Free heap<td>"); toSend += String(ESP.getFreeHeap()) + F(" bytes<td>remote IP<td>");
 toSend += request->client()->remoteIP().toString() + F("</table>");
 
 toSend += F("<h4>variables dump</h4>");
 toSend += "value=" + String(value)  + "  inverterCount=" + String(inverterCount) + "  zigbeeUp=" + String(zigbeeUp) + "<br>";
-toSend += "unixtime=" + String(now()) + "  switchonTime=" + String(switchonTime)  + "  switchoffTime=" + String(switchoffTime)+ "<br>";
-toSend += "polled = " + String(polled[0]) + String(polled[1]) + String(polled[2]) + String(polled[3]) + String(polled[4]) + String(polled[5]) + String(polled[6]) + String(polled[7]) + String(polled[8]) + "<br>";
-toSend += "resetCounter = " + String(resetCounter) + "  requestUrl = " + requestUrl  + "<br>";
-toSend += "pollOffset = " + String(pollOffset) + "  Mqtt_Format = " + String(Mqtt_Format) + "<br>";
+toSend += "switchonTime=" + String(switchonTime)  + "  switchoffTime=" + String(switchoffTime)+ "<br>";
+toSend += "polled = " + String(polled[0]) + String(polled[1]) + String(polled[2]) + String(polled[3]) + 
+String(polled[4]) + String(polled[5]) + String(polled[6]) + String(polled[7]) + String(polled[8]) + "  diagNose = " + String(diagNose) + "<br>";
+toSend += "resetCounter = " + String(resetCounter);
+toSend += "  pollOffset = " + String(pollOffset) + "  Mqtt_Format = " + String(Mqtt_Format) + "<br>";
 
 #ifdef TEST
 toSend += "  testCounter = " + String(testCounter) + " inv0 type = " + String(Inv_Prop[0].invType);
@@ -126,4 +136,9 @@ while (dir.next()) {
  //DebugPrintln("end infopage "); 
  //DebugPrint("de lengte van toSend na de infopage = "); //DebugPrintln( toSend.length() );
  request->send(200, "text/html", toSend); //send the html code to the client
+}
+
+uint32_t stack_size() {
+    char stack;
+    return (uint32_t)stack_start - (uint32_t)&stack;
 }
