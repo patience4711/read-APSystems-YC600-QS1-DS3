@@ -4,32 +4,66 @@
 // *****************************************************************************
 void sendZigbee( char printString[] )
 {
-//char bufferSend[254];
-    char bufferSend[3];
+    char bufferSend[254];
+    char byteSend[3]={0};
+    // add sLen 
+    sprintf( bufferSend, "%02X", (strlen(printString) / 2 - 2) );
+    delayMicroseconds(250); //give memset a little     //char bufferSend[3];
     // add sLen and crc
-    
-    strcpy(printString, strcat(sLen(printString), printString));
+    strcat(bufferSend, printString);
+    delayMicroseconds(250); //
+    //strcpy(printString, strcat(sLen(printString), printString));
+    //delayMicroseconds(250);
+    //strcat(printString, checkSum(printString));
+    strcat(bufferSend, checkSum(bufferSend));
     delayMicroseconds(250);
-    strcat(printString, checkSum(printString));
-    delayMicroseconds(250);
-    if (diagNose) ws.textAll("sending FE" + String(printString));
+    if (diagNose) ws.textAll("sending FE" + String(bufferSend));
 
     empty_serial();
 
     if (Serial.availableForWrite() > (uint8_t)strlen(printString))
     {
         Serial.write(0xFE); //we have to send "FE" at start of each command
-        for (uint8_t i = 0; i <= strlen(printString) / 2 - 1; i++)
+        for (uint8_t i = 0; i <= strlen(bufferSend) / 2 - 1; i++)
         {
          // we use 2 characters to make a byte
-            strncpy(bufferSend, printString + i * 2, 2); 
+            strncpy(byteSend, bufferSend + i * 2, 2); 
             delayMicroseconds(250);                     //give memset a little bit of time to empty all the buffers
-            Serial.write(StrToHex(bufferSend));        //turn the two chars to a byte and send this
+            Serial.write(StrToHex(byteSend));        //turn the two chars to a byte and send this
         }
             Serial.flush(); //wait till the full command was sent
 
     }
 }
+
+//void sendZigbee( char printString[] )
+//{
+////char bufferSend[254];
+//    char bufferSend[3];
+//    // add sLen and crc
+//    
+//    strcpy(printString, strcat(sLen(printString), printString));
+//    delayMicroseconds(250);
+//    strcat(printString, checkSum(printString));
+//    delayMicroseconds(250);
+//    if (diagNose) ws.textAll("sending FE" + String(printString));
+//
+//    empty_serial();
+//
+//    if (Serial.availableForWrite() > (uint8_t)strlen(printString))
+//    {
+//        Serial.write(0xFE); //we have to send "FE" at start of each command
+//        for (uint8_t i = 0; i <= strlen(printString) / 2 - 1; i++)
+//        {
+//         // we use 2 characters to make a byte
+//            strncpy(bufferSend, printString + i * 2, 2); 
+//            delayMicroseconds(250);                     //give memset a little bit of time to empty all the buffers
+//            Serial.write(StrToHex(bufferSend));        //turn the two chars to a byte and send this
+//        }
+//            Serial.flush(); //wait till the full command was sent
+//
+//    }
+//}
 
 // *****************************************************************************
 //                 read zigbee radio 

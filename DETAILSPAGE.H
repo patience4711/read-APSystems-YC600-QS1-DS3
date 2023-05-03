@@ -9,7 +9,10 @@ const char DETAILSPAGE [] PROGMEM = R"=====(
 table, th, td {border: 1px solid blue; font-size:16px; text-align:center} 
 body {margin:10px 10px 0px 20px; font-family:'lato',Verdana,Sans-serif;font-size:16px;}
 tr {height:35px;}
-.pol (display:none;}
+.pol {display:none;}
+@media only screen and (max-width: 800px) {
+th, td { width:60px; font-size:12px; }
+}
 </style>
 <script>
 function loadScript() {
