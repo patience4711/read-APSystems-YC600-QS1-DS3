@@ -74,32 +74,29 @@ void coordinator_init() {
     ecu_short[5]='\0';
     ws.textAll("ecu_short = " + String(ecu_short) );
 
-    // we start with a hard reset of the zb module
-    ZBhardReset();
-    delay(500);
+
 
     // construct some of the commands
     // ***************************** command 2 ********************************************
     // command 2 this is 26050108FFFF we add ecu_id reversed
-    //strncat(initCmd[2], ecu_id_reverse, sizeof(ecu_id_reverse)); 
-    //delayMicroseconds(250);
     snprintf(initCmd[2], sizeof(initCmd[2]), "26050108FFFF%s", ecu_id_reverse);
     delayMicroseconds(250);
 
     // ***************************** command 4 ********************************************
     // command 4 this is 26058302 + ecu_id_short 
-    //strncat(initBaseCommand[4], ECU_ID, 2);
-    //strncat(initBaseCommand[4], ECU_ID + 2, 2);
-    //delayMicroseconds(250);
     snprintf(initCmd[4], sizeof(initCmd[4]), "26058302%s", ecu_short);
     delayMicroseconds(250);
-    // send the rest of the commands
+
+    // we start with a hard reset of the zb module
+    ZBhardReset();
+    delay(500);    
+    // when the coordinator is running send the commands
     for (int y = 0; y < 8; y++) 
     {
-      //cmd 0 tm / 9 alles ok
+      //cmd 0 - 9 all ok
 
       if(diagNose) ws.textAll("coordinator init cmd " + String(y));
-      //sendZB(initCmd); // here it crashed, but why?
+      
       sendZB(initCmd[y]);
       ledblink(1,50);
       delay(1000); // give the inverter the chance to answer
