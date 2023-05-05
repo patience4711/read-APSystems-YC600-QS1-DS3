@@ -3,31 +3,40 @@
 // ******************************************************************
 int decodePollAnswer(int which)
 {
-// this function retrieves and analyzes the answer to a poll request
-
+//Serial.println("1 decodePollAnswer which = " + String(which) );
 // we need the fullincomingMessge and the inverterSerial
+  char messageToDecode[CC2530_MAX_SERIAL_BUFFER_SIZE] = {0};
 
-  char s_d[254] = {0};
+  char s_d[CC2530_MAX_SERIAL_BUFFER_SIZE] = {0};
   uint8_t Message_begin_offset = 0;    
+
   int t_old = 0;
+ 
   float en_old[4] = {0}; // energy old
   float energy_old_total = 0;
   int t_extr  = 0;
   int ts = 0;
   bool resetFlag = false;
   float total_pwr = 0;
-  char messageToDecode[254]={0};  
+//if(!*inMessage) return 50; // if empty we return with erroCode 50
+//
+//    strncpy(messageToDecode, inMessage, strlen(inMessage));
+//    //delayMicroseconds(250); //give memset a little bit of time to empty all the buffers
+//    
+//    // we dont need this char anymore so make it empty
+//    memset( &inMessage, '\0', sizeof(inMessage) ); //zero out the 
+//    delayMicroseconds(250);
+//  char messageToDecode[CC2530_MAX_SERIAL_BUFFER_SIZE]={0};  
   //if(!*inMessage) return 50; // if empty we return with erroCode 50
-  strcpy(messageToDecode, readZigbee(s_d));
+  strcpy(messageToDecode, readZB(s_d));
   //char * inMessage = readZigbee(s_d); 
   if (readCounter == 0) {
      if(diagNose) ws.textAll("no answer "); 
       return 50; //no answer
     }
   Serial.println("wrong here?");
-  //if(diagNose) ws.textAll("polling answer " + String(messageToDecode));   
-
-  char *tail;
+  //if(diagNose) ws.textAll("polling answer " + String(messageToDecode));       
+    char *tail;
 
     if(strstr(messageToDecode,  "FE01640100") == NULL) // answer to AF_DATA_REQUEST 00=success
     {
@@ -58,19 +67,17 @@ int decodePollAnswer(int which)
     }    
         
     //shorten the message by removing everything before 4481
-    //tail = strstr(messageToDecode, "44810000");
 
     tail = split(messageToDecode, "44810000"); // remove the 0000 as well
     //tail = after removing the 1st part
     // in tail at offset 14, 2 bytes with signalQuality reside   
-    //if(diagNose) ws.textAll("tail = " + String(tail) );
+
     //sigQ = roundoff( (float) (extractValue(14, 2, 1, 0, tail) * 100 / 254 ), 1);
     dtostrf((float)(extractValue(14, 2, 1, 0, tail) * 100 / 255 ), 0, 1, Inv_Data[which].sigQ);
     ws.textAll( "extracted sigQ = " + String(Inv_Data[which].sigQ) );
     //    dtostrf((float)(extractValue(68, 4, 1, 0, s_d) / 3.8 ), 0, 1, Inv_Data[which].acv);
     //    ws.textAll( "extracted ACV = " + String(Inv_Data[which].acv) );
 // a YC600 message
-//6013A101414008300A0C30600005E 408000158215 FBFB51 B103F20F42020000299500 00003C01 6B52C16904AE0000000000000000CCDE231500CB3345BA1F00030557073F0303030100000100000000000000000000000000000000000000000000000000000000000000FEFE3A100EF6
 // tail 06 01 3A 10 14 14 00 71 00 B5 7C FA 00 00 5E | 40 80 00 15 82 15 | FB FB 51 | B1 03 D4 0F 41 17 00 00 74 CF 00 | 00 00 76 70 | 6A 73 D0 6B 04 96 |
 //      0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 | 15 16 17 18 19 20 | 21 22 23 | 24 25 26 27 28 29 30 31 32 33 34 | 35 36 37 38 | 39 40 41 42 43 44 |
 // np                                                   0  1  2  3  4  5 | 6  7  8  | 9  10 11 12 13 14 15 16 17 18 19 | 20 21 22 23 | 24 25 26 27 28 29 |
@@ -100,47 +107,48 @@ int decodePollAnswer(int which)
 
 // new string
 // 703000021300fbfb5cbbbb2000fc0001ffff000000000000000006e506ee015901da036e13882bbb01480026 ff ff 05 25 | 08 43 | 00 3a 40 b2 | 00 35 38 52 | 00 ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff3896fefe
-        // attention s_d starts with the tail at offset 30 !!                             44            48temp  50   EN2       54     EN1
+        // attention s_d starts with the serial at offset 30 !!                             44            48temp  50   EN2       54     EN1
+        //NEW VERSION of s_d generation with search string
         memset(&s_d[0], 0, sizeof(s_d)); //zero out all buffers we could work with "messageToDecode"
         delayMicroseconds(250);            //give memset a little bit of time to empty all the buffers
         strncpy(s_d, tail + 30, strlen(tail));
         delayMicroseconds(250); //give memset a little bit of time to empty all the buffers
 
-        if(diagNose) ws.textAll("s_d = " + String(s_d) );
+   // #ifdef TEST
+   //    ws.textAll("s_d =  " + String(s_d)); // show the tail
+   // #endif
 
-        if( Inv_Prop[which].invType == 2 ) { // is this a DS3
-            ws.textAll( "decoding a DS3 inverter");
-            // ACV offset 34
-            dtostrf((float)(extractValue(68, 4, 1, 0, s_d) / 3.8 ), 0, 1, Inv_Data[which].acv);
-            ws.textAll( "extracted ACV = " + String(Inv_Data[which].acv) );
+      if( Inv_Prop[which].invType == 2 ) { // is this a DS3
+        ws.textAll( "decoding a DS3 inverter");
+        // ACV offset 34
+        dtostrf((float)(extractValue(68, 4, 1, 0, s_d) / 3.8 ), 0, 1, Inv_Data[which].acv);
+        ws.textAll( "extracted ACV = " + String(Inv_Data[which].acv) );
         
-            // FREQ offset 36
-            dtostrf((float)(extractValue(72, 4, 1, 0, s_d)/100 ), 0, 1, Inv_Data[which].freq);
-            ws.textAll( "extracted FREQ = " + String(Inv_Data[which].freq) );
+        // FREQ offset 36
+        dtostrf((float)(extractValue(72, 4, 1, 0, s_d)/100 ), 0, 1, Inv_Data[which].freq);
+        ws.textAll( "extracted FREQ = " + String(Inv_Data[which].freq) );
         
-            // HEATH offset 48
-            dtostrf((extractValue(96, 4, 1, 0, s_d)*0.0198 - 23.84), 0, 1, Inv_Data[which].heath);         
-            ws.textAll( "extracted HEATH = " + String(Inv_Data[which].heath) );
+        // HEATH offset 48
+        dtostrf((extractValue(96, 4, 1, 0, s_d)*0.0198 - 23.84), 0, 1, Inv_Data[which].heath);         
+        ws.textAll( "extracted HEATH = " + String(Inv_Data[which].heath) );
         
-          // ******************  dc voltage   *****************************************
-           //voltage ch1 offset 28
-           dtostrf( extractValue( 52, 4, 1, 0, s_d ) * (float)1 / (float)48, 0, 1, Inv_Data[which].dcv[0]);
-           //voltage ch2 offset 26
-           dtostrf( extractValue( 56, 4, 1, 0, s_d ) * (float)1 / (float)48, 0, 1, Inv_Data[which].dcv[1]);
-           // ******************  current   *****************************************
-           //current ch1 offset 30
-          //dtostrf( extractValue(60, 4, 1, 0, s_d ) * 1.25 / 100, 0, 1, Inv_Data[which].dcc[0]);
-          dtostrf( extractValue(60, 4, 1, 0, s_d ) * 0.0125, 0, 1, Inv_Data[which].dcc[0]);
-           //current ch1 offset 34
-          dtostrf( extractValue(64, 4, 1, 0, s_d ) * 0.0125, 0, 1, Inv_Data[which].dcc[1]);
+        // ******************  dc voltage   *****************************************
+         //voltage ch1 offset 28
+         dtostrf( extractValue( 52, 4, 1, 0, s_d ) * (float)1 / (float)48, 0, 1, Inv_Data[which].dcv[0]);
+         //voltage ch2 offset 26
+         dtostrf( extractValue( 56, 4, 1, 0, s_d ) * (float)1 / (float)48, 0, 1, Inv_Data[which].dcv[1]);
+         // ******************  current   *****************************************
+         //current ch1 offset 30
+        //dtostrf( extractValue(60, 4, 1, 0, s_d ) * 1.25 / 100, 0, 1, Inv_Data[which].dcc[0]);
+        dtostrf( extractValue(60, 4, 1, 0, s_d ) * 0.0125, 0, 1, Inv_Data[which].dcc[0]);
+         //current ch1 offset 34
+        dtostrf( extractValue(64, 4, 1, 0, s_d ) * 0.0125, 0, 1, Inv_Data[which].dcc[1]);
       
       } else {
-         if(diagNose) {
-            if(Inv_Prop[which].invType == 0) {
-                ws.textAll( "decoding a YC600 inverter"); 
-            } else { 
-               ws.textAll( "decoding a QS1 inverter");}
-         }
+         #ifdef TEST
+         if(Inv_Prop[which].invType == 0) {
+         ws.textAll( "decoding a YC600 inverter"); } else { ws.textAll( "decoding a QS1 inverter");}
+         #endif
 
          
         //yc600 or QS1
