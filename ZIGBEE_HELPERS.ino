@@ -1,24 +1,19 @@
-
 // *****************************************************************************
 //                 send to zigbee radio
 // *****************************************************************************
-void sendZigbee( char printString[] )
+void sendZB( char printString[] )
 {
-    char bufferSend[254];
+    char bufferSend[254]={0};
     char byteSend[3]={0};
     // add sLen 
     sprintf( bufferSend, "%02X", (strlen(printString) / 2 - 2) );
-    delayMicroseconds(250); //give memset a little     //char bufferSend[3];
-    // add sLen and crc
     strcat(bufferSend, printString);
     delayMicroseconds(250); //
-    //strcpy(printString, strcat(sLen(printString), printString));
-    //delayMicroseconds(250);
-    //strcat(printString, checkSum(printString));
+    //add crc
     strcat(bufferSend, checkSum(bufferSend));
     delayMicroseconds(250);
-    if (diagNose) ws.textAll("sending FE" + String(bufferSend));
-
+    
+    //clean up serial buffer
     empty_serial();
 
     if (Serial.availableForWrite() > (uint8_t)strlen(printString))
@@ -32,45 +27,15 @@ void sendZigbee( char printString[] )
             Serial.write(StrToHex(byteSend));        //turn the two chars to a byte and send this
         }
             Serial.flush(); //wait till the full command was sent
-
+    if (diagNose) ws.textAll("sendSB sent FE" + String(bufferSend));
     }
 }
-
-//void sendZigbee( char printString[] )
-//{
-////char bufferSend[254];
-//    char bufferSend[3];
-//    // add sLen and crc
-//    
-//    strcpy(printString, strcat(sLen(printString), printString));
-//    delayMicroseconds(250);
-//    strcat(printString, checkSum(printString));
-//    delayMicroseconds(250);
-//    if (diagNose) ws.textAll("sending FE" + String(printString));
-//
-//    empty_serial();
-//
-//    if (Serial.availableForWrite() > (uint8_t)strlen(printString))
-//    {
-//        Serial.write(0xFE); //we have to send "FE" at start of each command
-//        for (uint8_t i = 0; i <= strlen(printString) / 2 - 1; i++)
-//        {
-//         // we use 2 characters to make a byte
-//            strncpy(bufferSend, printString + i * 2, 2); 
-//            delayMicroseconds(250);                     //give memset a little bit of time to empty all the buffers
-//            Serial.write(StrToHex(bufferSend));        //turn the two chars to a byte and send this
-//        }
-//            Serial.flush(); //wait till the full command was sent
-//
-//    }
-//}
 
 // *****************************************************************************
 //                 read zigbee radio 
 // *****************************************************************************
-// this function is somewhat unefficient but that seems an advantage due to the 
-// slow reaction from the inverter
-char * readZigbee( char inMessage[] ) {
+// this function returns the incoming message as a char*
+char * readZB( char inMessage[] ) {
     readCounter = 0;
     //wait a while untill something available
     //if not within the reactiontime we return NULL
@@ -83,19 +48,17 @@ char * readZigbee( char inMessage[] ) {
         
     while (Serial.available())
         {
-        // here we have the danger that when readcounter reaches 512, there are 1024 bytes processed 
-        // the length of a poll answer is usually not more than 223
+        
         if (readCounter < CC2530_MAX_SERIAL_BUFFER_SIZE/2)
             {
                 sprintf(oneChar, "%02X", Serial.read()); //always uppercase
                 strncat(inMessage, oneChar, 2); // append 
-                //processIncomingByte(Serial.read());
+                //processIncomingByte not needed anymore
                 readCounter += 1;
             }
             else
             {
-                //Serial.read(); // we read from serial to empty the buffer but do not process
-                ESP.wdtFeed();
+                ESP.wdtFeed(); // prevent timeout
                 empty_serial(); // remove all excess data in the buffer at once
             }
             if (Serial.available() == 0) delay(120); // we wait if there comes more data
@@ -109,20 +72,86 @@ char * readZigbee( char inMessage[] ) {
         }
 
         if(diagNose) {
-          delayMicroseconds(250); // give it some time otherwise the connection closes
-          ws.textAll("received " + String(inMessage) + "  rc=" + String(readCounter) );
+          delayMicroseconds(250); // give it some time 
+          ws.textAll("readZB " + String(inMessage) + "  rc=" + String(readCounter) );
+          delayMicroseconds(250); // give it some time 
         }
         return inMessage;
 }
+//// *****************************************************************************
+////                 send to zigbee radio
+//// *****************************************************************************
+//void sendZigbee( char printString[] )
+//{
+//    char bufferSend[3];
+//    // first add sLen and crc
+//    strcpy(printString, strcat(sLen(printString), printString));
+//    delayMicroseconds(250);
+//    strcat(printString, checkSum(printString));
+//    delayMicroseconds(250);
+//
+//    if (Serial.availableForWrite() > (uint8_t)strlen(printString))
+//    {
+//        Serial.write(0xFE); //we have to send "FE" at start of each command
+//        for (uint8_t i = 0; i <= strlen(printString) / 2 - 1; i++)
+//        {
+//         // we use 2 characters to make a byte
+//            strncpy(bufferSend, printString + i * 2, 2); 
+//            delayMicroseconds(250);                     //give memset a little bit of time to empty all the buffers
+//            Serial.write(StrToHex(bufferSend));        //turn the two chars to a byte and send this
+//        }
+//            Serial.flush(); //wait till the full command was sent
+//    }
+//    if (diagNose) ws.textAll("sendZigbee sent FE" + String(printString));
+//}
+
+//// *****************************************************************************
+////                 read zigbee radio at swapped serial
+//// *****************************************************************************
+//// this function is somewhat unefficient but that seems an advantage due to the 
+//// slow reaction from the inverter
+//void readZigbee() {
+//    readCounter = 0;
+//    char oneChar[3] = {0};
+//    //fullIncomingMessage[0] = '\0'; //terminate otherwise all is appended
+////    memset( &inMessage, 0, sizeof(inMessage) ); //zero out the 
+////    delayMicroseconds(250);
+//        
+//    while (Serial.available())
+//        {
+//        // here we have the danger that when readcounter reaches 512, there are 1024 bytes processed 
+//        // the length of a poll answer is usually not more than 223
+//        if (readCounter < CC2530_MAX_SERIAL_BUFFER_SIZE/2)
+//            {
+//                sprintf(oneChar, "%02X", Serial.read()); // always uppercase
+//                strncat(inMessage, oneChar, 2); // append 
+//                //processIncomingByte(Serial.read());
+//                readCounter += 1;
+//            }
+//            else
+//            {
+//                //Serial.read(); // we read from serial to empty the buffer but do not process
+//                ESP.wdtFeed();
+//                empty_serial(); // remove all excess data in the buffer at once
+//            }
+//            if (Serial.available() == 0) delay(120); // we wait if there comes more data
+//        }
+//            //if we come here there is no serial data anymore
+// 
+//    cleanIncoming(); // check for F8 and remove it
+//    if (diagNose) ws.textAll("readZigbee " + String(inMessage));
+//}
 
 //// format the incoming byte and add it to inMessage
 //void processIncomingByte(const byte inByte)
 //{
 //char oneChar[10] = {0};
-//    sprintf(oneChar, "%02X", inByte);
+//    sprintf(oneChar, "%02x", inByte);
 //    strncat(inMessage, oneChar, 2); // append 
 //} // end of processIncomingByte
 
+
+//// this is done in readZB
 //void cleanIncoming() {
 //// with swaps we get F8 sometimes, this removes it
 //   if(inMessage[0] == 'F' && inMessage[1] == '8') {
@@ -139,7 +168,7 @@ char *sLen(char Command[])
 {
 char bufferSln[254];
     sprintf(bufferSln, "%02X", (strlen(Command) / 2 - 2));
-    delayMicroseconds(250); //give memset a little time
+    delayMicroseconds(250); //give memset a little bit of time to empty all the buffers
 
     return bufferSln;
 }
@@ -160,22 +189,17 @@ char bufferCRCdiezweite[254] = {0};
         sprintf(bufferCRC, "%02X", StrToHex(bufferCRC) ^ StrToHex(bufferCRCdiezweite));
         delayMicroseconds(250); //give memset a little bit of time to empty all the buffers
     }
-//    uint8_t iToUpper = 0;
-//    while (bufferCRC[iToUpper])
-//    {
-//        bufferCRC[iToUpper] = toupper(bufferCRC[iToUpper]);
-//        iToUpper++;
-//    }
+
     return bufferCRC;
 }
 
-// convert a char to Hex ******************************************************
+// **************************  convert a char to Hex ******************************************************
 int StrToHex(char str[])
 {
     return (int)strtol(str, 0, 16);
 }
 
-// reverse the ecu id **********************************************************
+// *************************  reverse the ecu id **********************************************************
 String ECU_REVERSE() {
 String ecu_id = String(ECU_ID);
 String reverse = ecu_id.substring(10,12) + ecu_id.substring(8,10) + ecu_id.substring(6,8) + ecu_id.substring(4,6) + ecu_id.substring(2,4) + ecu_id.substring(0,2);
@@ -207,18 +231,20 @@ void inverterReset(int which) {
 
       //should be 2401 103A 1414060001000F13 80 97 1B 01 A3 D6 FBFB06C1000000000000A6FEFE
       // got      1414060001000F1380971B01A3D6FBFB06C1000000000000A6FEFE
-      //put sln at the beginning and crc at the end done by sendZigbee
+
+
+      //
+      //strcpy(resetCmd, strcat(sLen(resetCmd), resetCmd));
+      // put sln at the beginning and CRC at the end done by sendZigbee()
     
-      sendZigbee(resetCmd);
+      sendZB(resetCmd);
       delay(1000);
-      
       char s_d[150]={0};
-      // read the incoming message is there is one
-      char * inMessage = readZigbee(s_d);
+      char * inMess = readZB(s_d);
 
       if(readCounter == 0) {
       } 
-      ws.textAll("received : " + String(inMessage) );
+      ws.textAll("received : " + String(inMess) );
 }
 
 // ******************************************************************************
@@ -236,18 +262,5 @@ void resetValues(bool energy, bool mustSend) {
          }
          if(mustSend) mqttPoll(z); // send the null values
       }
- }
-
- bool waitSerialAvailable() // wait untill something 's available
-{
-  //We start with a minimum delay
-  //delay(800);
-  unsigned long wait = millis();
-  while ( !Serial.available() )
-      {
-      if ( millis() - wait > 2000) return false; // return false after 2000 milis time out
-      }
-  // if we are here there is something available
-   delay(500);
-   return true;
+      
 }

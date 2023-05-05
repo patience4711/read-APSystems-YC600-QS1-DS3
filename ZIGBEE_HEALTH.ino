@@ -36,7 +36,7 @@ if(Mqtt_outTopic.endsWith("/")) {
 
         case 2:
               //zigbeeUp = 0;
-              //String term = "zb down, received : " + String(inMessage);
+              //String term = ("down");
               Update_Log("zigbee", "down");
               ws.textAll("zigbee down");
               resetCounter += 1;
@@ -58,7 +58,7 @@ int checkCoordinator() {
     char ecu_id_reverse[13];
     ECU_REVERSE().toCharArray(ecu_id_reverse, 13);
     char * tail;
-
+    char s_d[200]={0}; // to provide a buffer for readZB
     // the response = 67 00, status 1 bt, IEEEAddr 8bt, ShortAddr 2bt, DeviceType 1bt, Device State 1bt
     //  FE0E 67 00 00 FFFF 80971B01A3D8 0000 0709001
     // status = 00 means succes, IEEEAddress= FFFF80971B01A3D8, ShortAdr = 0000, devicetype=07 bits 0 to 2
@@ -70,34 +70,46 @@ int checkCoordinator() {
     //check the radio, send FE00670067
     // when ok the returned string = FE0E670000FFFF + ECU_ID REVERSE + 00000709001
     // so we check if we have this
-    char s_d[100]={0};
+
     char checkCmd[10]; // we send 2700 to the zb
-    strncpy(checkCmd, "270027", 9);
+   strncpy(checkCmd, "2700", 5);
     //first clean up the serial port
-    //empty_serial(); 
+    empty_serial(); 
     // now we do this 3 times
     for (int x=1; x<4; x++)
     {
-      strncpy(checkCmd, "270027", 9); // sendZigbee changes checkCmd so we have to renew it
-      sendZigbee(checkCmd ); // sendZigbee changes checkCmd so we have to renew it
+//      #ifdef DEBUG
+//      Serial.println("swap to zb");
+//      swap_to_zb();
+//      #endif    
+      //if(diagNose) { sendZigbee(checkCmd, true); } else { sendZigbee(checkCmd, false) }
+      sendZB(checkCmd );
+      char inMess[254]={0};  
+  //if(!*inMessage) return 50; // if empty we return with erroCode 50
+      strcpy(inMess, readZB(s_d));
       //if ( waitSerialAvailable() ) { readZigbee(); } else { readCounter = 0;} // when nothing available we don't read
-
-      char * inMess = readZigbee(s_d);
-      delayMicroseconds(250); 
-      delay(100);
-      //if(diagNose) ws.textAll("inMessage = " + String(inMess) + " rc = " + String(readCounter));
+//      if(diagNose) ws.textAll("inMess = " + String(inMess) + " rc = " + String(readCounter));
+//      #ifdef DEBUG
+//      Serial.println(F("swap to usb"));
+//      swap_to_usb();
+//      Serial.print(F("hc received ")); Serial.println(String(inMessage));
+//      #endif
   
    // we get this : FE0E670000 FFFF80971B01A3D8 0000 07090011
-   //    received : FE0E670000 FFFF80971B01A3D6 0000 0709001F when ok
+  //    received : FE0E670000FFFF80971B01A3D600000709001F when ok
   
       //check if ecu_id_reverse is in the string, then split it there + 2 bytes
       if( strstr(inMess, ecu_id_reverse) )
       {
+          //ws.textAll("found ecu id");
           tail = split(inMess, ecu_id_reverse + 4);
+          //ws.textAll("tail=" + String(tail)); 
+          //Serial.println("\nhealth received : " + String(inMessage) );
           if( strstr(tail, "0709") ) 
             {
               if(diagNose) ws.textAll("found 0709, running oke");
-              return 0;
+              //String term = "zb up, attempts = " + String(x);
+              return 0;            
             } 
        }     
    delay(700);
@@ -112,22 +124,36 @@ void ZigbeePing() {
     // if the pin command failed then we have to restart the coordinator
     //Update_Log("zigbee", "check serial loopback");
     // these commands already have the length 00 and checksum 20 resp 26
-    char pingCmd[20]={"210120"}; // ping
-    char s_d[100]={0};
+    char pingCmd[20]={"2101"}; // ping
+    char s_d[200] = {0}; 
     //first make serial empty
-    //empty_serial();
-    //send command    
-    sendZigbee(pingCmd); // answer is FE02 6101 79 07 1C
+    empty_serial();
+
+    sendZB(pingCmd); // answer is FE02 6101 79 07 1C
+    
+    char inMess[254]={0};  
+  //if(!*inMessage) return 50; // if empty we return with erroCode 50
+    strcpy(inMess, readZB(s_d));
     //if ( waitSerialAvailable() ) { readZigbee(); } else { readCounter = 0;} // when nothing available we don't read
-    //retrieve answer
-    char * inMessage = readZigbee(s_d);
-    //if(diagNose) ws.textAll("inMessage = " + String(inMessage) + " rc = " + String(readCounter));
-    if (strstr(inMessage, "FE026101" ) == NULL) 
+    //if(diagNose) ws.textAll("inMessage = " + String(inMess) + " rc = " + String(readCounter));
+    if (strstr(inMess, "FE026101" ) == NULL) 
     {
       if(diagNose) ws.textAll("no ping answer");
+      //Update_Log("zigbee", "stopped reason no ping answer");
+      
+      // the next command = commented out for test
+      //sendZigbee(startCmd); // start when no ping
+      //if ( waitSerialAvailable() ) { readZigbee(); } else { readCounter = 0;}
+      //delay(5000); //to give the zigbee system the chance to start  
+      
     } else {
       if(diagNose) ws.textAll("ping ok");
     }
+    
+//    #ifdef DEBUG
+//    swap_to_usb();
+//    #endif
+    // we ignore the answer
 }
 
 

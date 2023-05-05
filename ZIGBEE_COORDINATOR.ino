@@ -51,23 +51,28 @@ void coordinator_init() {
     ws.textAll("init zb coordinator");
     zigbeeUp = 11; //initial it is initializing 11, 0=down 1=up
     yield();
-
+    //char s_d[150];
     char ecu_id_reverse[13]; //= {ECU_REVERSE()};
     ECU_REVERSE().toCharArray(ecu_id_reverse, 13);
-    char initCmd[254]={0};
+    //char initCmd[254]={0};
 
     // commands for setting up coordinater
-    char initBaseCommand[][254] = {
+    char initCmd[][254] = {
       "2605030103", // ok   this is a ZB_WRITE_CONFIGURATION CMD //changed to 01
       "410000",     // ok   ZB_SYS_RESET_REQ
-      "26050108FFFF", // + ecu_id_reverse,  this is a ZB_WRITE_CONFIGURATION CMD
+      "0", // + ecu_id_reverse,  this is a ZB_WRITE_CONFIGURATION CMD
       "2605870100",  //ok 
-      "26058302",  // + ecu_id.substring(0,2) + ecu_id.substring(2,4),
+      "0",  // + ecu_id.substring(0,2) + ecu_id.substring(2,4),
       "2605840400000100", //ok
       "240014050F00010100020000150000",  //AF_REGISTER register an application’s endpoint description
       "2600", //ok ZB_START_REQUEST
     };
 
+    char ecu_short[5]={0};
+    strncat(ecu_short, ECU_ID + 2, 2); // D8A3011B9780 must be A3D8
+    strncat(ecu_short, ECU_ID, 2);
+    ecu_short[5]='\0';
+    ws.textAll("ecu_short = " + String(ecu_short) );
 
     // we start with a hard reset of the zb module
     ZBhardReset();
@@ -76,38 +81,37 @@ void coordinator_init() {
     // construct some of the commands
     // ***************************** command 2 ********************************************
     // command 2 this is 26050108FFFF we add ecu_id reversed
-    strncat(initBaseCommand[2], ecu_id_reverse, sizeof(ecu_id_reverse)); 
+    //strncat(initCmd[2], ecu_id_reverse, sizeof(ecu_id_reverse)); 
+    //delayMicroseconds(250);
+    snprintf(initCmd[2], sizeof(initCmd[2]), "26050108FFFF%s", ecu_id_reverse);
     delayMicroseconds(250);
-    
+
     // ***************************** command 4 ********************************************
     // command 4 this is 26058302 + ecu_id_short 
-    strncat(initBaseCommand[4], ECU_ID, 2);
-    strncat(initBaseCommand[4], ECU_ID + 2, 2);
+    //strncat(initBaseCommand[4], ECU_ID, 2);
+    //strncat(initBaseCommand[4], ECU_ID + 2, 2);
+    //delayMicroseconds(250);
+    snprintf(initCmd[4], sizeof(initCmd[4]), "26058302%s", ecu_short);
     delayMicroseconds(250);
-    
     // send the rest of the commands
     for (int y = 0; y < 8; y++) 
     {
       //cmd 0 tm / 9 alles ok
-      strcpy(initCmd, initBaseCommand[y]);
 
-      // CRC at the end of the command done in sendZigbee
-      sendZigbee(initCmd);
+      if(diagNose) ws.textAll("coordinator init cmd " + String(y));
+      //sendZB(initCmd); // here it crashed, but why?
+      sendZB(initCmd[y]);
       ledblink(1,50);
-      // read the answer , we don't do anything with that
-      char s_d[150]={0};
-      char * inMessage = readZigbee(s_d);
+      delay(1000); // give the inverter the chance to answer
 
-      //if(diagNose) ws.textAll("inMessage = " + String(inMessage) + " rc = " + String(readCounter));
+      // read the incoming message
+      //s_d[0]='\0'; // if we don't do this, it crashes
+      //char * inMess = readZB(s_d);
+      // we could skip the reading as we don't do anything with the message
+      // so insteat we could flush the buffer. Would save us the buffer s_d
+       if(waitSerialAvailable) empty_serial();
     }
     // now all the commands are send 
-    //first clean (zero out) initCmd
-    
-    memset(&initCmd, 0, sizeof(initCmd)); //zero out 
-    delayMicroseconds(250);
-    memset(&initBaseCommand, 0, sizeof(initBaseCommand)); //zero out 
-    delayMicroseconds(250);    
- 
 }
 
 void sendNO() {
@@ -119,17 +123,19 @@ void sendNO() {
     // now send command 9 this is "2401FFFF1414060001000F1E", + ecu_id_reverse + FBFB1100000D6030FBD3000000000000000004010281FEFE"
     snprintf(noCmd, sizeof(noCmd), "2401FFFF1414060001000F1E%sFBFB1100000D6030FBD3000000000000000004010281FEFE", ecu_id_reverse);
     
-    // put in the CRC at the end of the command now done by sendZigbee()
-
     ws.textAll("sending N.O. cmd");
 
-    sendZigbee(noCmd);
+    sendZB(noCmd);
 
-      // read the answer , we don't do anything with that
-      char s_d[150];
-      char * inMessage = readZigbee(s_d);
+    // read the answer , we don't do anything with that
+    // just that readZB shows the answer in console.
+    //char s_d[150];
+    //char * inMessage = readZB(s_d);
+    // we could skip the reading as we don't do anything with the message
+    // so insteat we could flush the buffer. Would save us the buffer s_d
+     if(waitSerialAvailable) empty_serial();
 
-    //zero out 
-    memset(&noCmd, 0, sizeof(noCmd)); //zero out 
-    delayMicroseconds(250);
+    //zero out noCmd not sure this has any purpose 
+    //memset(&noCmd, 0, sizeof(noCmd)); //zero out 
+    //delayMicroseconds(250);
 }
