@@ -12,13 +12,8 @@ You can use the provided binary but if you must compile it yourself: Use arduino
 <br>Please note: by popular demand I have published the code here but i do not feel responsible for problems as to compiling. Impossible for me to know why it doesn't compile in your situation.
 
 ## downloads
-april 14 2023: There is a new version v9_8b available, See changelog.<br>
-Download [ESP-ECU-v9_8](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP_ECU_v9-8b.zip)<br>
-
-april 1 2023: There is a new experimental version [ESP-ECU_v9_7_beta](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_7_beta.bin) available. This version has output of all inverters together in the frontpage. Look [here]( https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/issues/89) for more info.
-
-march 24 2023: 18:00hr There is a recompiled version v9_6c available, See changelog.<br>
-Download [ESP-ECU-v9_6c](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_v9_6c.bin)<br>
+May 10 2023: There is a new version v9_13 available, See changelog<br>
+Download [ESP-ECU-v9_12](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_12.zip)<br>
 
 <br>In case someone wants to print the housing, here is an [stl file](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-housing.zip)
 This is for a nodemcu board 31x58mm.
@@ -52,6 +47,10 @@ The interesting values are send via mqtt and displayed on the main page.
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
 ## changelog ##
+version ESP-ECU_V9_12:
+-  completely re-designed "the engine", 40% more free heap.
+-  Some cosmetic improvements
+
 version ESP-ECU_V9_9:
 - fix for the zigbee crashes
 - improved frontpage with buttons to see details.
