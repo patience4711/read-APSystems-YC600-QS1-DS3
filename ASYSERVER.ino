@@ -351,9 +351,9 @@ server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) {
 //  int panelCount=4;
   int i;
   if (request->hasArg("inv")) {
-  i = (request->arg("inv").toInt()) ;
+     i = (request->arg("inv").toInt()) ;
   } else {
-  i = iKeuze;
+     i = iKeuze;
   //request->send(200, "text/plain", "no argument provided");
   }
   //Serial.println("i = " + String(i));
@@ -362,6 +362,7 @@ server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) {
 
 //      if(Inv_Prop[i].invType == 1) panelCount=4;
       json += "\"inv\":\"" + String(i) + "\"";
+      json += ",\"name\":\"" + String(Inv_Prop[i].invLocation) + "\"";
       json += ",\"polled\":\"" + String(polled[i]) + "\"";
       json += ",\"serial\":\"" + String(Inv_Prop[i].invSerial)  + "\"";      
       json += ",\"sid\":\""  + String(Inv_Prop[i].invID) + "\""; //freq = a char
@@ -389,6 +390,13 @@ server.on("/get.Inverter", HTTP_GET, [](AsyncWebServerRequest *request) {
          }
       }
       
+//      for(int z = 0; z < panelCount; z++ ) 
+//      {
+//        json += ",\"dcv" + String(z) + "\":" + String(atof(Inv_Data[i].dcv[z]));
+//        json += ",\"dcc" + String(z) + "\":" + String(atof(Inv_Data[i].dcc[z]));
+//        json += ",\"pow" + String(z) + "\":" + String(atof(Inv_Data[i].power[z]));
+//        json += ",\"en" + String(z) + "\":" + String(en_saved[i][z], 2);
+//      }
       json += ",\"power\":" + String(atof(Inv_Data[i].power[4]));
       json += ",\"energy\":" + String(Inv_Data[i].en_total, 2);
       json += "}";     

@@ -1,4 +1,3 @@
-
 const char CONSOLE_HTML[] PROGMEM = R"=====(
 <!DOCTYPE html><html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -34,7 +33,7 @@ document.getElementById("help").style.display = "none";
   <b>10;POLL=x: </b> poll inverter #x<br><br>
   <b>10;ERASE: </b> delete all inverter files<br><br>
   <b>10;DIAG: </b> more Debug messages in console<br><br>
-  <b>10;EDIT=0-0xAABB: </b> mark an inverter as paired<br><br>
+  <b>10;EDIT=0-AABB: </b> mark an inverter as paired<br><br>
   <b>10;CLEAR: </b clear console window<br><br>
  
   </div>
@@ -88,8 +87,8 @@ document.getElementById("help").style.display = "none";
   function onMessage(event) {
     //var message = event.data;
     field.insertAdjacentHTML('beforeend', "<tr><td>" + event.data );
-    if (field.rows.length > 22) {
-    var rtm = field.rows.length - 22;
+    if (field.rows.length > 20) {
+    var rtm = field.rows.length - 20;
     for (let x=0; x<rtm; x++) { field.deleteRow(0); }
   }
     if (event.data == "clearWindow") { 
@@ -181,8 +180,8 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
               ws.textAll("error, no such inverter");
               return;  
               }
-              char invid[7];
-              for(int i=10;  i<17; i++) { invid[i-10] = txBuffer[i]; }
+              char invid[5];
+              for(int i=10;  i<15; i++) { invid[i-10] = txBuffer[i]; }
               ws.textAll("edit inverter " + String(kz));
               ws.textAll("id = " + String(invid));
               strncpy(Inv_Prop[kz].invID, invid, 6);
@@ -210,7 +209,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
                  ws.textAll("error, non-excisting inverter");
                  return;  
               }
-                 inverterReset(kz);
+                 inverterReboot(kz);
               return;
           } else
 

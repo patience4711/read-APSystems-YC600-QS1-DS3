@@ -18,24 +18,14 @@ int decodePollAnswer(int which)
   int ts = 0;
   bool resetFlag = false;
   float total_pwr = 0;
-//if(!*inMessage) return 50; // if empty we return with erroCode 50
-//
-//    strncpy(messageToDecode, inMessage, strlen(inMessage));
-//    //delayMicroseconds(250); //give memset a little bit of time to empty all the buffers
-//    
-//    // we dont need this char anymore so make it empty
-//    memset( &inMessage, '\0', sizeof(inMessage) ); //zero out the 
-//    delayMicroseconds(250);
-//  char messageToDecode[CC2530_MAX_SERIAL_BUFFER_SIZE]={0};  
-  //if(!*inMessage) return 50; // if empty we return with erroCode 50
+
+  //retrieve the poll answer
   strcpy(messageToDecode, readZB(s_d));
-  //char * inMessage = readZigbee(s_d); 
   if (readCounter == 0) {
      if(diagNose) ws.textAll("no answer "); 
       return 50; //no answer
     }
-  Serial.println("wrong here?");
-  //if(diagNose) ws.textAll("polling answer " + String(messageToDecode));       
+      
     char *tail;
 
     if(strstr(messageToDecode,  "FE01640100") == NULL) // answer to AF_DATA_REQUEST 00=success

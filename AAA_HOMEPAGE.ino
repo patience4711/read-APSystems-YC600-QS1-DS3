@@ -235,8 +235,7 @@ function getData(invnr) {
       var cel = "e" + String(invnr);
       celbgc(cel);
       if (eN != "n/e") {
-      // if the inverter is not polled we still have to show the energy if available
-      //if(polled == "1") {
+      if(polled == "1") {
             document.getElementById(cel).innerHTML = eN;
             if(cnt > 1){
               totalEn = totalEn + parseFloat(eN);
@@ -244,9 +243,9 @@ function getData(invnr) {
               document.getElementById("r9").style.display="table-row";
               document.getElementById("e9").innerHTML = totalEn.toFixed(2);
               }
-        // } else {
-        //   document.getElementById(cel).innerHTML = "n/a"; 
-        // } 
+         } else {
+           document.getElementById(cel).innerHTML = "n/a"; 
+         } 
       
       } else {
         document.getElementById(cel).innerHTML = "n/e";
