@@ -1,6 +1,6 @@
 /* this is a tricky process as it is hard to check if it does what it should.
  *  if brought up with sprintf constructed commands, it seems we can pair but 
- *  get no polling answers.
+ *  we never get any polling answers.
  *  This is not caused by only the last NO command. It seems that if we feed sendZB() with a 
  *  char that contains empty space, it goes wrong. 
  *  To send the relative commands i tried something like:
@@ -9,7 +9,7 @@
  *    sendZB(command);
  *    etc 
  *     }
- *  This works with pairing ( at least we get the invID ) but maybe it wasn't paired at all. 
+ *  This seems to work with pairing ( at least we get the invID ) but maybe it wasn't paired at all. 
  *  Anyway the polling fails constantly, also after rebooting the inverter.   
  *  command 2700 gives us the answer that the coordinator is up. So that proves nothing.
  *  I haven't investigate this further, for now only the method used here works
