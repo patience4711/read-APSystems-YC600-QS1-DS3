@@ -13,7 +13,7 @@ You can use the provided binary but if you must compile it yourself: Use arduino
 
 ## downloads
 May 10 2023: There is a new version v9_13 available, See changelog<br>
-Download [ESP-ECU-v9_12](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_12.zip)<br>
+Download [ESP-ECU-v9_12a]([https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_12.zip](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_12a.zip))<br>
 
 <br>In case someone wants to print the housing, here is an [stl file](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-housing.zip)
 This is for a nodemcu board 31x58mm.
