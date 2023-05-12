@@ -74,9 +74,7 @@ int testCounter = 0;
   time_t switchonTime = 0;
   bool dayTime=true;
 
-  byte mDay = 0;
-  String  maan = "";
-  int actionFlag = 0;
+  uint8_t actionFlag = 0;
 
  // variables wificonfig
   char pswd[11] = "0000";
@@ -96,11 +94,10 @@ int testCounter = 0;
 #define YC600_MAX_NUMBER_OF_INVERTERS 9
 char inMessage[CC2530_MAX_SERIAL_BUFFER_SIZE] = {0};
 int readCounter = 0;
-char messageHead[5];
+
 bool diagNose=false;
 bool Polling = true; // when true we have automatic polling
 int errorCode=10;
-int recovered = 0;
 
   int t_saved[YC600_MAX_NUMBER_OF_INVERTERS] = {0};
   float en_saved[YC600_MAX_NUMBER_OF_INVERTERS][4] = {0};
@@ -151,7 +148,6 @@ int event = 0;
 
   int dst;
   int iKeuze;
-  int inverterTopoll = 0;
   bool timeRetrieved = false;
   int networksFound = 0; // used in the portal
   int datum = 0; //
@@ -170,8 +166,6 @@ int event = 0;
 String toSend = "";
  
 int value = 0; 
-//int pollCounter =0;
-int aantal = 0;
 int resetCounter=0;
 
 // *******************************  log *************************************
