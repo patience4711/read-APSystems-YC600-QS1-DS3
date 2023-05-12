@@ -1,5 +1,5 @@
 # read APS inverters
-The purpose of this project is to read data via Zigbee from APS Systems inverters. The program can pair and poll YC600 QS1 and DS3 inverters, up to 9 pieces. The read values are displayed on a web page and sent via mosquitto in a user-defined Json format.
+The purpose of this project is to read data via Zigbee from APS Systems inverters. The program can pair and poll YC600 QS1 and DS3(-L-M-S verified) inverters, up to 9 pieces. The read values are displayed on a web page and sent via mosquitto in a user-defined Json format.
 The program has a lot of smart features. All settings can be done via the webinterface. It has a console that can be used for debugging and sending/receiving zigbee messages.<br>
 See the <a href='https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/wiki'>WIKI</a> for information on building it, the working, etc. 
 
