@@ -17,8 +17,10 @@ request->send_P(200, "text/html", DETAILSPAGE);
 
 server.on("/CONSOLE", HTTP_GET, [](AsyncWebServerRequest *request){
     if(checkRemote( request->client()->remoteIP().toString()) ) request->redirect( "/DENIED" );
+    loginBoth(request, "admin");
     request->send_P(200, "text/html", CONSOLE_HTML);
   });
+
 // Simple Firmware Update
   server.on("/FWUPDATE", HTTP_GET, [](AsyncWebServerRequest *request){
     if(checkRemote( request->client()->remoteIP().toString()) ) request->redirect( "/DENIED" );    
@@ -89,16 +91,18 @@ server.on("/SW=BACK", HTTP_GET, [](AsyncWebServerRequest *request) {
 
 server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
     loginBoth(request, "both");
-    DebugPrintln("send Homepage");
+    //DebugPrintln("send Homepage");
     request->send_P(200, "text/html", ECU_HOMEPAGE);
 });
 
 server.on("/STYLESHEET", HTTP_GET, [](AsyncWebServerRequest *request) {
    request->send_P(200, "text/css", STYLESHEET);
 });
-
 server.on("/JAVASCRIPT", HTTP_GET, [](AsyncWebServerRequest *request) {
    request->send_P(200, "text/css", JAVA_SCRIPT);
+});
+server.on("/SECURITY", HTTP_GET, [](AsyncWebServerRequest *request) {
+   request->send_P(200, "text/css", SECURITY);
 });
 server.on("/INVSCRIPT", HTTP_GET, [](AsyncWebServerRequest *request) {
    request->send_P(200, "text/css", INV_SCRIPT);
@@ -181,6 +185,7 @@ server.on("/REBOOT", HTTP_GET, [](AsyncWebServerRequest *request) {
 });
 
 server.on("/STARTAP", HTTP_GET, [](AsyncWebServerRequest *request) {
+    if(checkRemote( request->client()->remoteIP().toString()) ) request->redirect( "/DENIED" );
     loginBoth(request, "admin");
     //DebugPrintln("We gaan de gegevens wissen");
     String toSend = F("<!DOCTYPE html><html><head><script type='text/javascript'>setTimeout(function(){ window.location.href='/SW=BACK'; }, 5000 ); </script>");
@@ -403,7 +408,8 @@ server.on("/get.Power", HTTP_GET, [](AsyncWebServerRequest *request) {
 #ifdef TEST
 zigbeeUp = 1;
 #endif
-
+uint8_t remote = 0;
+if(checkRemote( request->client()->remoteIP().toString()) ) remote = 1;
 String json;
 int i = atoi(request->arg("inv").c_str()) ;
 // inv prop comes from spiffs so if we could evaluate that it exists
@@ -412,7 +418,7 @@ int i = atoi(request->arg("inv").c_str()) ;
       json += ",\"polled\":\"" + String(polled[i]) + "\"";    
       json += ",\"type\":\"" + String(Inv_Prop[i].invType) + "\"";
       json += ",\"count\":\"" + String(inverterCount) + "\"";
-      
+      json += ",\"remote\":\"" + String(remote) + "\""; //show the menu link y/n     
 // first test if the inverter exists
 if(String(Inv_Prop[i].invLocation) != "N/A") {
       for(int z = 0; z < 4; z++ ) 

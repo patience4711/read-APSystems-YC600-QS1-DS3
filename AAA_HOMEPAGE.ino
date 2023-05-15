@@ -34,13 +34,17 @@ tr {height:35px;}
 .btn { padding: 5px 18px; font-size:10px;}
 }
 </style>
+
 <script type="text/javascript" src="JAVASCRIPT"></script>
+<script type="text/javascript" src="SECURITY"></script>
 </head>
 
 <body onload='loadScript()'>
 <div id='msect'>
   <ul>
-  <li style='float:right;'><a id='haha' href='/MENU'>menu</a></li>
+  <li><a href='/INFOPAGE'>info</a></li>
+  <li><a href='/LOGPAGE'>log</a></li>
+  <li id="ml" style='float:right; display:none'><a id='haha' href='/MENU'>menu</a></li>
   </ul>
 </div>
 <div id='msect'>
@@ -149,7 +153,8 @@ function getData(invnr) {
       var sl = obj.sleep;
       var eN = obj.eN;
       cnt = parseInt(obj.count);
-                 
+      var rem = obj.remote;
+      if(rem == 0) {document.getElementById("ml").style.display = "block";}           
       if(st == "11") {
         document.getElementById("busy").style.display = "block";
       } else {
@@ -275,9 +280,7 @@ function getTimes() {
   xhttp.open("GET", "get.Times", true);
   xhttp.send();
 }
-
 )=====";
-
 
 
 //void sendHomepage() {

@@ -1,20 +1,3 @@
-//var interval = 60000;
-//setInterval(function loadTime() {
-//  var xhttp = new XMLHttpRequest();
-//  xhttp.onreadystatechange = function() {
-//    if (this.readyState == 4 && this.status == 200) {
-//      var antwoord = this.responseText;
-//      var obj = JSON.parse(antwoord);
-//      var hr = obj.uur;
-//      var mn = obj.min;
-//      var tijd= hr + ":" + mn;
-//      document.getElementById('tijdveld').innerHTML=tijd;
-//      }
-//  };
-//  xhttp.open("GET", "get.currentTime", true);
-//  xhttp.send();
-//  interval=60000;
-//},interval);
 
 const char INFOPAGE [] PROGMEM = R"=====(
 <!DOCTYPE html><html><head>
@@ -27,11 +10,6 @@ table, th, td {border: 1px solid blue; width:font-size:12px;}
 body {margin:10px 10px 0px 20px; font-family:'lato',Verdana,Sans-serif;font-size:12px;}
 </style>
 <script>
-//var interval = 60000;
-
-//setInterval(function loadData() {
-//loadTime()();
-//},15000);
 
 function loadTime() {
   var xhttp = new XMLHttpRequest();
@@ -49,6 +27,7 @@ function loadTime() {
   xhttp.send();
 }
 </script>
+<script type="text/javascript" src="SECURITY"></script>
 </head><body onload='loadTime()'><center>
 )=====";
 
@@ -115,11 +94,9 @@ toSend += request->client()->remoteIP().toString() + F("</table>");
 toSend += F("<h4>variables dump</h4>");
 toSend += "value=" + String(value)  + "  inverterCount=" + String(inverterCount) + "  zigbeeUp=" + String(zigbeeUp) + "<br>";
 toSend += "switchonTime=" + String(switchonTime)  + "  switchoffTime=" + String(switchoffTime)+ "<br>";
-toSend += "polled = " + String(polled[0]) + String(polled[1]) + String(polled[2]) + String(polled[3]) + 
-String(polled[4]) + String(polled[5]) + String(polled[6]) + String(polled[7]) + String(polled[8]) + "  diagNose = " + String(diagNose) + "<br>";
-toSend += "resetCounter = " + String(resetCounter);
-toSend += "  pollOffset = " + String(pollOffset) + "  Mqtt_Format = " + String(Mqtt_Format) + "<br>";
-
+toSend += "autopolling=" + String(Polling) + "  polled = " + String(polled[0]) + String(polled[1]) + String(polled[2]) + String(polled[3]) + String(polled[4]) + String(polled[5]) + String(polled[6]) + String(polled[7]) + String(polled[8]) + "<br>";
+toSend += "pollOffset = " + String(pollOffset) + "  Mqtt_Format = " + String(Mqtt_Format) + "<br>";
+toSend += "Zigbee resetCounter = " + String(resetCounter) + "<br>";
 #ifdef TEST
 toSend += "  testCounter = " + String(testCounter) + " inv0 type = " + String(Inv_Prop[0].invType);
 #endif

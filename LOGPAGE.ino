@@ -34,7 +34,9 @@ tr {height:10px;}
 #lijst td, #customers th { padding: 2px;}
 }
 
-</style></head>
+</style>
+<script type="text/javascript" src="SECURITY"></script>
+</head>
 <body>
 <center>
 <ul>
