@@ -21,7 +21,7 @@ void pairOnActionflag() {
     ws.textAll(term);  
   } else {
     //Serial.println("pairing failed");
-    strncpy(Inv_Prop[iKeuze].invID, "0x0000", 6);
+    strncpy(Inv_Prop[iKeuze].invID, "0000", 4);
     String term = "failed, inverter got id " + String(Inv_Prop[iKeuze].invID);
     Update_Log("pair", term);
     ws.textAll(term);      
@@ -36,7 +36,7 @@ void pairOnActionflag() {
 
 void handlePair(AsyncWebServerRequest *request) {
 
-     strncpy(Inv_Prop[iKeuze].invID, "1x1111\0", 7); // this value makes the pairing page visable
+     strncpy(Inv_Prop[iKeuze].invID, "1111", 4); // this value makes the pairing page visable
      
      actionFlag = 60; // we do this because no delay is alowed within a async request
      toSend=FPSTR(WAIT_PAIR);
@@ -52,7 +52,7 @@ bool pairing(int which) {
     char ecu_short[5]={0};
     strncat(ecu_short, ECU_ID + 2, 2); // D8A3011B9780 must be A3D8
     strncat(ecu_short, ECU_ID, 2);
-    ecu_short[5]='\0';
+    //ecu_short[5]='\0'; strncat is null terminated
     ws.textAll("ecu_short = " + String(ecu_short) );
     delay(1000);   
 
@@ -87,19 +87,20 @@ bool pairing(int which) {
       // we let decodePairMessage retrieve the answer then
       // the other answers are flushed
       if(y == 1 || y == 2) {
-        // if y 1 or 2 we catch and decode the answer
-        if ( decodePairMessage(which) ) 
-          {
-             success = true;
-          } 
+          // if y 1 or 2 we catch and decode the answer
+          if ( decodePairMessage(which) ) 
+            {
+               success = true;
+            } 
       } else { 
       // if not y 1 or 2 we waste the received message
       if(waitSerialAvailable) empty_serial();  
       }
    }
       //now all 4 commands have been sent
-      if(success) {return true; } else { return false;}  // when paired 0x103A
+      if(success) { return true; } else { return false;}  // when paired 3A10
 }
+
 
 bool decodePairMessage(int which)
 {
@@ -117,9 +118,11 @@ bool decodePairMessage(int which)
     char messageToDecode[254]={0};  
     strcpy(messageToDecode, readZB(s_d));
     
-    if (readCounter == 0) {
-        if(diagNose) ws.textAll("no pairing answer "); 
-        return 50; //no answer
+    ws.textAll("decoding : " + String(messageToDecode));
+    if (readCounter == 0 || strlen(messageToDecode) < 6 ){
+        if(diagNose) ws.textAll("no pairing answer ");
+        messageToDecode[0]='\0'; 
+        return false; //no answer
     }
     // here i made some changes, before each return make messageToDecode null and 
 //    //if (strcmp(messageToDecode, _noAnswerFromInverter) == 0) // default answer if the asked inverter doesn't send us values we compare the whole message
@@ -155,17 +158,15 @@ bool decodePairMessage(int which)
     }
 
     // now we know that it is what we expect
-  
-    strncpy(temp, result, 4);
-    temp[4]='\0';
-    if(diagNose) ws.textAll("found invID in MessageToDecode" + String(temp));
+    // the shortid is right after the last occurence of serialnr
+    if(diagNose) ws.textAll("found invID in MessageToDecode");
     memset(&Inv_Prop[which].invID, 0, sizeof(Inv_Prop[which].invID)); //zero out 
     delayMicroseconds(250);  
-    strncpy(Inv_Prop[which].invID, "0x", 2);
-    strncat(Inv_Prop[which].invID, temp + 2, 2);
-    strncat(Inv_Prop[which].invID, temp, 2);
-    Inv_Prop[which].invID[6] = '\0';
-    if ( String(temp) == "0000" ) 
+
+    strncpy(Inv_Prop[which].invID, result, 4);
+
+    if(diagNose) ws.textAll("found invID = " + String(Inv_Prop[which].invID));
+    if ( String(Inv_Prop[which].invID) == "0000" ) 
     {
        return false;    
     }
