@@ -47,6 +47,10 @@ The interesting values are send via mqtt and displayed on the main page.
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
 ## changelog ##
+version ESP-ECU_V9_13b:
+-  solved some bugs in the pairing process.
+-  secured the system, prevent visiting the menu from outside own network
+
 version ESP-ECU_V9_12:
 -  completely re-designed "the engine", 40% more free heap.
 -  Some cosmetic improvements
