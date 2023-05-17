@@ -1,37 +1,36 @@
 void pairOnActionflag() {
-//start with setup the coordinator
-//can we pair when the radio is up for normal operation
-   
-   String term = "start pairing inverter sn " + String(Inv_Prop[iKeuze].invSerial);
-   Update_Log("pairing", term);
-    if( !coordinator(false) ) {
-      term="pairing failed, zb system down";
-      Update_Log("pairing", term);
-      ws.textAll(term);
-       return;
+     // we do this in the loop (outside a server request)
+     //this because no delay is alowed within a async request
+     //start with setup the coordinator in pairing mode
+     String term = "start pairing inverter sn " + String(Inv_Prop[iKeuze].invSerial);
+     Update_Log("pairing", term);
+     if( !coordinator(false) ) {
+        term="pairing failed, zb system down";
+        Update_Log("pairing", term);
+        ws.textAll(term);
+        return;
+     }
+  
+     ws.textAll("trying pair inv " + String(iKeuze));
+    // now we know that the radio is up for pairing
+  
+    if( pairing(iKeuze) ) {
+       String term = "success, inverter got id " + String(Inv_Prop[iKeuze].invID);
+       Update_Log("pairing", term);
+       ws.textAll(term);  
+    } else {
+      // pairing failed
+       strncpy(Inv_Prop[iKeuze].invID, "0000", 4);
+       String term = "failed, inverter got id " + String(Inv_Prop[iKeuze].invID);
+       Update_Log("pair", term);
+       ws.textAll(term);      
     }
-
-  ws.textAll("trying pair inv " + String(iKeuze));
-  // now that we know that the radio is up, we don't need to test this in the pairing routine
-
-  if( pairing(iKeuze) ) {
-    //DebugPrintln("pairing success, saving configfile");
-    String term = "success, inverter got id " + String(Inv_Prop[iKeuze].invID);
-    Update_Log("pairing", term);
-    ws.textAll(term);  
-  } else {
-    //Serial.println("pairing failed");
-    strncpy(Inv_Prop[iKeuze].invID, "0000", 4);
-    String term = "failed, inverter got id " + String(Inv_Prop[iKeuze].invID);
-    Update_Log("pair", term);
-    ws.textAll(term);      
-  }
-    String bestand = "/Inv_Prop" + String(iKeuze) + ".str"; // /Inv_Prop0.str
-    writeStruct(bestand, iKeuze); // alles opslaan in SPIFFS   
-   
-   //after successfull pairing we issue the command for normal ops
-   sendNO();
-   checkCoordinator(); // updates the log
+       String bestand = "/Inv_Prop" + String(iKeuze) + ".str"; // /Inv_Prop0.str
+       writeStruct(bestand, iKeuze); // alles opslaan in SPIFFS   
+     
+       //after successfull pairing we issue the command for normal ops
+       sendNO();
+       checkCoordinator(); // updates the log
 }
 
 void handlePair(AsyncWebServerRequest *request) {
@@ -45,7 +44,7 @@ void handlePair(AsyncWebServerRequest *request) {
 }
 
 bool pairing(int which) {
-// we call this function when coordinator is up for pairing
+    // we call this function when coordinator is up for pairing
     char ecu_id_reverse[13]; 
     ECU_REVERSE().toCharArray(ecu_id_reverse, 13);
     //char short_ecu_id_reverse
@@ -93,7 +92,7 @@ bool pairing(int which) {
                success = true;
             } 
       } else { 
-      // if not y 1 or 2 we waste the received message
+      // if not y 1 or 2 we flush the received message
       if(waitSerialAvailable) empty_serial();  
       }
    }
@@ -103,8 +102,8 @@ bool pairing(int which) {
 
 
 bool decodePairMessage(int which)
-{
-    // this function retrieves the pairinganswer and tries to find the serialnr
+    {
+    // this function retrieves the pairinganswers 1 and 2 and tries to find the serialnr
     // if the serial is found, we extract the inverters short id and save it
 
     char _CC2530_answer_string[] = "44810000";
@@ -119,11 +118,11 @@ bool decodePairMessage(int which)
     strcpy(messageToDecode, readZB(s_d));
     
     ws.textAll("decoding : " + String(messageToDecode));
-    if (readCounter == 0 || strlen(messageToDecode) < 6 ){
-        if(diagNose) ws.textAll("no pairing answer ");
-        messageToDecode[0]='\0'; 
-        return false; //no answer
-    }
+//    if (readCounter == 0 || strlen(messageToDecode) < 6 ){
+//        if(diagNose) ws.textAll("no pairing answer ");
+//        messageToDecode[0]='\0'; 
+//        return false; //no answer
+//    }
     // here i made some changes, before each return make messageToDecode null and 
 //    //if (strcmp(messageToDecode, _noAnswerFromInverter) == 0) // default answer if the asked inverter doesn't send us values we compare the whole message
 //    if (strcmp(messageToDecode, "FE0164010064FE034480CD14011F") == 0)
@@ -132,8 +131,8 @@ bool decodePairMessage(int which)
 //    messageToDecode[0]='\0';
 //    return false;
 //    }
-// could we conlude that when the message is shorter than rc=42 it is not valid?
-    if (strlen(messageToDecode) > 222 || readCounter < 70)
+    // can we conclude that when the message is shorter than rc=42 it is not valid?
+    if (strlen(messageToDecode) > 222 || readCounter < 70 || strlen(messageToDecode) < 6)
     {
       ws.textAll("no valid pairing code, returning...");
       messageToDecode[0]='\0';
@@ -151,6 +150,7 @@ bool decodePairMessage(int which)
     if ( strstr(messageToDecode, Inv_Prop[which].invSerial) ) { 
         result = split(messageToDecode, Inv_Prop[which].invSerial);
     }
+
     // now we keep splitting as long as result contains the serial
     while ( strstr(result, Inv_Prop[which].invSerial) ) 
     { 
