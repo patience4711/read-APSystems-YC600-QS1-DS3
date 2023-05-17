@@ -127,15 +127,15 @@ bool decodePairMessage(int which)
     // here i made some changes, before each return make messageToDecode null and 
 //    //if (strcmp(messageToDecode, _noAnswerFromInverter) == 0) // default answer if the asked inverter doesn't send us values we compare the whole message
 //    if (strcmp(messageToDecode, "FE0164010064FE034480CD14011F") == 0)
-//    {
+//    {                            
 //    ws.textAll("received noAnswerFromInverter code, returning..");
 //    messageToDecode[0]='\0';
 //    return false;
 //    }
-
-    if (strlen(messageToDecode) > 222)
+// could we conlude that when the message is shorter than rc=42 it is not valid?
+    if (strlen(messageToDecode) > 222 || readCounter < 70)
     {
-      ws.textAll("no pairing code, returning...");
+      ws.textAll("no valid pairing code, returning...");
       messageToDecode[0]='\0';
       return false;   
     }
@@ -157,12 +157,22 @@ bool decodePairMessage(int which)
     result = split(result, Inv_Prop[which].invSerial);
     }
 
-    // now we know that it is what we expect
-    // the shortid is right after the last occurence of serialnr
-    if(diagNose) ws.textAll("found invID in MessageToDecode");
+    // now we know that it is what we expect: A string after the last occurence of serialnr
+    // the shortid is right after the last occurence of serialnr but this can also be the
+    // ECU-shortid id when the inverter doesn't exists
+    // if(diagNose) ws.textAll("found invID in MessageToDecode");
     memset(&Inv_Prop[which].invID, 0, sizeof(Inv_Prop[which].invID)); //zero out 
     delayMicroseconds(250);  
-
+    // check if it is not the ECU-shortid
+    char ecu_short[5]={0};
+    strncat(ecu_short, ECU_ID + 2, 2); // D8A3011B9780 must be A3D8
+    strncat(ecu_short, ECU_ID, 2);
+    
+    if(strcmp(result, ecu_short) == 0) {
+      if(diagNose) ws.textAll("invID equals ECU-Short, returning false");
+      return false;
+    }
+    // so result is not equal to ECU-shortid
     strncpy(Inv_Prop[which].invID, result, 4);
 
     if(diagNose) ws.textAll("found invID = " + String(Inv_Prop[which].invID));
