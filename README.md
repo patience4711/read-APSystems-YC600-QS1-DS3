@@ -12,8 +12,8 @@ You can use the provided binary but if you must compile it yourself: Use arduino
 <br>Please note: by popular demand I have published the code here but i do not feel responsible for problems as to compiling. Impossible for me to know why it doesn't compile in your situation.
 
 ## downloads
-May 17 2023: There is a new version v9_13b available, See changelog<br>
-Download [ESP-ECU-v9_13d](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_13d.zip)<br>
+May 22 2023: There is a new version v9_14 available, See changelog<br>
+Download [ESP-ECU-v9_14](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_14.zip)<br>
 
 <br>In case someone wants to print the housing, here is an [stl file](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-housing.zip)
 This is for a nodemcu board 31x58mm.
@@ -47,6 +47,10 @@ The interesting values are send via mqtt and displayed on the main page.
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
 ## changelog ##
+version ESP-ECU_V9_14:
+-  improved efficiency in the data trafic browser-server.
+-  tuned timing in the wifi config portal.
+
 version ESP-ECU_V9_13b:
 -  solved some bugs in the pairing process.
 -  secured the system, prevent visiting the menu from outside own network
