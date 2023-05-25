@@ -1,4 +1,4 @@
-
+//
 const char HTML_LOGPAGE[] PROGMEM = R"=====(
 <!DOCTYPE html><html><head><meta charset='utf-8'>
 <title>ESP-ECU</title>
@@ -33,7 +33,6 @@ tr {height:20px;}
 tr {height:10px;}
 #lijst td, #customers th { padding: 2px;}
 }
-
 </style>
 <script type="text/javascript" src="SECURITY"></script>
 </head>
@@ -41,7 +40,7 @@ tr {height:10px;}
 <center>
 <ul>
 <li><a href='/'>close</a></li>
-<li><a href='/INFOPAGE'>info</a></li>
+<li><a href='/ABOUT'>info</a></li>
 <li><a onclick="return confirm('are you sure?')" href='/CLEAR_LOG'>clear</a></li>
 </ul>
 <br><kop>ECU LOG</kop>

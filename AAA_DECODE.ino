@@ -252,15 +252,15 @@ We keep stacking the increases so we have also en_inc_total
     for(int x = 0; x < 4; x++ ) 
     {   
          if(Inv_Prop[which].conPanels[x]) { // is this panel connected ? otherwise skip
-         #ifndef TEST 
-         if(diagNose) {delay(100); ws.textAll(" * * * decoding panel " + String(x) + " * * * ");}           
-         #endif
+
+         //if(diagNose) {delay(100); ws.textAll(" * * * decoding panel " + String(x) + " * * * ");}           
+
             // first store the last value of energy_new temporary in energy_old
             // after the calulation we dont need it anymore
             en_old[x] = en_saved[which][x]; // en_new (per inverter per panel needs to be global
-#ifdef TEST            
-            if(diagNose) {delay(100); ws.textAll(" * decoding panel " + String(x) + " * en_old " + String(en_old[x]) );}
-#endif
+//#ifdef TEST            
+            if(diagNose) {delay(100); ws.textAll(" * decoding panel " + String(x) + " \n en_old " + String(en_old[x]) );}
+//#endif
             // now we extract a new energy_new[which][x] 
             en_extr = extractValue(offst+x*increment, btc, 1, 0, s_d); // offset 74 todays module energy channel 0
 
@@ -271,9 +271,9 @@ We keep stacking the increases so we have also en_inc_total
               en_saved[which][x] = (en_extr * 8.311F / (float)3600); //[Wh]
             }
 
-#ifdef TEST            
-            if(diagNose) {delay(100); ws.textAll("en_extr " + String(en_extr) + "  en_saved " + String(en_saved[which][x]) );}
-#endif            
+//#ifdef TEST            
+            if(diagNose) {delay(100); ws.textAll("en_extr " + String(en_extr) + "  en_saved " + String(en_saved[which][x]) + "\n\n" );}
+//#endif            
 
             // calculate the energy increase with or without reset and totalize it
             if(resetFlag){
@@ -312,7 +312,7 @@ We keep stacking the increases so we have also en_inc_total
     Inv_Data[which].en_total += en_incr_total; // stack the increase
     dtostrf( total_pwr, 0, 1, Inv_Data[which].power[4]); // write the total value in the struct   
 
-#ifdef TEST
+//#ifdef TEST
      yield();
      if(diagNose){
      delay(100);
@@ -320,7 +320,7 @@ We keep stacking the increases so we have also en_inc_total
      delay(100);
      ws.textAll("total energy stacked in Inv_Data[which].en_total: " + String(Inv_Data[which].en_total) + "\n");
      }
-#endif
+//#endif
     return 0;
 }       
 
@@ -361,81 +361,67 @@ yield();
 void mqttPoll(int which) {
 
 if(Mqtt_Format == 0) return;  
-bool reTain = false;
+//bool reTain = false;
 String Mqtt_send = Mqtt_outTopic;
 if(Mqtt_outTopic.endsWith("/")) {
 
   Mqtt_send += String(Inv_Prop[which].invIdx);
   }
 
-String toMQTT = "{\"inv_serial\":\"" + String(Inv_Prop[which].invSerial) + "\"";
+char pan[50]={0};
+char tail[40]={0};
+char toMQTT[300]={0};
 
 // the json to domoticz must be something like {"idx" : 7, "nvalue" : 0,"svalue" : "90;2975.00"}
-// does it work with the serial on the json?
-//sValue is something like "svalue":"20;30; / so we add a "}   
-//  "command": "udevice", // default so no meed to use
-// "idx" : 7,
-// "nvalue" : 0,
-// "svalue" : "90;2975.00"  
-String sValue="\"svalue\":\"";   
-   switch( Mqtt_Format)  {
+ 
+   switch( Mqtt_Format)  { 
     case 1: 
-       // en_total is the stacked energy increase
-       //String sValue="\"svalue\":\""; // "svalue":"
-       sValue += String(Inv_Data[which].power[4]) + ";" + String(Inv_Data[which].en_total, 2) ; //total of the 2 or 4
-       toMQTT += ",\"idx\":" + String(Inv_Prop[which].invIdx) + ",\"nvalue\":0," + sValue + "\"}";
-       //Serial.println("we publish to domoticz, mess is : " + toMQTT);
+       snprintf(toMQTT, sizeof(toMQTT), "{\"idx\":%d,\"nvalue\":0,\"svalue\":\"%s;%.2f\"}" , Inv_Prop[which].invIdx , Inv_Data[which].power[4], Inv_Data[which].en_total);
        break;
-       
+       // length 46
+
      case 2: // for not domoticz we have a different mqtt string how does this look?
-       toMQTT += ",\"temp\":\"" + String(Inv_Data[which].heath) + "\",\"p0\":\"" + String(Inv_Data[which].power[0]) + "\",\"p1\":\"" + String(Inv_Data[which].power[1]) + "\"";
-       if( Inv_Prop[which].invType == 1 ) {
-       toMQTT += ",\"p2\":\"" + String(Inv_Data[which].power[2]) + "\",\"p3\":\"" + String(Inv_Data[which].power[3])  +  "\"";
-       }
-       toMQTT += ",\"energy\":\"" + String(Inv_Data[which].en_total, 1) + "\"";
-       //Serial.println("we do not publish to domoticz, mess is : " + toMQTT);    
-       toMQTT += "}";
+       snprintf(toMQTT, sizeof(toMQTT), "{\"temp\":\"%s\",\"p0\":\"%s\",\"p1\":\"%s\",\"p2\":\"%s\",\"p3\":\"%s\",\"energy\":\"%.2f\"}" ,Inv_Data[which].heath, Inv_Data[which].power[0],Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[3], Inv_Data[which].en_total);
        break;  
        
-     case 3:
-       toMQTT += ",\"acv\":" + String(Inv_Data[which].acv) + ",\"freq\":" + String(Inv_Data[which].freq) + ",\"temp\":" + String(Inv_Data[which].heath);
-       if( Inv_Prop[which].invType == 1 ) {
-       toMQTT += ",\"dcv\":["+String(Inv_Data[which].dcv[0])+","+String(Inv_Data[which].dcv[1])+","+String(Inv_Data[which].dcv[2])+","+String(Inv_Data[which].dcv[3])+ "]";
-       toMQTT += ",\"dcc\":["+String(Inv_Data[which].dcc[0])+","+String(Inv_Data[which].dcc[1])+","+String(Inv_Data[which].dcc[2])+","+String(Inv_Data[which].dcc[3])+"]";
-       toMQTT += ",\"pwr\":["+String(Inv_Data[which].power[0])+","+String(Inv_Data[which].power[1])+","+String(Inv_Data[which].power[2])+","+String(Inv_Data[which].power[3])+"]";
-       toMQTT += ",\"en\":["+String(en_saved[which][0])+","+String(en_saved[which][1])+","+String(en_saved[which][2])+","+String(en_saved[which][3])+"]}";
-       //toMQTT += ",\"totalen\":" + String(Inv_Data[which].en_total, 2) +"}";
-             } else {
-       toMQTT += ",\"dcv\":["+String(Inv_Data[which].dcv[0])+","+String(Inv_Data[which].dcv[1])+"]";
-       toMQTT += ",\"dcc\":["+String(Inv_Data[which].dcc[0])+","+String(Inv_Data[which].dcc[1])+"]";
-       toMQTT += ",\"pwr\":["+String(Inv_Data[which].power[0])+","+String(Inv_Data[which].power[1])+"]";
-       toMQTT += ",\"en\":["+String(en_saved[which][0])+","+String(en_saved[which][1])+"]}";
-       //toMQTT += ",\"totalen\":" + String(Inv_Data[which].en_total, 2) +"}";
-       reTain=true;
-         }
-        break;
-
-     case 4:
-       toMQTT += ",\"acv\":" + String(Inv_Data[which].acv) + ",\"freq\":" + String(Inv_Data[which].freq) + ",\"temp\":" + String(Inv_Data[which].heath);
-       
-       toMQTT += ",\"ch0\":[" + String(Inv_Data[which].dcv[0]) + "," + String(Inv_Data[which].dcc[0]) + "," + String(Inv_Data[which].power[0]) + "," + String(en_saved[which][0]) + "]";
-       toMQTT += ",\"ch1\":[" + String(Inv_Data[which].dcv[1]) + "," + String(Inv_Data[which].dcc[1]) + "," + String(Inv_Data[which].power[1]) + "," + String(en_saved[which][1]) + "]";
-        if( Inv_Prop[which].invType == 1 ) { // add ch2 and ch3
-       toMQTT += ",\"ch2\":[" + String(Inv_Data[which].dcv[2]) + "," + String(Inv_Data[which].dcc[2]) + "," + String(Inv_Data[which].power[2]) + "," + String(en_saved[which][2]) + "]";
-       toMQTT += ",\"ch3\":[" + String(Inv_Data[which].dcv[3]) + "," + String(Inv_Data[which].dcc[3]) + "," + String(Inv_Data[which].power[3]) + "," + String(en_saved[which][3]) + "]";
+    case 3:
+        ws.textAll("sending format 3");
+        snprintf(toMQTT, sizeof(toMQTT), "{\"freq\":%s,\"temp\":%s,\"acv\":%s" , Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);
+        for(int z = 0; z < 4; z++ ) 
+        {
+           sprintf(pan, ",\"dcv%d\":%s,\"dcc%d\":%s,\"pow%d\":%s,\"en%d\":%.1f" , z , Inv_Data[which].dcv[z], z ,Inv_Data[which].dcc[z],z ,Inv_Data[which].power[z], z, en_saved[which][z]);
+           strcat(toMQTT, pan);
         }
-       toMQTT += ",\"totals\":[" + String(Inv_Data[which].power[4]) + "," + String(Inv_Data[which].en_total, 2) + "]}";
-       reTain=true;
-    }
- 
+        sprintf(tail, ",\"totalen\":%.1f} retain=true", Inv_Data[which].en_total );
+        //ws.textAll("tail = " + String(tail));
+        strncat(toMQTT, tail, strlen(tail));
+        break;
+//
+    case 4:
 
-   //DebugPrintln("mqtt mess :"); //DebugPrintln(toMQTT);
+        snprintf(toMQTT, sizeof(toMQTT), "{\"freq\":%s,\"temp\":%s,\"acv\":%s" , Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);      
+        sprintf(pan, ",\"ch0\":[%s,%s,%s,%.2f]", Inv_Data[which].dcv[0], Inv_Data[which].dcc[0], Inv_Data[which].power[0], en_saved[which][0]);  
+        strcat(toMQTT, pan);
+        sprintf(pan, ",\"ch1\":[%s,%s,%s,%.2f]", Inv_Data[which].dcv[1], Inv_Data[which].dcc[1], Inv_Data[which].power[1], en_saved[which][1]);  
+        strcat(toMQTT, pan);
+
+        if( Inv_Prop[which].invType == 1 ) { // add ch2 and ch3
+            sprintf(pan, ",\"ch2\":[%s,%s,%s,%.2f]", Inv_Data[which].dcv[2], Inv_Data[which].dcc[2], Inv_Data[which].power[2], en_saved[which][2]);  
+            strcat(toMQTT, pan);
+            sprintf(pan, ",\"ch3\":[%s,%s,%s,%.2f]", Inv_Data[which].dcv[3], Inv_Data[which].dcc[3], Inv_Data[which].power[3], en_saved[which][3]);  
+            strcat(toMQTT, pan);
+        }
+        sprintf(tail, ",\"totals\":[%s,%.2f]} retain=true", Inv_Data[which].power[4], Inv_Data[which].en_total);
+        strcat(toMQTT, tail);
+        break;
+    }
+
    #ifdef TEST
-     ws.textAll("sending mqtt to " + Mqtt_send );
-     ws.textAll("message:  " + toMQTT );
+   ws.textAll("sending mqtt to " + Mqtt_send );
+   ws.textAll("message:  " + toMQTT );
    #endif
-   
-   MQTT_Client.publish ( Mqtt_send.c_str(), toMQTT.c_str(), reTain );
+   //ws.textAll("message:  " + String(toMQTT) );
+   MQTT_Client.publish ( Mqtt_send.c_str(), toMQTT );
  }
 
 // not domoticz: {"inv_serial":"123456789012","temp":"12,3","p0":"123",p1":"123",p2":"123",p3":"123","energy":"345"}

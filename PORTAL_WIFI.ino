@@ -42,13 +42,13 @@ void start_portal() {
     
   server.begin();
 
-  Serial.println(F("entering portal loop"));
-  laatsteMeting = millis(); //voor de time-out
+
  
   // ***************************************************************************
   //              this is the infinitive  loop 
   //****************************************************************************
-
+  Serial.println(F("entering portal loop"));
+  laatsteMeting = millis(); //voor de time-out
   static unsigned long heartbeat = 0;
   while (millis() < laatsteMeting + 300*1000UL) { // 5 minuten== 300 30 == 30sec
   if ( millis() > heartbeat + 10*1000UL ) {
@@ -64,7 +64,7 @@ void start_portal() {
 //    handle_Serial();
 //   }
    if (value == 11) break;
-//    dnsServer.processNextRequest();
+    //dnsServer.processNextRequest();
 
   } 
   // ************************ end while loop ******************************* 
@@ -128,13 +128,13 @@ toSend.replace("{ma}", String(WiFi.macAddress()) );
           toSend.replace("Currently not connected to a  wifi network!" , page);
       }
       // hadden hudden hodden hedden
-      // verberg de wis knop als gewist en wanneer verbonden
+      // hide the de wipe button if wiped and connected
       if ( LittleFS.exists("/basisconfig.json") && event!=101 ) { //show if file is present
        toSend.replace("erase' hidden", "erase'");
       } else {
         //Serial.println(F("no basisconfig.json"));  
       }
-       //deze laten we zien als niet 101 en wel static ip
+       // we show this when ! 101 and static ip
       if( static_ip[0] != '\0' && static_ip[0] != '0' && event!=101) { //show if static is present
        toSend.replace("static' hidden", "static'"); 
       }
@@ -149,15 +149,12 @@ toSend.replace("{ma}", String(WiFi.macAddress()) );
 // *********************************************************************
 void handleForm(AsyncWebServerRequest *request) {
    laatsteMeting = millis();
-// als we de eerste keer hierkomen beginnen we met een netwerkscan
-// we might still trying to connect// this stops that
-//      ETS_UART_INTR_DISABLE ();
-//      wifi_station_disconnect ();
-//      ETS_UART_INTR_ENABLE ();
+// the first time we come here the networks are scanned
 
-toSend = FPSTR(PORTAL_HEAD);
-toSend += FPSTR(PORTAL_WIFIFORM);
-toSend.replace("{pw}",  String(pswd) );
+  toSend = FPSTR(PORTAL_HEAD);
+  toSend += FPSTR(PORTAL_WIFIFORM);
+  toSend.replace("{pw}",  String(pswd) );
+  toSend.replace("{sl}",  String(securityLevel) );
 
 if (networksFound == 0) {
       toSend.replace("aplijst" ,"WiFi scan not found networks. Restart configuration portal to scan again.");
@@ -186,8 +183,9 @@ if (networksFound == 0) {
 strcpy( ssid, request->getParam("s")->value().c_str() );
 strcpy( pass, request->getParam("p")->value().c_str() );  
 strcpy( pswd, request->getParam("pw")->value().c_str() );
+securityLevel = request->arg("sl").toInt();
 
-   wifiConfigsave(); // save the admin passwd
+  wifiConfigsave(); // save the admin passwd
   //  wifiConnect();  // won't work, only after reboot we are connected 
   tryConnectFlag = true;  // this takes care for the connectattempts in the loop
 
@@ -243,7 +241,7 @@ void eraseFiles(AsyncWebServerRequest *request) {
 }
 
 void eraseStatic(AsyncWebServerRequest *request) {
-   //DebugPrintln("static ip wissen");
+   //DebugPrintln("wipe static ip");
   String toSend = F("<!DOCTYPE html><html><head>");
   toSend += F("<script type='text/javascript'>setTimeout(function(){ window.location.href='/redirect'; }, 500 ); </script>");
   toSend += F("</head><body><h2>erasing ip settings, please wait... !</h2></body></html>");
@@ -270,12 +268,9 @@ void wifiConnect() {
 
       WiFi.mode(WIFI_AP_STA);
       delay(500);
-     
-      //Serial.println("Connecting to " + String(ssid));
-      //Serial.println(F("password =  " + String(pass)));
 
       if (connectWifi() == 1) {
-         Serial.println("yoepy, connected");
+         Serial.println("\nyoupy, connected");
          ledblink(3, 500);
          event=101;
        } else {
@@ -290,8 +285,7 @@ void wifiConnect() {
 // ************************************************************************
 
 int connectWifi() {  
-  //DebugPrintln("trying to connect with the new credentials");
- // WiFi.disconnect(true);
+
   if (ssid != "") {
     //Serial.println(F("we have a new ssid, trying to connect to that"));
     //trying to fix connection in progress hanging
@@ -313,20 +307,17 @@ int connectWifi() {
   }
   int connectAttempts = 0;
   while (WiFi.status() != WL_CONNECTED) {
-     delay(500);
-     //Serial.print("*");
+     delay(1000);
+     Serial.print("\nwifi state = " + String(WiFi.status()));
      connectAttempts += 1;
      if (connectAttempts==10) {break;}
   }
    //Serial.println(F("\nwe are out of  the for=loop, event = " + String(event) ));
 
    if(connectAttempts < 10 ) {
-      //DebugPrint ("Connected : ");
-      //DebugPrintln(WiFi.localIP());
       checkFixed(); // set static ip if configured
       return 1;
    } else {
-     //DebugPrint ("NOT Connected : ");
      return 0;
    }
 }

@@ -34,8 +34,8 @@ document.getElementById("help").style.display = "none";
   <b>10;ERASE: </b> delete all inverter files<br><br>
   <b>10;DIAG: </b> more Debug messages in console<br><br>
   <b>10;EDIT=0-AABB: </b> mark an inverter as paired<br><br>
-  <b>10;CLEAR: </b clear console window<br><br>
- 
+  <b>10;FILES: </b> show filesystem<br><br>
+  <b>10;CLEAR: </b> clear console window<br><br> 
   </div>
 
 <div id='msect'>
@@ -169,11 +169,12 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
               ws.textAll("poll inverter " + String(kz));
               iKeuze=kz;
               actionFlag=47;
+              diagNose=true; //
               return;
           } else 
            
           if (strncasecmp(txBuffer+3,"EDIT=",5) == 0) {
-            //input can be 10;POLL=0; 
+            //input can be 10;EDIT=0-AABB; 
             //ws.textAll("received " + String( (char*)data) + "<br>"); 
               int kz = String(txBuffer[8]).toInt();
               if ( kz > inverterCount-1 ) {
@@ -184,7 +185,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
               for(int i=10;  i<15; i++) { invid[i-10] = txBuffer[i]; }
               ws.textAll("edit inverter " + String(kz));
               ws.textAll("id = " + String(invid));
-              strncpy(Inv_Prop[kz].invID, invid, 6);
+              strncpy(Inv_Prop[kz].invID, invid, 4);
               String bestand = "/Inv_Prop" + String(kz) + ".str"; // /Inv_Prop0.str
               writeStruct(bestand, kz); // save in SPIFFS 
               return;
@@ -193,6 +194,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
            if (strncasecmp(txBuffer+3,"HEALTH",6) == 0) {  
               ws.textAll("check zb system");
               actionFlag=44; // perform the healthcheck
+              diagNose=true;
               return;             
           } else          
 
@@ -234,8 +236,6 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
           } else 
 // ********************** heap sensor **************************************
            if (strncasecmp(txBuffer+3,"DOMIDX=",6) == 0) {  
-            //input can be 10;POLL=0; 
-            //ws.textAll("received " + String( (char*)data) + "<br>"); 
               int kz = String(txBuffer[10]).toInt()*100;
               kz+=String(txBuffer[11]).toInt()*10;
               kz+=String(txBuffer[12]).toInt();
@@ -246,12 +246,20 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
               return;
           } else 
 
+           if (strncasecmp(txBuffer+3,"FILES",5) == 0) {  
+              //we do this in the loop
+              actionFlag = 46;
+              return;             
+          
+          } else 
+ 
+ 
  // ********************** zigbee test new*****************************          
            if (strncasecmp(txBuffer+3,"ZBT=",4) == 0) {  
               ws.textAll("going to send a teststring, len=" + String(len));
               //we do this in the loop
               actionFlag = 45;
-
+              diagNose=true;
                return;             
           
           } else 
@@ -295,6 +303,8 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       {
          ws.textAll("command = " + String(txBuffer) );  
          actionFlag = 21;
+         diagNose=true;
+         return;
 // ***************************************************************
 //      } else 
 //

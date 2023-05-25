@@ -1,5 +1,7 @@
 const char PORTAL_HEAD[] PROGMEM = R"=====(
-<!DOCTYPE html><html><html lang=\"en\"><head><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<!DOCTYPE html><html><html lang=\"en\">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>hansiart wificonfig</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
@@ -10,7 +12,7 @@ const char PORTAL_HEAD[] PROGMEM = R"=====(
 .btn,h2{font-size: 20px}
 .btn{width:300px;height:60px;background:#0066FF; outline: none;}
 .btn2{width:260px;height:60px;background:#CC00FF; outline: none; font-size: 14px}
-#together {position: absolute; display: inline-block; margin;left:10px; width:330px;} 
+#together {position: absolute; display: inline-block; margin;left:10px; width:330px; font-size:14px;} 
 
 .c{text-align: center;} div,input{padding:5px;font-size:1em;} 
 input{width:95%;} 
@@ -74,15 +76,16 @@ function showdiv() {
 <br><br><br><br><br><h1>please wait while trying to connect..</h1><br></div>
 
 
-<div style='background:lightblue; width:380px;'><H3 style='text-align: center;'> HANSIART CONFIG PORTAL </h3></div>
-<div id='together' style='top:88px; overflow-y:scroll; height:300px; left:35px; border: 3px solid #ff3467;'><h3>wifi networks</h3>
+<div style='background:lightblue; width:380px; height:50px;'><h4 style='text-align: center;'> HANSIART CONFIG PORTAL </h4></div>
+<div id='together' style='top:72px; overflow-y:scroll; height:276px; left:35px; border: 3px solid #ff3467;'><h3>wifi networks</h3>
 aplijst
 </div>
-<div id='together' style='top:410px; left:35px; border: 3px solid #f03467; background:lightyellow;'>
+<div id='together' style='top:368px; left:35px; border: 3px solid #f03467; background:lightyellow;'>
 <form method='get' action='wifiCon'>
 <table><tr><td style='width:120px;'>wifi netwerk<td><input id='s' name='s' length=32 placeholder='SSID' required></input></td></tr>
 <tr><td>wifi passwd<td><input id='p' name='p' length=64 type='text' placeholder='password' required></input></tr>
-<tr><td>admin passwd<td><input  name='pw' length='11' placeholder='max. 10 tekens' value='{pw}' pattern='.{4,10}' title='tussen 4 en 10 karakters'></input></tr> 
+<tr><td>admin passwd<td><input  name='pw' length='11' placeholder='max. 10 tekens' value='{pw}' pattern='.{4,10}' title='4 to 10 characters'></input></tr> 
+<tr><td>security level<td><input type='number' min='0' max="9" name='sl' value='{sl}'></input></tr> 
 </table><br/>
 <button type='submit' onclick='showdiv()' style='float:left'>save</button>
 </form></div></br></body></html>
@@ -92,7 +95,8 @@ aplijst
 const char PORTAL_CONFIRM[] PROGMEM = R"=====( 
 <body style='font-size:16px;'>
 <h1>  CONNECT TO WIFI</h1><br><br>
-<strong>please wait until the led has flashed, then click OK</strong><br><br>
+<strong>please wait until the led has flashed 3 times. <br>
+Then click OK or press the resetbutton on your ESP.</strong><br>
 <br><br><br>
 <form action='/home' method='get'><button class='btn' type='submit'>OK</button></form>
 <br><br>

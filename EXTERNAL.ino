@@ -1,35 +1,14 @@
 // find out if the request comes from inside the network
+//check if the first 9 characters of the router's ip ( 192.168.0 ) is in the url
 bool checkRemote(String url) {
-    //Serial.println("checkRemote the url = " + url);  
-    //String router=WiFi.gatewayIP().toString();
-    //Serial.println("routers address = " + router); 
-    //router = router.substring(0, 9);
-    //if ( url.indexOf(router) == -1 ) return true; else return false; 
-    if ( url.indexOf(WiFi.gatewayIP().toString().substring(0, 9)) == -1 ) return true; else return false;
+    if(securityLevel==0) return false; //no security so never remote
+    if ( url.indexOf(WiFi.gatewayIP().toString().substring(0, securityLevel)) == -1 ) return true; else return false;
 }
 
 // we come here when an unknown request is done
 
 void handleNotFound(AsyncWebServerRequest *request) {
   
-//String serverargument = request->url().c_str();
-////DebugPrintln("we are in handleNotFound");
-////DebugPrint("serverargument = "); //DebugPrintln(serverargument);
-//// if the client is outside the network he is can do nothing
-//
-//String addy = request->client()->remoteIP().toString();
-//bool intern = false;
-//String router=WiFi.gatewayIP().toString();
-//router = router.substring(0, 9);
-////DebugPrint("router substring 0-9 = "); //DebugPrintln(router);
-//
-//if ( addy.indexOf(router) == -1 ) { // indexOf geeft -1 als niet gevonden
-//  //DebugPrintln("the client comes form outside the network");
-//  intern = false; 
-//  } else {
-//  //DebugPrintln("the client comes form inside the network"); 
-//  intern = true; }
-
 bool intern = false;
 if(!checkRemote( request->client()->remoteIP().toString()) ) intern = true;
 
