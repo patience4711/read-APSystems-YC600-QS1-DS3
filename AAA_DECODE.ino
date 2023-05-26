@@ -361,7 +361,7 @@ yield();
 void mqttPoll(int which) {
 
 if(Mqtt_Format == 0) return;  
-//bool reTain = false;
+bool reTain = false;
 String Mqtt_send = Mqtt_outTopic;
 if(Mqtt_outTopic.endsWith("/")) {
 
@@ -384,17 +384,29 @@ char toMQTT[300]={0};
        snprintf(toMQTT, sizeof(toMQTT), "{\"temp\":\"%s\",\"p0\":\"%s\",\"p1\":\"%s\",\"p2\":\"%s\",\"p3\":\"%s\",\"energy\":\"%.2f\"}" ,Inv_Data[which].heath, Inv_Data[which].power[0],Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[3], Inv_Data[which].en_total);
        break;  
        
-    case 3:
-        ws.textAll("sending format 3");
+     case 3:
         snprintf(toMQTT, sizeof(toMQTT), "{\"freq\":%s,\"temp\":%s,\"acv\":%s" , Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);
-        for(int z = 0; z < 4; z++ ) 
-        {
-           sprintf(pan, ",\"dcv%d\":%s,\"dcc%d\":%s,\"pow%d\":%s,\"en%d\":%.1f" , z , Inv_Data[which].dcv[z], z ,Inv_Data[which].dcc[z],z ,Inv_Data[which].power[z], z, en_saved[which][z]);
-           strcat(toMQTT, pan);
+        //char pan[50]={0};
+        if( Inv_Prop[which].invType == 1 ) { // qs1
+            sprintf(pan, ",\"dcv\":[%s,%s,%s,%s]", Inv_Data[which].dcv[0], Inv_Data[which].dcv[1],Inv_Data[which].dcv[2],Inv_Data[which].dcv[3]);
+            strcat(toMQTT, pan);
+            sprintf(pan, ",\"dcc\":[%s,%s,%s,%s]", Inv_Data[which].dcc[0], Inv_Data[which].dcc[1],Inv_Data[which].dcc[2],Inv_Data[which].dcc[3]);
+            strcat(toMQTT, pan);
+            sprintf(pan, ",\"pwr\":[%s,%s,%s,%s]", Inv_Data[which].power[0], Inv_Data[which].power[1],Inv_Data[which].power[2],Inv_Data[which].power[3]);
+            strcat(toMQTT, pan);
+            sprintf(pan, ",\"en\":[%.2f,%.2f%.2f,%.2f]}", en_saved[which][0], en_saved[which][1], en_saved[which][2], en_saved[which][3]);
+            strcat(toMQTT, pan);
+        } else {
+            sprintf(pan, ",\"dcv\":[%s,%s]", Inv_Data[which].dcv[0], Inv_Data[which].dcv[1]);
+            strcat(toMQTT, pan);
+            sprintf(pan, ",\"dcc\":[%s,%s]", Inv_Data[which].dcc[0], Inv_Data[which].dcc[1]);
+            strcat(toMQTT, pan);
+            sprintf(pan, ",\"pwr\":[%s,%s]", Inv_Data[which].power[0], Inv_Data[which].power[1]);
+            strcat(toMQTT, pan);
+            sprintf(pan, ",\"en\":[%.2f,%.2f]}", en_saved[which][0], en_saved[which][1]);          
+            strcat(toMQTT, pan);
         }
-        sprintf(tail, ",\"totalen\":%.1f} retain=true", Inv_Data[which].en_total );
-        //ws.textAll("tail = " + String(tail));
-        strncat(toMQTT, tail, strlen(tail));
+        reTain=true;
         break;
 //
     case 4:
@@ -411,8 +423,9 @@ char toMQTT[300]={0};
             sprintf(pan, ",\"ch3\":[%s,%s,%s,%.2f]", Inv_Data[which].dcv[3], Inv_Data[which].dcc[3], Inv_Data[which].power[3], en_saved[which][3]);  
             strcat(toMQTT, pan);
         }
-        sprintf(tail, ",\"totals\":[%s,%.2f]} retain=true", Inv_Data[which].power[4], Inv_Data[which].en_total);
+        sprintf(tail, ",\"totals\":[%s,%.2f]}", Inv_Data[which].power[4], Inv_Data[which].en_total);
         strcat(toMQTT, tail);
+        reTain=true;
         break;
     }
 
@@ -421,7 +434,7 @@ char toMQTT[300]={0};
    ws.textAll("message:  " + toMQTT );
    #endif
    //ws.textAll("message:  " + String(toMQTT) );
-   MQTT_Client.publish ( Mqtt_send.c_str(), toMQTT );
+   MQTT_Client.publish ( Mqtt_send.c_str(), toMQTT, reTain );
  }
 
 // not domoticz: {"inv_serial":"123456789012","temp":"12,3","p0":"123",p1":"123",p2":"123",p3":"123","energy":"345"}
