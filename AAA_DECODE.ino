@@ -394,7 +394,7 @@ char toMQTT[300]={0};
             strcat(toMQTT, pan);
             sprintf(pan, ",\"pwr\":[%s,%s,%s,%s]", Inv_Data[which].power[0], Inv_Data[which].power[1],Inv_Data[which].power[2],Inv_Data[which].power[3]);
             strcat(toMQTT, pan);
-            sprintf(pan, ",\"en\":[%.2f,%.2f%.2f,%.2f]}", en_saved[which][0], en_saved[which][1], en_saved[which][2], en_saved[which][3]);
+            sprintf(pan, ",\"en\":[%.2f,%.2f,%.2f,%.2f]}", en_saved[which][0], en_saved[which][1], en_saved[which][2], en_saved[which][3]);
             strcat(toMQTT, pan);
         } else {
             sprintf(pan, ",\"dcv\":[%s,%s]", Inv_Data[which].dcv[0], Inv_Data[which].dcv[1]);
