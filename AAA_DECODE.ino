@@ -385,7 +385,7 @@ char toMQTT[300]={0};
        break;  
        
      case 3:
-        snprintf(toMQTT, sizeof(toMQTT), "{\"freq\":%s,\"temp\":%s,\"acv\":%s" , Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);
+        snprintf(toMQTT, sizeof(toMQTT), "{\"inv_serial\":\"%s\",\"freq\":%s,\"temp\":%s,\"acv\":%s" , Inv_Prop[which].invSerial, Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);
         //char pan[50]={0};
         if( Inv_Prop[which].invType == 1 ) { // qs1
             sprintf(pan, ",\"dcv\":[%s,%s,%s,%s]", Inv_Data[which].dcv[0], Inv_Data[which].dcv[1],Inv_Data[which].dcv[2],Inv_Data[which].dcv[3]);
@@ -411,7 +411,7 @@ char toMQTT[300]={0};
 //
     case 4:
 
-        snprintf(toMQTT, sizeof(toMQTT), "{\"freq\":%s,\"temp\":%s,\"acv\":%s" , Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);      
+        snprintf(toMQTT, sizeof(toMQTT), "{\"inv_serial\":\"%s\",\"freq\":%s,\"temp\":%s,\"acv\":%s" , Inv_Prop[which].invSerial, Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);      
         sprintf(pan, ",\"ch0\":[%s,%s,%s,%.2f]", Inv_Data[which].dcv[0], Inv_Data[which].dcc[0], Inv_Data[which].power[0], en_saved[which][0]);  
         strcat(toMQTT, pan);
         sprintf(pan, ",\"ch1\":[%s,%s,%s,%.2f]", Inv_Data[which].dcv[1], Inv_Data[which].dcc[1], Inv_Data[which].power[1], en_saved[which][1]);  
