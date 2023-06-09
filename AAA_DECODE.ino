@@ -19,7 +19,7 @@ int decodePollAnswer(int which)
   bool resetFlag = false;
   float total_pwr = 0;
 
-  //retrieve the poll answer
+  //retrieve the poll answer by reading the zigbee
   strcpy(messageToDecode, readZB(s_d));
   if (readCounter == 0) {
      if(diagNose) ws.textAll("no answer "); 
@@ -201,7 +201,7 @@ We keep stacking the increases so we have also en_inc_total
 // **********************************************************************
 //               calculation of the power per panel
 // **********************************************************************
-    ws.textAll("* * * * polled inverter " + String(which) + " * * * *");
+    if(diagNose) ws.textAll("* * * * polled inverter " + String(which) + " * * * *");
     #ifdef TEST
     ws.textAll("testCounter = " + String(testCounter));
     #endif
@@ -336,24 +336,40 @@ char *split(char *str, const char *delim)
     *p = '\0';                // terminate string after head
     return p + strlen(delim); // return tail substring
 }
-
 // *******************************************************************************************************************
 //                             extract values
 // *******************************************************************************************************************
 float extractValue(uint8_t startPosition, uint8_t valueLength, float valueSlope, float valueOffset, char toDecode[CC2530_MAX_SERIAL_BUFFER_SIZE])
 {
-//    Serial.println("re declare tempMsgBuffer");
-char tempMsgBuffer[64] = {0}; // was 254
-yield();
-    
-    memset(&tempMsgBuffer[0], 0, sizeof(tempMsgBuffer)); //zero out all buffers we could work with "messageToDecode"
-    delayMicroseconds(250);                              //give memset a little bit of time to empty all the buffers
-    strncpy(tempMsgBuffer, toDecode + startPosition, valueLength);
-    delayMicroseconds(250); //give memset a little bit of time to empty all the buffers
-
+    char tempMsgBuffer[64] = {0}; // was 254
     yield();
-    return (valueSlope * (float)StrToHex(tempMsgBuffer)) + valueOffset;
+
+    strncpy(tempMsgBuffer, toDecode + startPosition, valueLength);
+    
+    // now we have the part of the string "startposition - number of bytes"
+    // we calculate the value it is representing with strtol and correct it with valueSlope and offset
+    yield();
+
+    return (valueSlope * (float)strtol(tempMsgBuffer, 0, 16)) + valueOffset;
 }
+
+//// *******************************************************************************************************************
+////                             extract values
+//// *******************************************************************************************************************
+//float extractValue(uint8_t startPosition, uint8_t valueLength, float valueSlope, float valueOffset, char toDecode[CC2530_MAX_SERIAL_BUFFER_SIZE])
+//{
+////    Serial.println("re declare tempMsgBuffer");
+//char tempMsgBuffer[64] = {0}; // was 254
+//yield();
+//    
+//    memset(&tempMsgBuffer[0], 0, sizeof(tempMsgBuffer)); //zero out all buffers we could work with "messageToDecode"
+//    delayMicroseconds(250);                              //give memset a little bit of time to empty all the buffers
+//    strncpy(tempMsgBuffer, toDecode + startPosition, valueLength);
+//    delayMicroseconds(250); //give memset a little bit of time to empty all the buffers
+//
+//    yield();
+//    return (valueSlope * (float)StrToHex(tempMsgBuffer)) + valueOffset;
+//}
 
 // ************************************************************************************
 //                mqtt send polled data
@@ -361,16 +377,16 @@ yield();
 void mqttPoll(int which) {
 
 if(Mqtt_Format == 0) return;  
-bool reTain = false;
-String Mqtt_send = Mqtt_outTopic;
-if(Mqtt_outTopic.endsWith("/")) {
 
-  Mqtt_send += String(Inv_Prop[which].invIdx);
+  char Mqtt_send[26]={0};  
+  strcpy(Mqtt_send, Mqtt_outTopic);
+  if( Mqtt_send[strlen(Mqtt_send)-1] == '/' ) {
+    strcat(Mqtt_send, String(Inv_Prop[which].invIdx).c_str());
   }
-
-char pan[50]={0};
-char tail[40]={0};
-char toMQTT[300]={0};
+  bool reTain = false;
+  char pan[50]={0};
+  char tail[40]={0};
+  char toMQTT[300]={0};
 
 // the json to domoticz must be something like {"idx" : 7, "nvalue" : 0,"svalue" : "90;2975.00"}
  
@@ -381,7 +397,7 @@ char toMQTT[300]={0};
        // length 46
 
      case 2: // for not domoticz we have a different mqtt string how does this look?
-       snprintf(toMQTT, sizeof(toMQTT), "{\"temp\":\"%s\",\"p0\":\"%s\",\"p1\":\"%s\",\"p2\":\"%s\",\"p3\":\"%s\",\"energy\":\"%.2f\"}" ,Inv_Data[which].heath, Inv_Data[which].power[0],Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[3], Inv_Data[which].en_total);
+       snprintf(toMQTT, sizeof(toMQTT), "{\"inv\":\"%d\",\"temp\":\"%s\",\"p0\":\"%s\",\"p1\":\"%s\",\"p2\":\"%s\",\"p3\":\"%s\",\"energy\":\"%.2f\"}" ,which, Inv_Data[which].heath, Inv_Data[which].power[0],Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[3], Inv_Data[which].en_total);
        break;  
        
      case 3:
@@ -427,14 +443,23 @@ char toMQTT[300]={0};
         strcat(toMQTT, tail);
         reTain=true;
         break;
+     
+     case 5: // for thingspeak we have a different format
+       snprintf(toMQTT, sizeof(toMQTT), "field1=%d&field2=%s&field3=%s&field4=%s&field5=%s&field6=%s&field7=%.2f&status=MQTTPUBLISH" ,which, Inv_Data[which].heath, Inv_Data[which].power[0],Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[3], Inv_Data[which].en_total);
+       reTain=false;
+       break;
     }
 
    #ifdef TEST
    ws.textAll("sending mqtt to " + Mqtt_send );
-   ws.textAll("message:  " + toMQTT );
+   ws.textAll("message:  " + String(toMQTT) );
    #endif
+   // we check first if we are connected, else we connect 
+   if ( ! MQTT_Client.connected() ) {
+      if( !mqttConnect() ) return;
+   }
    //ws.textAll("message:  " + String(toMQTT) );
-   MQTT_Client.publish ( Mqtt_send.c_str(), toMQTT, reTain );
+   MQTT_Client.publish ( Mqtt_send, toMQTT, reTain );
  }
 
 // not domoticz: {"inv_serial":"123456789012","temp":"12,3","p0":"123",p1":"123",p2":"123",p3":"123","energy":"345"}

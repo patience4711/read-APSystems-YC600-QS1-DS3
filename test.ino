@@ -13,22 +13,20 @@ DebugPrint("len of txBuffer :  "); DebugPrintln(String(txBuffer));
        
        //len at the begin and crc at the end done by sendZigbee()
        //now we send this command
-       sendZigbee(sendCmd);
+       sendZB(sendCmd);
 
        //now read the answer
-       char * inMessage = readZigbee(s_d);
+       char * inMessage = readZB(s_d);
       if (readCounter == 0) {
          if(diagNose) ws.textAll("no answer "); 
           return;
         }       
-       if(diagNose) {
-       ws.textAll( String(inMessage) );
-       }
 }
 
 
 #ifdef TEST
 void testDecode() {
+  char inMessage[1024]={0};
 // we always test inverter 0, depending on the type we test the right string
 int type = Inv_Prop[0].invType; //
   polled[0] = true;
@@ -38,7 +36,7 @@ int type = Inv_Prop[0].invType; //
 
 //en_saved[0][0] = 245;
 
-char inMessage[512];
+
 switch(type) {
  case 0: // yc600
    strncpy(inMessage, "FE0164010064FE034480001401D2FE0345C43A1000A8FE724481000006013A101414007100B57CFA00005E408000158215FBFB51B103D40F4117000074CF00000076706A73D06B0496000000000000000172072D88017862E8201F00030555073F0303030100000100000000000000000000000000000000000000000000000000000000000000FEFE3A100E76",300);
@@ -73,64 +71,3 @@ testCounter += 1; // for the next round we have new string
 mqttPoll(0);
 }
 #endif
-
-//void test_polling(int which) {
-//    polled[which]=false; //nothing is displayed on webpage
-//
-//    if(diagNose) ws.textAll("polling"); //
-//    char pollCommand[67] = {0};
-//    char ecu_id_reverse[13];
-//    ECU_REVERSE().toCharArray(ecu_id_reverse, 13);    
-//
-//
-////    if(diagNose) ws.textAll("zb send poll cmd inverter " + String(which) + "  cmd:" + String(pollCommand));   
-//      snprintf(pollCommand, sizeof(pollCommand), "1D2401%.2s%.2s1414060001000F13%sFBFB06BB000000000000C1FEFE", Inv_Prop[which].invID + 4, Inv_Prop[which].invID + 2, ecu_id_reverse);
-//     //add checksum
-//     strcpy(pollCommand, strncat(pollCommand, checkSum(pollCommand), sizeof(pollCommand) + sizeof(checkSum(pollCommand))));
-//
-//     Serial.println("pollCommand after len and checksum:" + String(pollCommand));
-//}
-//void test_polling(int which) {
-//    polled[which]=false; //nothing is displayed on webpage
-//
-//    Serial.println("testpolling inv 0");
-//
-//    char pollCommand[254] = {0};
-//    char normalOperationBaseCommand[][254]  =
-//    {
-//        "2401",                      //+ ..string.sub(inv_id[x],3,4)..string.sub(inv_id[x],1,2)..
-//        "1414060001000F13",          //append (concatenate) _ecu_id_reverse
-//         // "1414000601000F13",          //append (concatenate) _ecu_id_reverse
-//        "FBFB06BB000000000000C1FEFE" // end of String
-//    };
-//    
-//    //Serial.println("Inv_Prop[which].invID = " + String(Inv_Prop[which].invID) );
-//    char inv_id[7];
-//    memset(&inv_id[0], 0, sizeof(inv_id)); //zero out otherwise we get strange tokens
-//    delayMicroseconds(250);
-//    
-//    strncpy(inv_id, Inv_Prop[which].invID, strlen(Inv_Prop[which].invID));
-//    inv_id[7]='\0'; //terminate
-//
-//    char ecu_id_reverse[13];  
-//    ECU_REVERSE().toCharArray(ecu_id_reverse, 13);
-//    
-//    strncpy(pollCommand, normalOperationBaseCommand[0], strlen(normalOperationBaseCommand[0])); // the 2401
-//    Serial.println(" 1 pollCommand now = " + String(pollCommand));
-//    strncat(pollCommand, inv_id + 4, 2 ); // ad the 2nd byte of inv_id
-//    strncat(pollCommand, inv_id + 2, 2 );     // ad the 1st byte of inv_id
-//    Serial.println("2 pollCommand after reversed inv id = " + String(pollCommand));
-//    strncat(pollCommand, normalOperationBaseCommand[1], sizeof(normalOperationBaseCommand[1]));
-//    Serial.println("3 pollCommand after 1414060001000F13 = " + String(pollCommand));         
-//    strncat(pollCommand, ecu_id_reverse, sizeof(ecu_id_reverse));
-//    Serial.println(" 4 pollCommand after reversed in id = " + String(pollCommand));
-//    strncat(pollCommand, normalOperationBaseCommand[2], sizeof(normalOperationBaseCommand[2]));
-//    //Serial.println("pollCommand after FBFB06BB000000000000C1FEFE = " + String(pollCommand));
-//    
-//    // calculate length and put this at beginning
-//    strcpy(pollCommand, strncat(sLen(pollCommand), pollCommand, sizeof(sLen(pollCommand)) + sizeof(pollCommand))); //build command plus sln at the beginning
-//    // put in the CRC at the end of the command
-//    strcpy(pollCommand, strncat(pollCommand, checkSum(pollCommand), sizeof(pollCommand) + sizeof(checkSum(pollCommand))));
-//    
-//    Serial.println("pollCommand after len and checksum:" + String(pollCommand));
-//}

@@ -3,11 +3,10 @@ void pairOnActionflag() {
      //this because no delay is alowed within a async request
      //start with setup the coordinator in pairing mode
      String term = "start pairing inverter sn " + String(Inv_Prop[iKeuze].invSerial);
-     Update_Log("pairing", term);
+     Update_Log(4, "start");
      if( !coordinator(false) ) {
-        term="pairing failed, zb system down";
-        Update_Log("pairing", term);
-        ws.textAll(term);
+        Update_Log(4, "ZB down");
+        ws.textAll(F("pairing failed, zb system down"));
         return;
      }
   
@@ -16,13 +15,13 @@ void pairOnActionflag() {
   
     if( pairing(iKeuze) ) {
        String term = "success, inverter got id " + String(Inv_Prop[iKeuze].invID);
-       Update_Log("pairing", term);
+       Update_Log(4, "success");
        ws.textAll(term);  
     } else {
       // pairing failed
        strncpy(Inv_Prop[iKeuze].invID, "0000", 4);
        String term = "failed, inverter got id " + String(Inv_Prop[iKeuze].invID);
-       Update_Log("pair", term);
+       Update_Log(4, "failed");
        ws.textAll(term);      
     }
        String bestand = "/Inv_Prop" + String(iKeuze) + ".str"; // /Inv_Prop0.str
@@ -163,15 +162,15 @@ bool decodePairMessage(int which)
     // if(diagNose) ws.textAll("found invID in MessageToDecode");
     memset(&Inv_Prop[which].invID, 0, sizeof(Inv_Prop[which].invID)); //zero out 
     delayMicroseconds(250);  
-    // check if it is not the ECU-shortid
-    char ecu_short[5]={0};
-    strncat(ecu_short, ECU_ID + 2, 2); // D8A3011B9780 must be A3D8
-    strncat(ecu_short, ECU_ID, 2);
-    
-    if(strcmp(result, ecu_short) == 0) {
-      if(diagNose) ws.textAll("invID equals ECU-Short, returning false");
-      return false;
-    }
+//    // check if it is not the ECU-shortid
+//    char ecu_short[5]={0};
+//    strncat(ecu_short, ECU_ID + 2, 2); // D8A3011B9780 must be A3D8
+//    strncat(ecu_short, ECU_ID, 2);
+//    
+//    if(strcmp(result, ecu_short) == 0) {
+//      if(diagNose) ws.textAll("invID equals ECU-Short, returning false");
+//      return false;
+//    }
     // so result is not equal to ECU-shortid
     strncpy(Inv_Prop[which].invID, result, 4);
 

@@ -1,12 +1,14 @@
 //
 const char ABOUT [] PROGMEM = R"=====(
 <!DOCTYPE html><html><head>
+<meta http-equiv="refresh" content="180">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset='utf-8'>
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 <title>ESP-ECU</title>
 <style>
-table, th, td {border: 1px solid blue; width:font-size:12px;} 
+table, th, td {border: 1px solid blue; width:font-size:12px; }
+th, td { padding-left: 4px; padding-right: 4px;}
 body {margin:10px 10px 0px 20px; font-family:'lato',Verdana,Sans-serif;font-size:12px;}
 </style>
 <script type="text/javascript" src="SECURITY"></script>
@@ -23,43 +25,13 @@ void handleAbout(AsyncWebServerRequest *request) {
   char temp[100]={0};
   strcpy_P(page, ABOUT);
 
- // Serial.println("page = " + String(page));
- // strcat(page, "<br><br><br><br>firmware version : ESP-ECU-v9_16b<br>");
-//  sprintf(temp, "systemtime = %d:%d " , hour(), minute());
-//  switch (dst) {
-//    case 1: strncat(temp, "summertime<br>", 14 ); break;
-//    case 2: strncat(temp, "wintertime<br>", 14 ); break;
-//    case 0: strncat(temp, "no dst set<br>", 14 ); 
-//  }
-//  strcat(page, temp);
-
-//  strcat(page, "time retrieved today : "); 
-//  if ( timeRetrieved ) strcat(page, "yes<br>"); else strcat(page, "no<br>");
-
-//  sprintf(temp, "wifi signalstrength = %ld<br>", WiFi.RSSI());
-//  strcat(page, temp);
-
-//  if ( Mqtt_Format != 0 ) { //bool == y en er is een mqtt adres, ja kijk dan of er een sensor is ingesteld
-   // check if connected
-  //   sprintf(temp,"The mqtt clientId = : %ld<br>", ESP.getChipId());
-  //   strcat(page,temp);    
-//    if ( MQTT_Client.connected() ) { //: add a dot
-//       sprintf(temp, "status mqtt : connected to %s<br>", Mqtt_Broker.c_str());
-//       } else {
-//       sprintf(temp,"status mqtt : not connected<br>");
-//       }
-//   } else {
-//       sprintf(temp, "mosquitto not configured<br>check the mosquitto settings<br>");
-//   }
-
   int minutens = millis()/60000;
   int urens = minutens/60;
   int dagen = urens/24;
  
-
   strcat(page, "<br><br><br><br><table><tr><TH colspan='2'> SYSTEM INFORMATION</th></tr>" );
-  strcat(page, "<tr><td>firmware version<td>ESP-ECU-v9_16b</tr>");
-  if ( timeRetrieved ) strcat(page,"<tr><td>time retrieved<td>yes</tr>"); else strcat(page,"<tr><td>time retrieved<td>n</tr>");
+  strcat(page, "<tr><td>firmware version<td>ESP-ECU-v10_2</tr>");
+  if ( timeRetrieved ) strcat(page,"<tr><td>time retrieved<td>yes</tr>"); else strcat(page,"<tr><td>time retrieved<td>no</tr>");
   sprintf(temp, "<tr><td>systemtime<td> %d:%d " , hour(), minute());
   switch (dst) {
     case 1: strncat(temp, "summertime</td>", 19 ); break;
@@ -79,12 +51,13 @@ void handleAbout(AsyncWebServerRequest *request) {
   sprintf(temp, "<tr><td>Free heap<td> %u bytes</td>", ESP.getFreeHeap() );
   strcat(page, temp);
 
-  if ( Mqtt_Format != 0 ) { //bool == y en er is een mqtt adres, ja kijk dan of er een sensor is ingesteld
-     sprintf(temp,"<tr><td>mqtt clientId<td>%ld</td>", ESP.getChipId());
-     strcat(page, temp);
+  if ( Mqtt_Format != 0 ) { 
+     //sprintf(temp,"<tr><td>mqtt clientId<td>%s</td>", Mqtt_Clientid);
+     //strcat(page, temp);
+
     // check if connected
     if ( MQTT_Client.connected() ) { //: add a dot
-       sprintf(temp, "<tr><td>mqtt connected<td>%s</td>", Mqtt_Broker.c_str());
+       sprintf(temp, "<tr><td>mqtt connected<td>%s</td>", Mqtt_Broker);
        } else {
        sprintf(temp, "<tr><td>mqtt status<td>not connected</td>");
        }

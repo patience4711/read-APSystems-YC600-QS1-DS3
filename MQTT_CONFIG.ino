@@ -4,23 +4,21 @@ const char MQTTCONFIG[] PROGMEM = R"=====(
 <div id='bo'></div>
   <div id='help'>
   <span class='close' onclick='sl();'>&times;</span><h3>MOSQUITTO HELP</h3>
-   <b>json format:</b><br>
+   <b>mqtt formats:</b><br>
   f0: mosquitto disabled<br>  
-  f1: {"inv_serial":"408000158215","idx":879,"nvalue":0,"svalue":"5.2"}<br>
-  f2: {"inv_serial":"408000158215","temp":"19.3","p0":"0.0","p1":"5.2","energy":"en_total"}<br>
+  f1: {"idx":879,"nvalue":0,"svalue":"5.2"}<br>
+  f2: {"inv":"0","temp":"19.3","p0":"0.0","p1":"5.2","energy":"en_total"}<br>
   f3: {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"dcv":[36.8,37.0],"dcc":[4.3,3.0],"pwr":[123.4,123.5],"en":[174.35,178.44]}<br>
-  f4: {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"ch0":[36.8,4.3,123.4,174.35],"ch1":[37.0,3.0,123.5,178.44],"totals":[power,energy]}
+  f4: {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"ch0":[36.8,4.3,123.4,174.35],"ch1":[37.0,3.0,123.5,178.44],"totals":[power,energy]}<br>
+  f5: "field1=0&field2=22.2&field3=234.4&field4=245.6&field5=0.0&field6=0.0&field7=2.67&status=MQTTPUBLISH" (invnr, temp, p1, p2, p3, p4, energy)
   <br>Format 3 and 4 have the retainflag set.
   <br><br> 
-  
   <b>send topic:</b><br> 
-  <br>If topic ends with '/' the idx of the inverter is added.
-
-  <br><br>
-  <b>receive topic:</b><br>The topic where will be subscribed for incoming messages.<br><br>
-  <b>mqtt_username en password</b><br>Optional, these can be left empty.
-  <br><br>
-
+  If topic ends with '/' the idx of the inverter is added.<br><br>
+  <b>receive topic:</b><br>The topic is ESP-ECU/in.<br><br>
+  <b>mqtt_username, password, client id</b><br>Optional, these can be left empty.<br><br>
+  <b>state idx</b><br>An identification for messages about heap/stack.
+  
   </div>
 </div>
 <div id='msect'>
@@ -38,14 +36,16 @@ const char MQTTCONFIG[] PROGMEM = R"=====(
     <option value='2' fm_2>format 2</option>
     <option value='3' fm_3>format 3</option>
     <option value='4' fm_4>format 4</option>
+    <option value='5' fm_5>format 5</option>    
     </select>
   <tr><td >address<td><input class='inp6' name='mqtAdres' value='{mqttAdres}' size='31' placeholder='broker adres'></tr>
   <tr><td >port<td><input class='inp2' name='mqtPort' value='{mqttPort}' size='31' placeholder='mqtt port'></tr>
-  <tr><td>receive topic:&nbsp<td><input class='inp6' name='mqtinTopic' value='{mqttinTopic}' placeholder='mqtt topic send' length='60'></tr>
+  
   <tr><td>send topic:&nbsp<td><input class='inp6' name='mqtoutTopic' value='{mqttoutTopic}' placeholder='mqtt topic receive' length='60'></tr>
-  <tr><td>username:&nbsp<td><input class='inp4' name='mqtUser' value='{mqtu}' size='4' length='4'></td></tr>
-  <tr><td>password:&nbsp<td><input class='inp4' name='mqtPas' value='{mqtp}' size='4' length='4'></td></tr>
- 
+  <tr><td>state idx:&nbsp<td><input class='inp2' name='mqidx' value='{idx}' size='4' length='4'></tr>
+  <tr><td>username:&nbsp<td><input class='inp6' name='mqtUser' value='{mqtu}'></td></tr>
+  <tr><td>password:&nbsp<td><input class='inp6' name='mqtPas' value='{mqtp}'></td></tr>
+  <tr><td>client id:&nbsp<td><input class='inp6' name='mqtCi' value='{mqtc}'></td></tr>
   </form>
   </td></table>
   </div><br>
@@ -55,12 +55,12 @@ const char MQTTCONFIG[] PROGMEM = R"=====(
   <li id='sub'><a href='#' onclick='submitFunction("/SW=BACK")'>save</a></li>
   <li><a href='/MENU'>done</a>
   <li><a href='#' onclick='helpfunctie()'>help</a>
-  <li><a href='/MQTT_TEST' >test</a></ul>
+
   <br>
 </div>
 </body></html>
 )=====";
-
+  //<li><a href='/MQTT_TEST' >test</a></ul>
 
 void zendPageMQTTconfig() {
    //DebugPrintln("we are at zendPageMQTTconfig");
@@ -71,14 +71,14 @@ toSend += FPSTR(MQTTCONFIG);
 
   //altijd de mqtt gegevens terugzetten
  
-//if (Mqtt_Enabled) { toSend.replace("#check", "checked");}
-toSend.replace("{mqttAdres}", Mqtt_Broker);
-toSend.replace("{mqttPort}", Mqtt_Port);
-toSend.replace("{mqttinTopic}", Mqtt_inTopic);
-toSend.replace("{mqttoutTopic}", Mqtt_outTopic);
-toSend.replace("{mqtu}", Mqtt_Username );
-toSend.replace("{mqtp}", Mqtt_Password );
-//toSend.replace("{idx1}", String(Mqtt_Idx));
+toSend.replace("{mqttAdres}",    String(Mqtt_Broker)   );
+toSend.replace("{mqttPort}",     String(Mqtt_Port)     );
+//toSend.replace("{mqttinTopic}",  String(Mqtt_inTopic)  );
+toSend.replace("{mqttoutTopic}", String(Mqtt_outTopic) );
+toSend.replace("{mqtu}",         String(Mqtt_Username) );
+toSend.replace("{mqtp}",         String(Mqtt_Password) );
+toSend.replace("{idx}"          , String(domIdx) ); 
+toSend.replace("{mqtc}"         , String(Mqtt_Clientid) );
 switch (Mqtt_Format) {
  case 0:
     toSend.replace("fm_0", "selected");
@@ -95,40 +95,24 @@ switch (Mqtt_Format) {
  case 4:
     toSend.replace("fm_4", "selected");
     break;
+ case 5:
+    toSend.replace("fm_5", "selected");
+    break;
   }
 }
 
 void handleMQTTconfig(AsyncWebServerRequest *request) {
-
   //collect serverarguments
-  Mqtt_Broker = request->arg("mqtAdres");
-  //DebugPrint("Mqtt_Broker na strcpy = "); //DebugPrintln(Mqtt_Broker); // oke
+  strcpy( Mqtt_Broker  , request->getParam("mqtAdres")   ->value().c_str() );
+  strcpy( Mqtt_Port    , request->getParam("mqtPort")    ->value().c_str() );
+ // strcpy( Mqtt_inTopic , request->getParam("mqtinTopic") ->value().c_str() );
+  strcpy( Mqtt_outTopic, request->getParam("mqtoutTopic")->value().c_str() );
+  strcpy( Mqtt_Username, request->getParam("mqtUser")    ->value().c_str() );
+  strcpy( Mqtt_Password, request->getParam("mqtPas")     ->value().c_str() );
+  strcpy( Mqtt_Clientid, request->getParam("mqtCi")     ->value().c_str() );  
+  domIdx = request->arg("mqidx").toInt(); //values are 0 1 2
+  Mqtt_Format = request->arg("fm").toInt(); //values are 0 1 2 3 4 5
 
-  Mqtt_Port = request->arg("mqtPort");
-  //DebugPrint("mqttPort = "); //DebugPrintln(Mqtt_Port); // ok
-
-  Mqtt_inTopic = request->arg("mqtinTopic");
-  //DebugPrint("mqtt_inTopic na strcpy = "); //DebugPrintln(String(Mqtt_inTopic)); // oke
-
-  Mqtt_outTopic = request->arg("mqtoutTopic");
-  //DebugPrint("mqtt_outTopic na strcpy = "); //DebugPrintln(String(Mqtt_outTopic)); // oke
-  
-  Mqtt_Username = request->arg("mqtUser");
-  //DebugPrint("Mqtt_Username na strcpy = "); //DebugPrintln(Mqtt_Username); // oke
-
-  Mqtt_Password = request->arg("mqtPas");
-  //DebugPrint("Mqtt_Username na strcpy = "); //DebugPrintln(Mqtt_Password); // oke
-
-  Mqtt_Format = request->arg("fm").toInt(); //values are 0 1 2//Mqtt_Idx = request->arg("mqidx1").toInt(); 
-
-// de selectbox
-//   char tempChar[1] = "";
-//   String dag = request->arg("mqtEn");  // mqselect
-//   if ( dag == "on") { Mqtt_Enabled = true; } else { Mqtt_Enabled = false; }
-
-//  toSend = FPSTR(CONFIRM);
-//  toSend.replace("SW=BACK", "MQTT");
-//  request->send(200, "text/html", toSend); //send the html code to the client
   DebugPrintln("saved mqttconfig");
   mqttConfigsave();  // 
   actionFlag=24; // reconnect with these settings
