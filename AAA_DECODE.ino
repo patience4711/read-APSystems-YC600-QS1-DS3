@@ -455,11 +455,7 @@ if(Mqtt_Format == 0) return;
    ws.textAll("message:  " + String(toMQTT) );
    #endif
    // we check first if we are connected, else we connect 
-   if ( ! MQTT_Client.connected() ) {
-      if( !mqttConnect() ) return;
-   }
-   //ws.textAll("message:  " + String(toMQTT) );
-   MQTT_Client.publish ( Mqtt_send, toMQTT, reTain );
+   if( mqttConnect() ) MQTT_Client.publish ( Mqtt_send, toMQTT, reTain );
  }
 
 // not domoticz: {"inv_serial":"123456789012","temp":"12,3","p0":"123",p1":"123",p2":"123",p3":"123","energy":"345"}
