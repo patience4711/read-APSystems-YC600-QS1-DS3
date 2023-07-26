@@ -12,6 +12,9 @@ You can use the provided binary but if you must compile it yourself: Use arduino
 <br>Please note: by popular demand I have published the code here but i do not feel responsible for problems as to compiling. Impossible for me to know why it doesn't compile in your situation.
 
 ## downloads
+july 26 2023: There is a new version 10_8 available, See changelog<br> 
+Download [ESP-ECU-v10_8](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-v10_8.bin)<br>
+
 May 22 2023: There is a new version v9_14 available, See changelog<br>
 Download [ESP-ECU-v9_14](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_14.zip)<br>
 
@@ -47,6 +50,11 @@ The interesting values are send via mqtt and displayed on the main page.
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
 ## changelog ##
+version ESP-ECU_V10:
+-  introduced a new way for communication webpage-server.
+-  compressed web files.
+-  Some cosmetic changes 
+
 version ESP-ECU_V9_14:
 -  improved efficiency in the data trafic browser-server.
 -  tuned timing in the wifi config portal.
