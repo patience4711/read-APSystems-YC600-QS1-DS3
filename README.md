@@ -15,8 +15,8 @@ You can use the provided binary but if you must compile it yourself: Use arduino
 july 26 2023: There is a new version 10_8 available, See changelog<br> 
 Download [ESP-ECU-v10_8](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-v10_8.bin)<br>
 
-May 22 2023: There is a new version v9_14 available, See changelog<br>
-Download [ESP-ECU-v9_14](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-9_14.zip)<br>
+july 30 2023: There is package available with all necessary files, like software for the zigbee, a serial communicater etc.<br>
+Download [ESP-ECU-ADDON](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_ADDON.zip)<br>
 
 <br>In case someone wants to print the housing, here is an [stl file](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-housing.zip)
 This is for a nodemcu board 31x58mm.
