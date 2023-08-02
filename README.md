@@ -18,6 +18,8 @@ Download [ESP-ECU-v10_8](https://github.com/patience4711/read-APSystems-YC600-QS
 july 30 2023: There is package available with all necessary files, like software for the zigbee, a serial communicater etc.<br>
 Download [ESP-ECU-ADDON](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU_ADDON.zip)<br>
 
+Download the zigbee firmware [CC25XX-FIRMWARE](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/CC25xx-FIRMWARE.zip)
+
 <br>In case someone wants to print the housing, here is an [stl file](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-housing.zip)
 This is for a nodemcu board 31x58mm.
 
