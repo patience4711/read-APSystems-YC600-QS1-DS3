@@ -12,7 +12,7 @@ You can use the provided binary but if you must compile it yourself: Use arduino
 <br>Please note: by popular demand I have published the code here but i do not feel responsible for problems as to compiling. Impossible for me to know why it doesn't compile in your situation.
 
 ## downloads
-july 26 2023: There is a new version 10_8 available, See changelog<br> 
+july 26 2023: There is a new version 10_8 available, see changelog,<br> 
 Download [ESP-ECU-v10_8](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-v10_8.bin)<br>
 
 july 30 2023: There is package available with all necessary files, like software for the zigbee, a serial communicater etc.<br>
