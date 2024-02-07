@@ -109,26 +109,26 @@ int decodePollAnswer(int which)
    //    ws.textAll("s_d =  " + String(s_d)); // show the tail
    // #endif
 
-      if( Inv_Prop[which].invType == 2 ) { // is this a DS3
-        if(diagNose) ws.textAll( "decoding a DS3 inverter");
+if( Inv_Prop[which].invType == 2 ) 
+      { // is this a DS3, 
+        if( diagNose != 0 ) consoleOut( "decoding a DS3 inverter");
         // ACV offset 34
-        Inv_Data[which].acv = extractValue(68, 4, 1, 0, s_d) / 3.8 ;        
-        if(diagNose) ws.textAll( "extracted ACV = " + String(Inv_Data[which].acv) );
+        Inv_Data[which].acv = extractValue(68, 4, 1, 0, s_d) / 3.8 ;
+        if( diagNose != 0 ) consoleOut( "extracted ACV = " + String(Inv_Data[which].acv) );
         
         // FREQ offset 36
         Inv_Data[which].freq = extractValue(72, 4, 1, 0, s_d)/100;
-        if(diagNose) ws.textAll( "extracted FREQ = " + String(Inv_Data[which].freq) );
+        if( diagNose != 0 ) consoleOut( "extracted FREQ = " + String(Inv_Data[which].freq) );
         
-        // HEATH offset 48
-        Inv_Data[which].heath = extractValue(96, 4, 1, 0, s_d)*0.0198 - 23.84; //18        
-        if(diagNose) ws.textAll( "extracted HEATH = " + String(Inv_Data[which].heath) );
+        // HEATH offset 48        
+        Inv_Data[which].heath = extractValue(96, 4, 1, 0, s_d)*0.0198 - 23.84; //18
+        if( diagNose != 0 ) consoleOut( "extracted HEATH = " + String(Inv_Data[which].heath) );
         
-        // ******************  dc voltage   *****************************************
+                // ******************  dc voltage   *****************************************
          //voltage ch1 offset 28
          Inv_Data[which].dcv[0] = extractValue( 52, 4, 1, 0, s_d ) * (float)1 / (float)48;
          // voltage ch2 offset 26
          Inv_Data[which].dcv[1] = extractValue( 56, 4, 1, 0, s_d ) * (float)1 / (float)48;
-         
          // ******************  current   *****************************************
          //current ch1 offset 30
          Inv_Data[which].dcc[0] =  extractValue(60, 4, 1, 0, s_d ) * 0.0125;
@@ -136,49 +136,46 @@ int decodePollAnswer(int which)
          Inv_Data[which].dcc[1] =  extractValue(64, 4, 1, 0, s_d ) * 0.0125;
       } else {
          
-        //yc600 or QS1
+        //yc600 or QS1 have these values in the same place
         //frequency ac voltage and temperature
         Inv_Data[which].acv = extractValue(56, 4, 1, 0, s_d) * ((float)1 / (float)1.3277) / 4 ;
-   
+        
+        //frquency offset 48        
         Inv_Data[which].freq = 50000000 / extractValue(24, 6, 1, 0, s_d) ;
- 
+         
+        // temperature offset 10
         Inv_Data[which].heath = extractValue(20, 4, 0.2752F, -258.7F, s_d);
       }
-       if( Inv_Prop[which].invType == 0 ) { // is this a DS3
+       if( Inv_Prop[which].invType == 0 ) { // is this a YC600
          // ******************  dc voltage   *****************************************
          //voltage ch1 offset 24
          Inv_Data[which].dcv[0] = (extractValue( 48, 2, (float)16, 0, s_d ) + extractValue(46, 1, 1, 0, s_d)) * (float)82.5 / (float)4096;
 
          //voltage ch2 offset 27
-         Inv_Data[which].dcv[1] = (extractValue( 54, 2, (float)16, 0, s_d ) + extractValue(52, 1, 1, 0, s_d)) * (float)82.5 / (float)4096;
+         Inv_Data[which].dcv[01] = (extractValue( 54, 2, (float)16, 0, s_d ) + extractValue(52, 1, 1, 0, s_d)) * (float)82.5 / (float)4096;
 
          // ******************  current   *****************************************
          //current ch1 offset 22
          Inv_Data[which].dcc[0] = (extractValue(47, 1, (float)256, 0, s_d) + extractValue(44, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; //[A]
 
          //current ch1 offset 25
-         Inv_Data[which].dcc[1] = (extractValue(53, 1, (float)256, 0, s_d) + extractValue(50, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; //[A]
+         Inv_Data[which].dcc[1] = (extractValue(53, 1, (float)256, 0, s_d) + extractValue(50, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; 
 
-       }
-       else if(Inv_Prop[which].invType == 1) // SQ1
+       } 
         //********************************************************************************************
         //                                     SQ1
         //********************************************************************************************
+        else if(Inv_Prop[which].invType == 1) //SQ1 inverter
         {
-          //voltage ch1 offset 24
-         Inv_Data[which].dcv[1] = (extractValue( 48, 2, (float)16, 0, s_d ) + extractValue(46, 1, 1, 0, s_d)) * (float)82.5 / (float)4096;
-
-         //voltage ch2 offset 27
-         Inv_Data[which].dcv[0] = (extractValue( 54, 2, (float)16, 0, s_d ) + extractValue(52, 1, 1, 0, s_d)) * (float)82.5 / (float)4096;
-
-         // ******************  current   *****************************************
-         //current ch1 offset 22
-         Inv_Data[which].dcc[1] = (extractValue(47, 1, (float)256, 0, s_d) + extractValue(44, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; //[A]
-
-         //current ch1 offset 25
-         Inv_Data[which].dcc[0] = (extractValue(53, 1, (float)256, 0, s_d) + extractValue(50, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; //[A]         
-          
           //offset 21 -> byte for voltage ch3
+          Inv_Data[which].dcv[1] = (extractValue( 48, 2, (float)16, 0, s_d ) + extractValue(40, 1, 1, 0, s_d)) * (float)82.5 / (float)4096;
+          //offset 18 -> byte for voltage ch4
+          Inv_Data[which].dcv[0] =  ( extractValue( 54, 2, (float)16, 0, s_d ) + extractValue(34, 1, 1, 0, s_d) ) * (float)82.5 / (float)4096;         // ***************************  current  *****************************************
+          //current ch0 offset 22
+          Inv_Data[which].dcc[1] = ( extractValue( 47, 1, (float)256, 0, s_d ) + extractValue(38, 2, 1, 0, s_d) ) * (float)27.5 / (float)4096; 
+          //current ch1 offset 25
+           Inv_Data[which].dcc[0] = ( extractValue( 53, 1, (float)256, 0, s_d ) + extractValue(32, 2, 1, 0, s_d)) * (float)27.5 / (float)4096;
+           //offset 21 -> byte for voltage ch3
           Inv_Data[which].dcv[2] = (extractValue( 42, 2, (float)16, 0, s_d ) + extractValue(40, 1, 1, 0, s_d)) * (float)82.5 / (float)4096;
           //offset 18 -> byte for voltage ch4
           Inv_Data[which].dcv[3] =  ( extractValue( 36, 2, (float)16, 0, s_d ) + extractValue(34, 1, 1, 0, s_d) ) * (float)82.5 / (float)4096;         // ***************************  current  *****************************************
@@ -187,8 +184,9 @@ int decodePollAnswer(int which)
           //offset 16 and 17 for current and status ch4
            Inv_Data[which].dcc[3] = ( extractValue( 35, 1, (float)256, 0, s_d ) + extractValue(32, 2, 1, 0, s_d)) * (float)27.5 / (float)4096;
         }  
-//      }      
-            yield();
+      
+ 
+         yield();
 
 
 /* 
@@ -259,7 +257,7 @@ We keep stacking the increases so we have also en_inc_total
             
             if(diagNose) {delay(100); ws.textAll(" * decoding panel " + String(x) + " \n en_old " + String(en_old[x]) );}
 
-            if ( Inv_Prop[which].invType == 0) { // for yc600 1 and 2 are swapped compared to qs1
+            if ( Inv_Prop[which].invType == 0) { // for yc600 channels 1 and 2 are swapped compared to qs1
                 if(x==0)  offset = offst + 8;  else offset = offst;
             // now we extract a new energy_new[which][x] 
             en_extr = extractValue(offset, btc, 1, 0, s_d); // offset 74 todays module energy channel 0
