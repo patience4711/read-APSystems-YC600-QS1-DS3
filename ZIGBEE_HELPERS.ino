@@ -194,7 +194,7 @@ void inverterReboot(int which) {
 void resetValues(bool energy, bool mustSend) {
       for(int z=0; z<inverterCount; z++) 
       { 
-         for(int y=0; y<5; y++ ) strcpy(Inv_Data[z].power[y], "0.0"); // make powervalues null for all panels
+         for(int y=0; y<5; y++ ) Inv_Data[z].power[y] = 0.0; // make powervalues null for all panels
          if(diagNose) ws.textAll("reset power values inv " + String(z));
          if(energy) 
          {

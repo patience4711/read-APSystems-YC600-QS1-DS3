@@ -63,8 +63,9 @@ int decodePollAnswer(int which)
     // in tail at offset 14, 2 bytes with signalQuality reside   
 
     //sigQ = roundoff( (float) (extractValue(14, 2, 1, 0, tail) * 100 / 254 ), 1);
-    dtostrf((float)(extractValue(14, 2, 1, 0, tail) * 100 / 255 ), 0, 1, Inv_Data[which].sigQ);
-    ws.textAll( "extracted sigQ = " + String(Inv_Data[which].sigQ) );
+    //dtostrf((float)(extractValue(14, 2, 1, 0, tail) * 100 / 255 ), 0, 1, Inv_Data[which].sigQ);
+    Inv_Data[which].sigQ = (extractValue(14, 2, 1, 0, tail) * 100 / 255 );
+    if(diagNose) ws.textAll( "extracted sigQ = " + String(Inv_Data[which].sigQ) );
     //    dtostrf((float)(extractValue(68, 4, 1, 0, s_d) / 3.8 ), 0, 1, Inv_Data[which].acv);
     //    ws.textAll( "extracted ACV = " + String(Inv_Data[which].acv) );
 // a YC600 message
@@ -109,84 +110,84 @@ int decodePollAnswer(int which)
    // #endif
 
       if( Inv_Prop[which].invType == 2 ) { // is this a DS3
-        ws.textAll( "decoding a DS3 inverter");
+        if(diagNose) ws.textAll( "decoding a DS3 inverter");
         // ACV offset 34
-        dtostrf((float)(extractValue(68, 4, 1, 0, s_d) / 3.8 ), 0, 1, Inv_Data[which].acv);
-        ws.textAll( "extracted ACV = " + String(Inv_Data[which].acv) );
+        Inv_Data[which].acv = extractValue(68, 4, 1, 0, s_d) / 3.8 ;        
+        if(diagNose) ws.textAll( "extracted ACV = " + String(Inv_Data[which].acv) );
         
         // FREQ offset 36
-        dtostrf((float)(extractValue(72, 4, 1, 0, s_d)/100 ), 0, 1, Inv_Data[which].freq);
-        ws.textAll( "extracted FREQ = " + String(Inv_Data[which].freq) );
+        Inv_Data[which].freq = extractValue(72, 4, 1, 0, s_d)/100;
+        if(diagNose) ws.textAll( "extracted FREQ = " + String(Inv_Data[which].freq) );
         
         // HEATH offset 48
-        dtostrf((extractValue(96, 4, 1, 0, s_d)*0.0198 - 23.84), 0, 1, Inv_Data[which].heath);         
-        ws.textAll( "extracted HEATH = " + String(Inv_Data[which].heath) );
+        Inv_Data[which].heath = extractValue(96, 4, 1, 0, s_d)*0.0198 - 23.84; //18        
+        if(diagNose) ws.textAll( "extracted HEATH = " + String(Inv_Data[which].heath) );
         
         // ******************  dc voltage   *****************************************
          //voltage ch1 offset 28
-         dtostrf( extractValue( 52, 4, 1, 0, s_d ) * (float)1 / (float)48, 0, 1, Inv_Data[which].dcv[0]);
-         //voltage ch2 offset 26
-         dtostrf( extractValue( 56, 4, 1, 0, s_d ) * (float)1 / (float)48, 0, 1, Inv_Data[which].dcv[1]);
+         Inv_Data[which].dcv[0] = extractValue( 52, 4, 1, 0, s_d ) * (float)1 / (float)48;
+         // voltage ch2 offset 26
+         Inv_Data[which].dcv[1] = extractValue( 56, 4, 1, 0, s_d ) * (float)1 / (float)48;
+         
          // ******************  current   *****************************************
          //current ch1 offset 30
-        //dtostrf( extractValue(60, 4, 1, 0, s_d ) * 1.25 / 100, 0, 1, Inv_Data[which].dcc[0]);
-        dtostrf( extractValue(60, 4, 1, 0, s_d ) * 0.0125, 0, 1, Inv_Data[which].dcc[0]);
-         //current ch1 offset 34
-        dtostrf( extractValue(64, 4, 1, 0, s_d ) * 0.0125, 0, 1, Inv_Data[which].dcc[1]);
-      
+         Inv_Data[which].dcc[0] =  extractValue(60, 4, 1, 0, s_d ) * 0.0125;
+         // current ch1 offset 34
+         Inv_Data[which].dcc[1] =  extractValue(64, 4, 1, 0, s_d ) * 0.0125;
       } else {
-         #ifdef TEST
-         if(Inv_Prop[which].invType == 0) {
-         ws.textAll( "decoding a YC600 inverter"); } else { ws.textAll( "decoding a QS1 inverter");}
-         #endif
-
          
         //yc600 or QS1
-//      frequency ac voltage and temperature
-        //Inv_Data[which].acv = String((float)((extractValue(56, 4, 1, 0, s_d) * ((float)1 / (float)1.3277)) / 4), 1);
-        dtostrf((float)((extractValue(56, 4, 1, 0, s_d) * ((float)1 / (float)1.3277)) / 4), 0, 1, Inv_Data[which].acv);
-
-        dtostrf((float)50000000 / extractValue(24, 6, 1, 0, s_d), 0, 1, Inv_Data[which].freq);
-         
-        dtostrf(extractValue(20, 4, 0.2752F, -258.7F, s_d), 0, 1, Inv_Data[which].heath); 
-
-        // ******************  dc voltage   *****************************************
+        //frequency ac voltage and temperature
+        Inv_Data[which].acv = extractValue(56, 4, 1, 0, s_d) * ((float)1 / (float)1.3277) / 4 ;
+   
+        Inv_Data[which].freq = 50000000 / extractValue(24, 6, 1, 0, s_d) ;
+ 
+        Inv_Data[which].heath = extractValue(20, 4, 0.2752F, -258.7F, s_d);
+      }
+       if( Inv_Prop[which].invType == 0 ) { // is this a DS3
+         // ******************  dc voltage   *****************************************
          //voltage ch1 offset 24
-         dtostrf( (extractValue( 48, 2, (float)16, 0, s_d ) + extractValue(46, 1, 1, 0, s_d)) * (float)82.5 / (float)4096, 0, 1, Inv_Data[which].dcv[1]);
+         Inv_Data[which].dcv[0] = (extractValue( 48, 2, (float)16, 0, s_d ) + extractValue(46, 1, 1, 0, s_d)) * (float)82.5 / (float)4096;
+
          //voltage ch2 offset 27
-         dtostrf( (extractValue( 54, 2, (float)16, 0, s_d ) + extractValue(52, 1, 1, 0, s_d)) * (float)82.5 / (float)4096, 0, 1, Inv_Data[which].dcv[0]);
+         Inv_Data[which].dcv[1] = (extractValue( 54, 2, (float)16, 0, s_d ) + extractValue(52, 1, 1, 0, s_d)) * (float)82.5 / (float)4096;
+
          // ******************  current   *****************************************
          //current ch1 offset 22
-         float currentP1 = (extractValue(47, 1, (float)256, 0, s_d) + extractValue(44, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; //[A]
-         dtostrf(currentP1, 0, 1, Inv_Data[which].dcc[1]);
-         //current ch1 offset 25
-         float currentP0 = (extractValue(53, 1, (float)256, 0, s_d) + extractValue(50, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; //[A]
-         dtostrf(currentP0, 0, 1, Inv_Data[which].dcc[0]);
+         Inv_Data[which].dcc[0] = (extractValue(47, 1, (float)256, 0, s_d) + extractValue(44, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; //[A]
 
+         //current ch1 offset 25
+         Inv_Data[which].dcc[1] = (extractValue(53, 1, (float)256, 0, s_d) + extractValue(50, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; //[A]
+
+       }
+       else if(Inv_Prop[which].invType == 1) // SQ1
         //********************************************************************************************
         //                                     SQ1
         //********************************************************************************************
-        if(Inv_Prop[which].invType == 1) //SQ1 inverter
         {
-          #ifdef TEST
-          ws.textAll( "extracting dc values for panels 2 and 3");
-          #endif
-          //these are the values of channel 2 and 3 of the sq1 according to electrosun911
-          //offset 21 -> byte for voltage ch3
-          dtostrf( (extractValue( 42, 2, (float)16, 0, s_d ) + extractValue(40, 1, 1, 0, s_d)) * (float)82.5 / (float)4096, 0, 1, Inv_Data[which].dcv[2]);          
-          //offset 18 -> byte for voltage ch4
-          dtostrf( (extractValue( 36, 2, (float)16, 0, s_d ) + extractValue(34, 1, 1, 0, s_d)) * (float)82.5 / (float)4096, 0, 1, Inv_Data[which].dcv[3]);
+          //voltage ch1 offset 24
+         Inv_Data[which].dcv[1] = (extractValue( 48, 2, (float)16, 0, s_d ) + extractValue(46, 1, 1, 0, s_d)) * (float)82.5 / (float)4096;
 
-          // ***************************  current  *****************************************
+         //voltage ch2 offset 27
+         Inv_Data[which].dcv[0] = (extractValue( 54, 2, (float)16, 0, s_d ) + extractValue(52, 1, 1, 0, s_d)) * (float)82.5 / (float)4096;
+
+         // ******************  current   *****************************************
+         //current ch1 offset 22
+         Inv_Data[which].dcc[1] = (extractValue(47, 1, (float)256, 0, s_d) + extractValue(44, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; //[A]
+
+         //current ch1 offset 25
+         Inv_Data[which].dcc[0] = (extractValue(53, 1, (float)256, 0, s_d) + extractValue(50, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; //[A]         
+          
+          //offset 21 -> byte for voltage ch3
+          Inv_Data[which].dcv[2] = (extractValue( 42, 2, (float)16, 0, s_d ) + extractValue(40, 1, 1, 0, s_d)) * (float)82.5 / (float)4096;
+          //offset 18 -> byte for voltage ch4
+          Inv_Data[which].dcv[3] =  ( extractValue( 36, 2, (float)16, 0, s_d ) + extractValue(34, 1, 1, 0, s_d) ) * (float)82.5 / (float)4096;         // ***************************  current  *****************************************
           //offset 19 and 20 for current and status ch3
-          float currentP2 = ( extractValue( 41, 1, (float)256, 0, s_d ) + extractValue(38, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; //[A]
-          dtostrf(currentP2, 0, 1, Inv_Data[which].dcc[2]);
-    
+          Inv_Data[which].dcc[2] = ( extractValue( 41, 1, (float)256, 0, s_d ) + extractValue(38, 2, 1, 0, s_d) ) * (float)27.5 / (float)4096; 
           //offset 16 and 17 for current and status ch4
-          float currentP3 = ( extractValue( 35, 1, (float)256, 0, s_d ) + extractValue(32, 2, 1, 0, s_d)) * (float)27.5 / (float)4096; //[A]
-          dtostrf(currentP3, 0, 1, Inv_Data[which].dcc[3]);
+           Inv_Data[which].dcc[3] = ( extractValue( 35, 1, (float)256, 0, s_d ) + extractValue(32, 2, 1, 0, s_d)) * (float)27.5 / (float)4096;
         }  
-      }      
+//      }      
             yield();
 
 
@@ -202,9 +203,6 @@ We keep stacking the increases so we have also en_inc_total
 //               calculation of the power per panel
 // **********************************************************************
     if(diagNose) ws.textAll("* * * * polled inverter " + String(which) + " * * * *");
-    #ifdef TEST
-    ws.textAll("testCounter = " + String(testCounter));
-    #endif
     // 1st the time period 
     // at the start of this we have a value of the t_new[which] of the former poll
     // if this is 0 there was no former poll 
@@ -220,8 +218,6 @@ We keep stacking the increases so we have also en_inc_total
          break;
     }
     
-
-
     //if the inverter had a reset, time new would be smaller than time old
     //t_saved is globally defined so we remember the last. With the new we can calculate the timeperiod
     if (t_extr < t_saved[which] || t_saved[which] == 0) { // there has been a reset 
@@ -233,7 +229,10 @@ We keep stacking the increases so we have also en_inc_total
     //whatever happened we remember t_ext as the new time value
     t_saved[which] = t_extr;
 
-    if(diagNose) delay(100); ws.textAll("extracted time = " + String(t_extr) + "  the timespan = " + String(ts));
+    if(diagNose) { 
+      delay(100); 
+      ws.textAll("extracted time = " + String(t_extr) + "  the timespan = " + String(ts));
+    }
 
     // now for each channel 
     int increment = 10; // offset to the next energy value
@@ -250,36 +249,37 @@ We keep stacking the increases so we have also en_inc_total
 
 
     for(int x = 0; x < 4; x++ ) 
-    {   
+    {
+         int offset = 0;     
+    
          if(Inv_Prop[which].conPanels[x]) { // is this panel connected ? otherwise skip
-
-         //if(diagNose) {delay(100); ws.textAll(" * * * decoding panel " + String(x) + " * * * ");}           
-
             // first store the last value of energy_new temporary in energy_old
             // after the calulation we dont need it anymore
             en_old[x] = en_saved[which][x]; // en_new (per inverter per panel needs to be global
-//#ifdef TEST            
+            
             if(diagNose) {delay(100); ws.textAll(" * decoding panel " + String(x) + " \n en_old " + String(en_old[x]) );}
-//#endif
-            // now we extract a new energy_new[which][x] 
-            en_extr = extractValue(offst+x*increment, btc, 1, 0, s_d); // offset 74 todays module energy channel 0
 
-            //we calculate a new energy value for this panel and remember it
+            if ( Inv_Prop[which].invType == 0) { // for yc600 1 and 2 are swapped compared to qs1
+                if(x==0)  offset = offst + 8;  else offset = offst;
+            // now we extract a new energy_new[which][x] 
+            en_extr = extractValue(offset, btc, 1, 0, s_d); // offset 74 todays module energy channel 0
+            } else {
+            // for ds1 and qs10 now we extract a new energy_new[which][x] 
+            en_extr = extractValue(offst+x*increment, btc, 1, 0, s_d); // offset 74 todays module energy channel 0
+            }// we calculate a new energy value for this panel and remember it
             if ( Inv_Prop[which].invType == 2) {
               en_saved[which][x] = (en_extr / (float)1000 /100) * 1.66; //[Wh]
             } else {
               en_saved[which][x] = (en_extr * 8.311F / (float)3600); //[Wh]
             }
-
-//#ifdef TEST            
+           
             if(diagNose) {delay(100); ws.textAll("en_extr " + String(en_extr) + "  en_saved " + String(en_saved[which][x]) + "\n\n" );}
-//#endif            
 
             // calculate the energy increase with or without reset and totalize it
             if(resetFlag){
-            en_incr = en_saved[which][x]; // the increase is the new value 
+            en_incr = en_saved[which][x]; // the inverter energy value per panel  
             } else {
-            en_incr = en_saved[which][x] - en_old[x]; //increase is new-old
+            en_incr = en_saved[which][x] - en_old[x]; //increase is new -/- old
             }
 
             en_incr_total += en_incr; //totalize the energy increase for this poll
@@ -287,12 +287,13 @@ We keep stacking the increases so we have also en_inc_total
             //Inv_Data[which].en_total += en_incr; // stack the increase
             
             //calculate the power for this panel and remember
-            if ( Inv_Prop[which].invType == 2) {
-              power = en_incr / ts * (float)3600; //[W]
-            } else {
-              power = en_incr / ts * (float)3600; //[W]
-            }
-            dtostrf( power, 0, 1, Inv_Data[which].power[x]); // write the value in the struct
+             power = en_incr / ts * (float)3600; //[W]
+//            if ( Inv_Prop[which].invType == 2) {
+//              power = en_incr / ts * (float)3600; //[W]
+//            } else {
+//              power = en_incr / ts * (float)3600; //[W]
+//            }
+            Inv_Data[which].power[x] = round1(power);
             total_pwr += power;
             
             yield();
@@ -310,9 +311,9 @@ We keep stacking the increases so we have also en_inc_total
      // now we extracted all values per panel and added the increased energy
      // we have invData[which].power[x] and invData[which].en_total
     Inv_Data[which].en_total += en_incr_total; // stack the increase
-    dtostrf( total_pwr, 0, 1, Inv_Data[which].power[4]); // write the total value in the struct   
+    //dtostrf( total_pwr, 0, 1, Inv_Data[which].power[4]); // write the total value in the struct   
+    Inv_Data[which].pw_total = total_pwr;
 
-//#ifdef TEST
      yield();
      if(diagNose){
      delay(100);
@@ -320,7 +321,7 @@ We keep stacking the increases so we have also en_inc_total
      delay(100);
      ws.textAll("total energy stacked in Inv_Data[which].en_total: " + String(Inv_Data[which].en_total) + "\n");
      }
-//#endif
+
     return 0;
 }       
 
@@ -386,38 +387,38 @@ if(Mqtt_Format == 0) return;
   bool reTain = false;
   char pan[50]={0};
   char tail[40]={0};
-  char toMQTT[300]={0};
+  char toMQTT[512]={0};
 
 // the json to domoticz must be something like {"idx" : 7, "nvalue" : 0,"svalue" : "90;2975.00"}
  
    switch( Mqtt_Format)  { 
     case 1: 
-       snprintf(toMQTT, sizeof(toMQTT), "{\"idx\":%d,\"nvalue\":0,\"svalue\":\"%s;%.2f\"}" , Inv_Prop[which].invIdx , Inv_Data[which].power[4], Inv_Data[which].en_total);
+       snprintf(toMQTT, sizeof(toMQTT), "{\"idx\":%d,\"nvalue\":0,\"svalue\":\"%.1f;%.2f\"}" , Inv_Prop[which].invIdx , Inv_Data[which].pw_total, Inv_Data[which].en_total);
        break;
        // length 46
 
      case 2: // for not domoticz we have a different mqtt string how does this look?
-       snprintf(toMQTT, sizeof(toMQTT), "{\"inv\":\"%d\",\"temp\":\"%s\",\"p0\":\"%s\",\"p1\":\"%s\",\"p2\":\"%s\",\"p3\":\"%s\",\"energy\":\"%.2f\"}" ,which, Inv_Data[which].heath, Inv_Data[which].power[0],Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[3], Inv_Data[which].en_total);
+       snprintf(toMQTT, sizeof(toMQTT), "{\"inv\":\"%d\",\"temp\":\"%.1f\",\"p0\":\"%.1f\",\"p1\":\"%.1f\",\"p2\":\"%.1f\",\"p3\":\"%.1f\",\"energy\":\"%.2f\"}" ,which, Inv_Data[which].heath, Inv_Data[which].power[0],Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[3], Inv_Data[which].en_total);
        break;  
        
      case 3:
-        snprintf(toMQTT, sizeof(toMQTT), "{\"inv_serial\":\"%s\",\"freq\":%s,\"temp\":%s,\"acv\":%s" , Inv_Prop[which].invSerial, Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);
+        snprintf(toMQTT, sizeof(toMQTT), "{\"inv_serial\":\"%s\",\"freq\":%.1f,\"temp\":%.1f,\"acv\":%.1f" , Inv_Prop[which].invSerial, Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);
         //char pan[50]={0};
         if( Inv_Prop[which].invType == 1 ) { // qs1
-            sprintf(pan, ",\"dcv\":[%s,%s,%s,%s]", Inv_Data[which].dcv[0], Inv_Data[which].dcv[1],Inv_Data[which].dcv[2],Inv_Data[which].dcv[3]);
+            sprintf(pan, ",\"dcv\":[%.1f,%.1f,%.1f,%.1f]", Inv_Data[which].dcv[0], Inv_Data[which].dcv[1],Inv_Data[which].dcv[2],Inv_Data[which].dcv[3]);
             strcat(toMQTT, pan);
-            sprintf(pan, ",\"dcc\":[%s,%s,%s,%s]", Inv_Data[which].dcc[0], Inv_Data[which].dcc[1],Inv_Data[which].dcc[2],Inv_Data[which].dcc[3]);
+            sprintf(pan, ",\"dcc\":[%.1f,%.1f,%.1f,%.1f]", Inv_Data[which].dcc[0], Inv_Data[which].dcc[1],Inv_Data[which].dcc[2],Inv_Data[which].dcc[3]);
             strcat(toMQTT, pan);
-            sprintf(pan, ",\"pwr\":[%s,%s,%s,%s]", Inv_Data[which].power[0], Inv_Data[which].power[1],Inv_Data[which].power[2],Inv_Data[which].power[3]);
+            sprintf(pan, ",\"pwr\":[%.1f,%.1f,%.1f,%.1f]", Inv_Data[which].power[0], Inv_Data[which].power[1],Inv_Data[which].power[2],Inv_Data[which].power[3]);
             strcat(toMQTT, pan);
             sprintf(pan, ",\"en\":[%.2f,%.2f,%.2f,%.2f]}", en_saved[which][0], en_saved[which][1], en_saved[which][2], en_saved[which][3]);
             strcat(toMQTT, pan);
         } else {
-            sprintf(pan, ",\"dcv\":[%s,%s]", Inv_Data[which].dcv[0], Inv_Data[which].dcv[1]);
+            sprintf(pan, ",\"dcv\":[%.1f,%.1f]", Inv_Data[which].dcv[0], Inv_Data[which].dcv[1]);
             strcat(toMQTT, pan);
-            sprintf(pan, ",\"dcc\":[%s,%s]", Inv_Data[which].dcc[0], Inv_Data[which].dcc[1]);
+            sprintf(pan, ",\"dcc\":[%.1f,%.1f]", Inv_Data[which].dcc[0], Inv_Data[which].dcc[1]);
             strcat(toMQTT, pan);
-            sprintf(pan, ",\"pwr\":[%s,%s]", Inv_Data[which].power[0], Inv_Data[which].power[1]);
+            sprintf(pan, ",\"pwr\":[%.1f,%.1f]", Inv_Data[which].power[0], Inv_Data[which].power[1]);
             strcat(toMQTT, pan);
             sprintf(pan, ",\"en\":[%.2f,%.2f]}", en_saved[which][0], en_saved[which][1]);          
             strcat(toMQTT, pan);
@@ -427,38 +428,117 @@ if(Mqtt_Format == 0) return;
 //
     case 4:
 
-        snprintf(toMQTT, sizeof(toMQTT), "{\"inv_serial\":\"%s\",\"freq\":%s,\"temp\":%s,\"acv\":%s" , Inv_Prop[which].invSerial, Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);      
-        sprintf(pan, ",\"ch0\":[%s,%s,%s,%.2f]", Inv_Data[which].dcv[0], Inv_Data[which].dcc[0], Inv_Data[which].power[0], en_saved[which][0]);  
+        snprintf(toMQTT, sizeof(toMQTT), "{\"inv_serial\":\"%s\",\"freq\":%.1f,\"temp\":%.1f,\"acv\":%.1f" , Inv_Prop[which].invSerial, Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);      
+        sprintf(pan, ",\"ch0\":[%.1f,%.1f,%.1f,%.2f]", Inv_Data[which].dcv[0], Inv_Data[which].dcc[0], Inv_Data[which].power[0], en_saved[which][0]);  
         strcat(toMQTT, pan);
-        sprintf(pan, ",\"ch1\":[%s,%s,%s,%.2f]", Inv_Data[which].dcv[1], Inv_Data[which].dcc[1], Inv_Data[which].power[1], en_saved[which][1]);  
+        sprintf(pan, ",\"ch1\":[%.1f,%.1f,%.1f,%.2f]", Inv_Data[which].dcv[1], Inv_Data[which].dcc[1], Inv_Data[which].power[1], en_saved[which][1]);  
         strcat(toMQTT, pan);
 
         if( Inv_Prop[which].invType == 1 ) { // add ch2 and ch3
-            sprintf(pan, ",\"ch2\":[%s,%s,%s,%.2f]", Inv_Data[which].dcv[2], Inv_Data[which].dcc[2], Inv_Data[which].power[2], en_saved[which][2]);  
+            sprintf(pan, ",\"ch2\":[%.1f,%.1f,%.1f,%.2f]", Inv_Data[which].dcv[2], Inv_Data[which].dcc[2], Inv_Data[which].power[2], en_saved[which][2]);  
             strcat(toMQTT, pan);
-            sprintf(pan, ",\"ch3\":[%s,%s,%s,%.2f]", Inv_Data[which].dcv[3], Inv_Data[which].dcc[3], Inv_Data[which].power[3], en_saved[which][3]);  
+            sprintf(pan, ",\"ch3\":[%.1f,%.1f,%.1f,%.2f]", Inv_Data[which].dcv[3], Inv_Data[which].dcc[3], Inv_Data[which].power[3], en_saved[which][3]);  
             strcat(toMQTT, pan);
         }
-        sprintf(tail, ",\"totals\":[%s,%.2f]}", Inv_Data[which].power[4], Inv_Data[which].en_total);
+        sprintf(tail, ",\"totals\":[%.1f,%.2f]}", Inv_Data[which].pw_total, Inv_Data[which].en_total);
         strcat(toMQTT, tail);
         reTain=true;
         break;
      
      case 5: // for thingspeak we have a different format
-       snprintf(toMQTT, sizeof(toMQTT), "field1=%d&field2=%s&field3=%s&field4=%s&field5=%s&field6=%s&field7=%.2f&status=MQTTPUBLISH" ,which, Inv_Data[which].heath, Inv_Data[which].power[0],Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[3], Inv_Data[which].en_total);
+       snprintf(toMQTT, sizeof(toMQTT), "field1=%d&field2=%.1f&field3=%.1f&field4=%.1f&field5=%.1f&field6=%.1f&field7=%.2f&field8=%.1f&status=MQTTPUBLISH" ,which, Inv_Data[which].heath, Inv_Data[which].power[0],Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[3], Inv_Data[which].en_total, Inv_Data[which].acv);
        reTain=false;
        break;
     }
 
-   #ifdef TEST
-   ws.textAll("sending mqtt to " + Mqtt_send );
-   ws.textAll("message:  " + String(toMQTT) );
-   #endif
-   // we check first if we are connected, else we connect 
-   if( mqttConnect() ) MQTT_Client.publish ( Mqtt_send, toMQTT, reTain );
+
+   // mqttConnect() checks first if we are connected, if not we connect anyway
+   if(mqttConnect() ) MQTT_Client.publish ( Mqtt_send, toMQTT, reTain );
  }
 
-// not domoticz: {"inv_serial":"123456789012","temp":"12,3","p0":"123",p1":"123",p2":"123",p3":"123","energy":"345"}
-//format 2 {"inv_serial":"408000158211","temp":"18.0","p0":"88.4","p1":"88.0","energy":"174.4"}
-//format3 {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"dcv":[36.8,37.0],"dcc":[4.3,3.0],"pwr":[nan,nan],"totalen":174.35}
-//format3 {"inv_serial":"408000158211","acv":68.2,"freq":50.0,"temp":18.0,"ch0":[dcv0,dcc0,power0,enSaved0],"ch2":[dcv1,dcc1,power1,en_saved1] etc
+
+//// ************************************************************************************
+////                mqtt send polled data
+//// ************************************************************************************
+//void mqttPoll(int which) {
+//
+//if(Mqtt_Format == 0) return;  
+//
+//  char Mqtt_send[26]={0};  
+//  strcpy(Mqtt_send, Mqtt_outTopic);
+//  if( Mqtt_send[strlen(Mqtt_send)-1] == '/' ) {
+//    strcat(Mqtt_send, String(Inv_Prop[which].invIdx).c_str());
+//  }
+//
+//  StaticJsonDocument doc(1024);
+//  JsonObject root = doc.to<JsonObject>();
+//// the json to domoticz must be something like {"idx" : 7, "nvalue" : 0,"svalue" : "90;2975.00"}
+// 
+//   switch( Mqtt_Format)  { 
+//    case 1: 
+//       root["idx"] = Inv_Prop[which].invIdx;
+//       root["nvalue"] = 0;
+//       root["svalue"][0] = Inv_Data[which].pw_total;
+//       
+//       snprintf(toMQTT, sizeof(toMQTT), "{\"idx\":%d,\"nvalue\":0,\"svalue\":\"%.1f;%.2f\"}" , Inv_Prop[which].invIdx , Inv_Data[which].pw_total, Inv_Data[which].en_total);
+//       break;
+//       // length 46
+//
+//     case 2: // for not domoticz we have a different mqtt string how does this look?
+//       snprintf(toMQTT, sizeof(toMQTT), "{\"inv\":\"%d\",\"temp\":\"%.1f\",\"p0\":\"%.1f\",\"p1\":\"%.1f\",\"p2\":\"%.1f\",\"p3\":\"%.1f\",\"energy\":\"%.2f\"}" ,which, Inv_Data[which].heath, Inv_Data[which].power[0],Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[3], Inv_Data[which].en_total);
+//       break;  
+//       
+//     case 3:
+//        snprintf(toMQTT, sizeof(toMQTT), "{\"inv_serial\":\"%s\",\"freq\":%.1f,\"temp\":%.1f,\"acv\":%.1f" , Inv_Prop[which].invSerial, Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);
+//        //char pan[50]={0};
+//        if( Inv_Prop[which].invType == 1 ) { // qs1
+//            sprintf(pan, ",\"dcv\":[%.1f,%.1f,%.1f,%.1f]", Inv_Data[which].dcv[0], Inv_Data[which].dcv[1],Inv_Data[which].dcv[2],Inv_Data[which].dcv[3]);
+//            strcat(toMQTT, pan);
+//            sprintf(pan, ",\"dcc\":[%.1f,%.1f,%.1f,%.1f]", Inv_Data[which].dcc[0], Inv_Data[which].dcc[1],Inv_Data[which].dcc[2],Inv_Data[which].dcc[3]);
+//            strcat(toMQTT, pan);
+//            sprintf(pan, ",\"pwr\":[%.1f,%.1f,%.1f,%.1f]", Inv_Data[which].power[0], Inv_Data[which].power[1],Inv_Data[which].power[2],Inv_Data[which].power[3]);
+//            strcat(toMQTT, pan);
+//            sprintf(pan, ",\"en\":[%.2f,%.2f,%.2f,%.2f]}", en_saved[which][0], en_saved[which][1], en_saved[which][2], en_saved[which][3]);
+//            strcat(toMQTT, pan);
+//        } else {
+//            sprintf(pan, ",\"dcv\":[%.1f,%.1f]", Inv_Data[which].dcv[0], Inv_Data[which].dcv[1]);
+//            strcat(toMQTT, pan);
+//            sprintf(pan, ",\"dcc\":[%.1f,%.1f]", Inv_Data[which].dcc[0], Inv_Data[which].dcc[1]);
+//            strcat(toMQTT, pan);
+//            sprintf(pan, ",\"pwr\":[%.1f,%.1f]", Inv_Data[which].power[0], Inv_Data[which].power[1]);
+//            strcat(toMQTT, pan);
+//            sprintf(pan, ",\"en\":[%.2f,%.2f]}", en_saved[which][0], en_saved[which][1]);          
+//            strcat(toMQTT, pan);
+//        }
+//        reTain=true;
+//        break;
+////
+//    case 4:
+//
+//        snprintf(toMQTT, sizeof(toMQTT), "{\"inv_serial\":\"%s\",\"freq\":%.1f,\"temp\":%.1f,\"acv\":%.1f" , Inv_Prop[which].invSerial, Inv_Data[which].freq, Inv_Data[which].heath, Inv_Data[which].acv);      
+//        sprintf(pan, ",\"ch0\":[%.1f,%.1f,%.1f,%.2f]", Inv_Data[which].dcv[0], Inv_Data[which].dcc[0], Inv_Data[which].power[0], en_saved[which][0]);  
+//        strcat(toMQTT, pan);
+//        sprintf(pan, ",\"ch1\":[%.1f,%.1f,%.1f,%.2f]", Inv_Data[which].dcv[1], Inv_Data[which].dcc[1], Inv_Data[which].power[1], en_saved[which][1]);  
+//        strcat(toMQTT, pan);
+//
+//        if( Inv_Prop[which].invType == 1 ) { // add ch2 and ch3
+//            sprintf(pan, ",\"ch2\":[%.1f,%.1f,%.1f,%.2f]", Inv_Data[which].dcv[2], Inv_Data[which].dcc[2], Inv_Data[which].power[2], en_saved[which][2]);  
+//            strcat(toMQTT, pan);
+//            sprintf(pan, ",\"ch3\":[%.1f,%.1f,%.1f,%.2f]", Inv_Data[which].dcv[3], Inv_Data[which].dcc[3], Inv_Data[which].power[3], en_saved[which][3]);  
+//            strcat(toMQTT, pan);
+//        }
+//        sprintf(tail, ",\"totals\":[%.1f,%.2f]}", Inv_Data[which].pw_total, Inv_Data[which].en_total);
+//        strcat(toMQTT, tail);
+//        reTain=true;
+//        break;
+//     
+//     case 5: // for thingspeak we have a different format
+//       snprintf(toMQTT, sizeof(toMQTT), "field1=%d&field2=%.1f&field3=%.1f&field4=%.1f&field5=%.1f&field6=%.1f&field7=%.2f&status=MQTTPUBLISH" ,which, Inv_Data[which].heath, Inv_Data[which].power[0],Inv_Data[which].power[1], Inv_Data[which].power[2], Inv_Data[which].power[3], Inv_Data[which].en_total);
+//       reTain=false;
+//       break;
+//    }
+//
+//
+//   // mqttConnect() checks first if we are connected, if not we connect anyway
+//   if(mqttConnect() ) MQTT_Client.publish ( Mqtt_send, toMQTT, reTain );
+// }

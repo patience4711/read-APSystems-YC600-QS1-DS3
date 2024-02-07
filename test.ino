@@ -4,7 +4,7 @@ char sendCmd[100];
 char s_d[254]={0};
 int len = strlen(txBuffer);
 
-DebugPrint("len of txBuffer :  "); DebugPrintln(String(txBuffer));
+//DebugPrint("len of txBuffer :  "); DebugPrintln(String(txBuffer));
 
       for(int i=0; i<len; i++) 
       {
@@ -71,3 +71,6 @@ testCounter += 1; // for the next round we have new string
 mqttPoll(0);
 }
 #endif
+
+
+// En is een getal of n/a

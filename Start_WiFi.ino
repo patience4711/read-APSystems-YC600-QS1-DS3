@@ -57,7 +57,7 @@ void checkFixed() {
 }
 
 void loginBoth(AsyncWebServerRequest *request, String who) {
-  String authFailResponse = "<h2>login failed <a href='/'>click here</a></h2>";
+  //String authFailResponse = "<h2>login failed <a href='/'>click here</a></h2>";
   if (who == "admin" ){
   const char* www_realm = "login as administrator."; 
     if (!request->authenticate("admin", pswd)) return request->requestAuthentication();

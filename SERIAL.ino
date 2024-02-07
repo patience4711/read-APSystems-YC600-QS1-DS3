@@ -92,7 +92,7 @@
 ////              Serial.println("going to unpair the specified inverter");
 ////              int kz = String(InputBuffer_Serial[10]).toInt(); 
 ////              Serial.println("going to unpair inverter " + String(kz));
-////              strcpy(Inv_Prop[kz].invID, "0x0000"); //unpair
+////              strcpy(Inv_Prop[kz].invID, "0000"); //unpair
 ////                writeStruct("/Inv_Prop" + String(kz) + ".str", kz); 
 ////              return;             
 ////          
@@ -184,7 +184,7 @@
 ////          } else
 //
 ////           if (strncasecmp(InputBuffer_Serial+3,"PAIRSIM",7) == 0) {  
-////              strncpy(Inv_Prop[1].invID, "0xABCD",6);
+////              strncpy(Inv_Prop[1].invID, "ABCD",6);
 ////              Serial.print("Inv_Prop[1].invID = " + String(Inv_Prop[1].invID));
 ////              String bestand = "/Inv_Prop1.str"; // /Inv_Prop1.str
 ////              writeStruct("/Inv_Prop1.str", 1); // alles opslaan in SPIFFS

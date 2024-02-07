@@ -4,28 +4,26 @@
 void SPIFFS_read() {
   //DebugPrintln("mounting FS...");
  if (LittleFS.begin()) {
-    DebugPrintln("mounted file system");
+    //DebugPrintln("mounted file system");
 
        if( file_open_for_read("/wificonfig.json") ) {
-                DebugPrintln("read wificonfig\n");
+                Serial.println("read wificonfig\n");
           } else {
-             DebugPrintln("wificonfig.json not opened\n");
+             Serial.println("wificonfig.json not opened\n");
           }
        
        if( file_open_for_read("/basisconfig.json") ) {     
-             DebugPrintln("read basisconfig\n");
+             Serial.println("read basisconfig\n");
           } else {
-          DebugPrintln("basisconfig.json not opened\n");
+          Serial.println("basisconfig.json not opened\n");
         } 
        if( file_open_for_read("/mqttconfig.json") ) {     
-             DebugPrintln("mqttconfig read");
+             Serial.println("mqttconfig read");
           } else {
-          DebugPrintln("mqttconfig.json not opened");
+          Serial.println("mqttconfig.json not opened");
         }         
-  } else {
-        DebugPrintln("failed to mount FS");
-   }
- // einde spiffs lezen 5 bestanden
+  } 
+ // einde spiffs lezen 3 bestanden
 
 }  
 
@@ -68,55 +66,50 @@ bool leesStruct(String whichfile) {
 //                      de gegevens opslaan in SPIFFS                         *  
 // ****************************************************************************
 void wifiConfigsave() {
-   DebugPrintln("saving config");
+   //DebugPrintln("saving config");
 
     DynamicJsonDocument doc(1024);
     JsonObject json = doc.to<JsonObject>();   
     json["ip"] = static_ip;
     json["pswd"] = pswd;
-    //json["lengte"] = lengte;
-    //json["breedte"] = breedte;
     json["longi"] = longi;
     json["lati"] = lati;
-    
-    json["timezone"] = timezone;
+    json["gmtOffset"] = gmtOffset;
     json["zomerTijd"] = zomerTijd;
-
+    json["securityLevel"] = securityLevel;
     File configFile = LittleFS.open("/wificonfig.json", "w");
-    if (!configFile) {
-      DebugPrintln("open file for writing failed!");
-    }
+//    if (!configFile) {
+//      //DebugPrintln("open file for writing failed!");
+//    }
     //DebugPrintln("wificonfig.json written");
-    #ifdef DEBUG 
-//    json.printTo(Serial);
+//    #ifdef DEBUG 
+////    json.printTo(Serial);
     serializeJson(json, Serial);
     Serial.println(F("")); 
-    #endif
+//    #endif
     serializeJson(json, configFile);
     configFile.close();
 }
 
 
 void basisConfigsave() {
-    DebugPrintln("saving basis config");
+    //DebugPrintln("saving basis config");
     DynamicJsonDocument doc(1024);
     JsonObject json = doc.to<JsonObject>();
     json["ECU_ID"] = ECU_ID;
     json["userPwd"] = userPwd;
-//    json["pollRes"] = pollRes;
     json["inverterCount"] = inverterCount;
     json["Polling"] = Polling;
     json["pollOffset"] = pollOffset;
-//    json["calli"] = calliBration;
     File configFile = LittleFS.open("/basisconfig.json", "w");
     if (!configFile) {
       //DebugPrintln("open file for writing failed");
     }
-    DebugPrintln("inverterconfig.json written");
-    #ifdef DEBUG 
-    serializeJson(json, Serial);
-    Serial.println(F(""));     
-    #endif
+ //   DebugPrintln("inverterconfig.json written");
+//    #ifdef DEBUG 
+//    serializeJson(json, Serial);
+//    Serial.println(F(""));     
+//    #endif
     serializeJson(json, configFile);
     configFile.close();
 }
@@ -126,24 +119,24 @@ void mqttConfigsave() {
     DynamicJsonDocument doc(1024);
     JsonObject json = doc.to<JsonObject>();
 // 
-//    json["Mqtt_Enabled"] = Mqtt_Enabled;
+
     json["Mqtt_Broker"] = Mqtt_Broker;
     json["Mqtt_Port"] = Mqtt_Port;    
-    json["Mqtt_inTopic"] = Mqtt_inTopic;
+    json["Mqtt_stateIDX"] = Mqtt_stateIDX;
     json["Mqtt_outTopic"] = Mqtt_outTopic;
     json["Mqtt_Username"] = Mqtt_Username;
     json["Mqtt_Password"] = Mqtt_Password;
-//    json["Mqtt_Idx"] = Mqtt_Idx;
+    json["Mqtt_Clientid"] = Mqtt_Clientid;    
     json["Mqtt_Format"] = Mqtt_Format;    
     File configFile = LittleFS.open("/mqttconfig.json", "w");
     if (!configFile) {
       //DebugPrintln("open file for writing failed");
     }
-    DebugPrintln("mqttconfig.json written");
-    #ifdef DEBUG
-    serializeJson(json, Serial);
-    Serial.println(F("")); 
-    #endif
+    //DebugPrintln("mqttconfig.json written");
+//    #ifdef DEBUG
+//    serializeJson(json, Serial);
+//    Serial.println(F("")); 
+//    #endif
     serializeJson(json, configFile);
     configFile.close();
 }
@@ -165,9 +158,9 @@ bool file_open_for_read(String bestand) {
            configFile.readBytes(buf.get(), size);
            DynamicJsonDocument doc(1024);
            auto error = deserializeJson(doc, buf.get());
-           #ifdef DEBUG 
-           serializeJson(doc, Serial); Serial.println(F(""));
-           #endif
+//           #ifdef DEBUG 
+//           serializeJson(doc, Serial); Serial.println(F(""));
+//           #endif
              if (error) return false; 
               //DebugPrintln("parsed json");
               String jsonStr = ""; // we printen het json object naar een string
@@ -181,8 +174,9 @@ bool file_open_for_read(String bestand) {
 //                      if(jsonStr.indexOf("breedte") > 0){ strcpy(breedte, doc["breedte"]);}
                       if(jsonStr.indexOf("longi") > 0){longi = doc["longi"].as<float>();}
                       if(jsonStr.indexOf("lati") > 0){lati = doc["lati"].as<float>();}                      
-                      if(jsonStr.indexOf("timezone") > 0){ strcpy(timezone, doc["timezone"]);}
+                      if(jsonStr.indexOf("gmtOffset") > 0){ strcpy(gmtOffset, doc["gmtOffset"]);}
                       if(jsonStr.indexOf("zomerTijd") > 0){zomerTijd = doc["zomerTijd"].as<bool>();}
+                      if(jsonStr.indexOf("securityLevel") > 0){securityLevel = doc["securityLevel"].as<int>();}
             }
 
             if (bestand == "/basisconfig.json") {
@@ -196,33 +190,33 @@ bool file_open_for_read(String bestand) {
               }            
 
             if (bestand == "/mqttconfig.json"){
-                     //if(jsonStr.indexOf("Mqtt_Enabled") > 0)  { Mqtt_Enabled =  doc["Mqtt_Enabled"].as<bool>();}   
-                     if(jsonStr.indexOf("Mqtt_Broker") > 0)   { Mqtt_Broker =   doc["Mqtt_Broker"].as<String>();}
-                     if(jsonStr.indexOf("Mqtt_Port") > 0)     { Mqtt_Port =   doc["Mqtt_Port"].as<String>();}  
-                     if(jsonStr.indexOf("Mqtt_inTopic") > 0)  { Mqtt_inTopic =  doc["Mqtt_inTopic"].as<String>();}         
-                     if(jsonStr.indexOf("Mqtt_outTopic") > 0) { Mqtt_outTopic = doc["Mqtt_outTopic"].as<String>();}         
-                     if(jsonStr.indexOf("Mqtt_Username") > 0) { Mqtt_Username = doc["Mqtt_Username"].as<String>();}
-                     if(jsonStr.indexOf("Mqtt_Password") > 0) { Mqtt_Password = doc["Mqtt_Password"].as<String>();}
-                     if(jsonStr.indexOf("Mqtt_Format") > 0) { Mqtt_Format = doc["Mqtt_Format"].as<int>();}
-            
+                     if(jsonStr.indexOf("Mqtt_Broker")   >  0 ) { strcpy(Mqtt_Broker,   doc["Mqtt_Broker"])         ;}
+                     if(jsonStr.indexOf("Mqtt_Port")     >  0 ) { strcpy(Mqtt_Port,     doc["Mqtt_Port"])           ;}  
+                    // if(jsonStr.indexOf("Mqtt_inTopic")  >  0 ) { strcpy(Mqtt_inTopic,  doc["Mqtt_inTopic"])        ;}         
+                     if(jsonStr.indexOf("Mqtt_outTopic") >  0 ) { strcpy(Mqtt_outTopic, doc["Mqtt_outTopic"])       ;}         
+                     if(jsonStr.indexOf("Mqtt_Username") >  0 ) { strcpy(Mqtt_Username, doc["Mqtt_Username"])       ;}
+                     if(jsonStr.indexOf("Mqtt_Password") >  0 ) { strcpy(Mqtt_Password, doc["Mqtt_Password"])       ;}
+                     if(jsonStr.indexOf("Mqtt_Clientid") >  0 ) { strcpy(Mqtt_Clientid, doc["Mqtt_Clientid"])       ;}
+                     if(jsonStr.indexOf("Mqtt_Format")   >  0 ) { Mqtt_Format =         doc["Mqtt_Format"].as<int>();}
+                     if(jsonStr.indexOf("Mqtt_stateIDX")   >  0 ) { Mqtt_stateIDX =         doc["Mqtt_stateIDX"].as<int>();}
             }
              return true;
  }
 
 // we do this before swap_to_zigbee
-void printStruct( String bestand ) {
-//input String bestand = "/Inv_Prop" + String(x) + ".str";
-      //String bestand = bestand + String(i) + ".str"
-      //leesStruct(bestand); is done at boottime
-      #ifdef DEBUG
-      int ivn = bestand.substring(9,10).toInt();
-      Serial.println("Inv_Prop[" + String(ivn) + "].invLocation = " + String(Inv_Prop[ivn].invLocation));     
-      Serial.println("Inv_Prop[" + String(ivn) + "].invSerial = " + String(Inv_Prop[ivn].invSerial));
-      Serial.println("Inv_Prop[" + String(ivn) + "].invID = " + String(Inv_Prop[ivn].invID)); 
-      Serial.println("Inv_Prop[" + String(ivn) + "].invType = " + String(Inv_Prop[ivn].invType));
-      Serial.println("Inv_Prop[" + String(ivn) + "].invIdx = " + String(Inv_Prop[ivn].invIdx));
-      Serial.println("Inv_Prop[" + String(ivn) + "].conPanels = " + String(Inv_Prop[ivn].conPanels[0])  + String(Inv_Prop[ivn].conPanels[1]) + String(Inv_Prop[ivn].conPanels[2]) + String(Inv_Prop[ivn].conPanels[3]));      
-      Serial.println("");
-      Serial.println("****************************************");
-      #endif
-}
+//void printStruct( String bestand ) {
+////input String bestand = "/Inv_Prop" + String(x) + ".str";
+//      //String bestand = bestand + String(i) + ".str"
+//      //leesStruct(bestand); is done at boottime
+////      #ifdef DEBUG
+////      int ivn = bestand.substring(9,10).toInt();
+////      Serial.println("Inv_Prop[" + String(ivn) + "].invLocation = " + String(Inv_Prop[ivn].invLocation));     
+////      Serial.println("Inv_Prop[" + String(ivn) + "].invSerial = " + String(Inv_Prop[ivn].invSerial));
+////      Serial.println("Inv_Prop[" + String(ivn) + "].invID = " + String(Inv_Prop[ivn].invID)); 
+////      Serial.println("Inv_Prop[" + String(ivn) + "].invType = " + String(Inv_Prop[ivn].invType));
+////      Serial.println("Inv_Prop[" + String(ivn) + "].invIdx = " + String(Inv_Prop[ivn].invIdx));
+////      Serial.println("Inv_Prop[" + String(ivn) + "].conPanels = " + String(Inv_Prop[ivn].conPanels[0])  + String(Inv_Prop[ivn].conPanels[1]) + String(Inv_Prop[ivn].conPanels[2]) + String(Inv_Prop[ivn].conPanels[3]));      
+////      Serial.println("");
+////      Serial.println("****************************************");
+////      #endif
+//}

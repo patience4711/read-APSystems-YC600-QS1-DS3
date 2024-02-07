@@ -24,15 +24,19 @@ bool coordinator(bool normal) { // if true we send the extra command for normal 
     if ( checkCoordinator() == 0 ) // can be 0 1 or 2
      
     {
-        Update_Log(2 , "started");
-        ws.textAll("ZB coordinator started");
+        #ifdef LOG 
+        Update_Log(2 , "started"); 
+        #endif
+        if(diagNose) ws.textAll("ZB coordinator started");
         //busyState = 0;
         ledblink(5,100);
         return true;
       
     } else {
-        Update_Log(2 , "failed");
-        ws.textAll("starting ZB coordinator failed");
+        #ifdef LOG 
+        Update_Log(2 , "failed"); 
+        #endif
+        if(diagNose) ws.textAll("starting ZB coordinator failed");
         return false;  
     }
 }
@@ -67,7 +71,7 @@ void coordinator_init() {
 *  Finished. Heap=26712
 *  
 */
-    ws.textAll("init zb coordinator");
+    if(diagNose) ws.textAll("init zb coordinator");
     zigbeeUp = 11; //initial it is initializing 11, 0=down 1=up
     yield();
     char s_d[254]={0}; // provide a buffer for the call to readZB
@@ -151,7 +155,7 @@ void sendNO() {
     // now send command 9 this is "2401FFFF1414060001000F1E", + ecu_id_reverse + FBFB1100000D6030FBD3000000000000000004010281FEFE"
     snprintf(noCmd, sizeof(noCmd), "2401FFFF1414060001000F1E%sFBFB1100000D6030FBD3000000000000000004010281FEFE", ecu_id_reverse);
     
-    ws.textAll("sending N.O. cmd");
+    if(diagNose) ws.textAll("sending N.O. cmd");
 
     sendZB(noCmd);
 

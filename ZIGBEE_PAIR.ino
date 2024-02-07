@@ -3,9 +3,13 @@ void pairOnActionflag() {
      //this because no delay is alowed within a async request
      //start with setup the coordinator in pairing mode
      String term = "start pairing inverter sn " + String(Inv_Prop[iKeuze].invSerial);
-     Update_Log(4, "start");
+     #ifdef LOG 
+     Update_Log(4, "start"); 
+     #endif
      if( !coordinator(false) ) {
-        Update_Log(4, "ZB down");
+        #ifdef LOG 
+        Update_Log(4, "ZB down"); 
+        #endif
         ws.textAll(F("pairing failed, zb system down"));
         return;
      }
@@ -15,13 +19,17 @@ void pairOnActionflag() {
   
     if( pairing(iKeuze) ) {
        String term = "success, inverter got id " + String(Inv_Prop[iKeuze].invID);
-       Update_Log(4, "success");
+       #ifdef LOG 
+       Update_Log(4, "success"); 
+       #endif
        ws.textAll(term);  
     } else {
       // pairing failed
        strncpy(Inv_Prop[iKeuze].invID, "0000", 4);
        String term = "failed, inverter got id " + String(Inv_Prop[iKeuze].invID);
-       Update_Log(4, "failed");
+       #ifdef LOG 
+       Update_Log(4, "failed"); 
+       #endif
        ws.textAll(term);      
     }
        String bestand = "/Inv_Prop" + String(iKeuze) + ".str"; // /Inv_Prop0.str

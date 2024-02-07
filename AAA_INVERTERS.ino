@@ -3,15 +3,10 @@ const char INVCONFIG_START[] PROGMEM = R"=====(
 <title>ESP-ECU</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-<link rel="stylesheet" type="text/css" href="/STYLESHEET">
+<link rel="stylesheet" type="text/css" href="/STYLESHEET_HOME">
+<link rel="stylesheet" type="text/css" href="/STYLESHEET_SUBS">
 <script type='text/javascript'>
 
-function helpfunctie() {
-document.getElementById("help").style.display = "block";
-}
-function sl() {  
-document.getElementById("help").style.display = "none";
-}
 function showSubmit() {
 document.getElementById("sub").style.display = "block";
 }
@@ -38,32 +33,19 @@ div.overlay {
   line-height: 300px;
 }
 </style>
+<script>
+function cl() {
+window.location.href='/MENU';
+}
+</script>
 </head>
 <body onload='%LOADBAG%'>
-
-<div id='msect'>
-  <div id="help">
-  <span class='close' onclick='sl();'>&times;</span><h3>INVERTER SETTINGS HELP</h3>
-  <b>you can add max 9 inverters.</b><br><br>
-  <b>name</b><br>
-  Enter a meaningfull name or the position of the inverter.
-  <br><br><b>inverter serialnr:</b><br>
-  You can find the serialnr stickered on the inverter.
-  <br><br><b>panels:</b><br>
-  Check which panels are connected.
-  <br><br><b>pair:</b><br>
-  link your inverter to this ECU in order to make the zigbee communication possible.<br>
-  When paired you will see the obtained inverter ID in the status field.
-  You can find more information in the log or information page. 
-  <br><br>
-  </div>
-</div>
 
 <center>
 
 <div id='msect'>
 <ul>
-<li><a href='/MENU'>done</a></li>
+<li id='fright'><span class='close' onclick='cl();'>&times;</span>
 <li><a href='/INV?welke=0' style='display:%none'0%>inv. 0</a></li>
 <li><a href='/INV?welke=1' style='display:%none'1%>inv. 1</a></li>
 <li><a href='/INV?welke=2' style='display:%none'2%>inv. 2</a></li>
@@ -94,7 +76,6 @@ div.overlay {
     <li><a href='#' onclick='delFunction("/SW=BACK")'>delete</a></li>
   </div>
     <li><a href='#' onclick='helpfunctie()'>help</a></li>
-  
     <li id='sub'><a href='#' onclick='submitFunction("/SW=BACK")'>save</a></li>
   
 </div>  
@@ -179,9 +160,8 @@ void handleInverterconfig(AsyncWebServerRequest *request)
   // we only collect the data for this specific inverter
   // read the serverargs and copy the values into the variables
 
-   DebugPrintln("we are in handleInverterconfig");    
-   //Serial.println("inverterCount initial = " + String(inverterCount));
-   //Serial.println("iKeuze = " + String(iKeuze));  
+   //("we are in handleInverterconfig");    
+ 
    // collect the serverarguments
    strcpy(Inv_Prop[iKeuze].invLocation, request->arg("il").c_str());
    strcpy(Inv_Prop[iKeuze].invSerial, request->arg("iv").c_str());
@@ -217,8 +197,8 @@ void handleInverterconfig(AsyncWebServerRequest *request)
    
    basisConfigsave();  // save inverterCount
    #ifdef DEBUG
-   DebugPrintln("\ninverterCount after edit (saved) = " + String(inverterCount));  
-   DebugPrintln("list of the files we have after edit");
+   //("\ninverterCount after edit (saved) = " + String(inverterCount));  
+   //("list of the files we have after edit");
    printInverters();
    #endif
        
@@ -239,7 +219,7 @@ void handleInverterdel(AsyncWebServerRequest *request)
   // we only collect the data for this specific inverter
   // read the serverargs and copy the values into the variables
 
-   DebugPrintln("we are in handleInverterdel");    
+   //("we are in handleInverterdel");    
    //Serial.println("inverterCount initial = " + String(inverterCount));
    //Serial.println("iKeuze = " + String(iKeuze));  
 
@@ -249,7 +229,7 @@ void handleInverterdel(AsyncWebServerRequest *request)
    if(LittleFS.exists(bestand) ) LittleFS.remove(bestand);
    
    //Serial.println("list of the files we have after removed one");
-   printInverters();
+   //printInverters();
    inverterCount -= 1;
    basisConfigsave();  // save inverterCount   
 //   // now we may have a gap in the file order
@@ -264,19 +244,19 @@ void handleInverterdel(AsyncWebServerRequest *request)
       actionFlag = 10;
 }
 
-void printInverters() {      
-      Serial.println(F(" ****** excisting inverter files ******"));
-      for (int x=0; x < inverterCount+1; x++) 
-      {
-      String bestand = "/Inv_Prop" + String(x) + ".str";
-      
-      if(LittleFS.exists(bestand)) 
-          {
-              Serial.print(F("filename: ")); Serial.println(bestand);
-              printStruct(bestand);
-          }
-      }
-}
+//void printInverters() {      
+//      Serial.println(F(" ****** excisting inverter files ******"));
+//      for (int x=0; x < inverterCount+1; x++) 
+//      {
+//      String bestand = "/Inv_Prop" + String(x) + ".str";
+//      
+//      if(LittleFS.exists(bestand)) 
+//          {
+//              Serial.print(F("filename: ")); Serial.println(bestand);
+//              printStruct(bestand);
+//          }
+//      }
+//}
 
 // say we have
 // Inv_prop0.str
@@ -310,7 +290,7 @@ bool found = false;
         found = true;
         LittleFS.rename(bestand_2, bestand_1); // file 2 becomes file 1
       //Serial.println("renamed " + bestand_1);
-        printInverters();    
+       // printInverters();    
       }
   }
   // we remove the last file
@@ -424,7 +404,7 @@ int verklikker = 0;
            if (Inv_Prop[iKeuze].conPanels[3]) { toSend.replace("#4check", "checked");}
         }
         
-        if(String(Inv_Prop[iKeuze].invID) != "0x0000") 
+        if(String(Inv_Prop[iKeuze].invID) != "0000") 
         {
            toSend.replace("unpaired", String(Inv_Prop[iKeuze].invID) );
         }

@@ -26,12 +26,9 @@ if ( intern ) {    //DebugPrintln("the request comes from inside the network");
                  request->send ( 200, "text/plain", "automatic polling, skipping" ); //zend bevestiging
                  return; 
               }
-              DebugPrintln("handleNotFound found POLL=");
+              //("handleNotFound found POLL=");
               int x = serverUrl.indexOf("POLL=");
-              //ws.textAll("serverUrl = " + serverUrl);
-              //ws.textAll("sub = " + serverUrl.substring(6,7));
               int inv = serverUrl.substring(6,7).toInt();
-              //ws.textAll("inv= " + String(inv));
               String teZenden = "polling inverternr " + String(inv);
               if(inv > inverterCount-1 ) {
                   String teZenden="ERROR " + serverUrl + " inverter not exists !";

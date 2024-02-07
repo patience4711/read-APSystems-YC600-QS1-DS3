@@ -59,7 +59,7 @@ ICACHE_RAM_ATTR void isr() {
            return; // jump out, the button is high so it was a clumpsiness
          }
      digitalWrite(led_onb, LOW); //de onboard led aan
-     Serial.println("button still pressed, onboard led on");
+     //Serial.println("button still pressed, onboard led on");
      //next we wait some time again
      while (endtime - starttime  <= 9000) //2000 millis = 2 sec
      { 

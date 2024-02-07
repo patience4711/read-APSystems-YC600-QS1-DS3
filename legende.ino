@@ -54,4 +54,19 @@ Configuration ID: 0x0003; Size: 1 byte; Default value: 0
 
 65: Sent=FE0D 240014050F0001010002000015000020
 65: Received=FE 01 64 00 00 65
+
+lengths of progmem files
+ECU_HOMEPAGE length = 3543 now 3113  combined with JAVA_SCRIPT 6737 after removing whitespace 
+
+stylesheet_home length = 1244 now 1074
+stylesheet_subs length = 1209
+MENUPAGE length = 1444
+HTML_HEAD length = 727
+LOGPAGE length = 1393
+DETAILSPAGE length = 2172
+DETAILS_SCRIPT length = 3019
+JAVA_SCRIPT length = 4741
+
+with beginrespons after combining the scripts with the home- and detailspage the memory comes back
+so when the scripts are served apart, the memory leak arises
 */

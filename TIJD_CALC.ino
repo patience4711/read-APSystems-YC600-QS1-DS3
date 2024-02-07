@@ -5,7 +5,7 @@ void sun_setrise() {
 //float OUR_latitude = atof(breedte);
 float OUR_longtitude = longi;
 float OUR_latitude = lati;
-float OUR_timezone = atof(timezone); //   120                     // localtime with UTC difference in minutes
+float OUR_timezone = atof(gmtOffset); //   120                     // localtime with UTC difference in minutes
 
 sunMoon  sm;
 

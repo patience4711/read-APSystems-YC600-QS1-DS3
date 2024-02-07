@@ -16,7 +16,7 @@ void getTijd() {
     // Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
     //const unsigned long seventyYears = 2208988800UL;
     // subtract seventy years:
-//    unsigned long epoch = secsSince1900 - seventyYears + atof(timezone) * 60; // * 60 weggehaald omdat timezone in minuten is
+//    unsigned long epoch = secsSince1900 - seventyYears + atof(gmtOffset) * 60; // * 60 weggehaald omdat gmtOffset in minuten is
 //    unsigned long epochTime = timeClient.getEpochTime;
     // we have to do this conditional, if time retrieving failed
     if (epochTime < 1000) {
@@ -24,9 +24,9 @@ void getTijd() {
     return;
   } else {
    
-    epochTime += atoi(timezone) * 60;
+    epochTime += atoi(gmtOffset) * 60;
     setTime(epochTime); // dit moeten we doen omdat anders zomertijd() niet werkt
-    //Serial.print("epoch gecorrigeerd voor timezone = "); Serial.println(epochTime);
+    //Serial.print("epoch gecorrigeerd voor gmtOffset = "); Serial.println(epochTime);
     if ( zomerTijd == true ) {
     //Serial.print("zomerTijd[0] = een o dus on "); Serial.println(String(zomerTijd));  
       if (zomertijd() == true) {  
@@ -36,7 +36,9 @@ void getTijd() {
       }
     }
     timeRetrieved=true;  
-    Update_Log("system", "time retrieved");
+    #ifdef LOG 
+    Update_Log(1, "got time"); 
+    #endif
     }
     //DebugPrint(" Unix time epoch = ");
     //DebugPrintln(epochTime);

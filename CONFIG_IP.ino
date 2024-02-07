@@ -15,24 +15,12 @@ function submitF() {
 }
 </script>
 <div id='msect'>
-  <div id='help'>
-  <span class='close' onclick='sl();'>&times;</span><h3>IP ADDRESS HELP</h3>
-  <b>STATIC IP:</b><br>You can configure a static ip. 
-  Usually redundant, the dhcp ip is usually already fixed.
-  <br><br>
-  <b>DHCP IP:</b><br> the router determines the IP address.<br><br>
-  <b>IP address:</b><br>
-  Should be derived from the router's IP address. If ip router is 192.168.2.1, <br>a correct static ip is <br>192.168.2.<span style='color:red;'>2 t/m 254</span>
-  <br><br>
-  If you set a DHCP IP address, a valid IP must be entered, or leave this field empty.<br>
-  <br><br>
-  </div>
-</div>
+<ul> <li id="sub"><a href="#" onclick='submitF()'>save</a></li>
+<li id='fright'><span class='close' onclick='cl();'>&times;</span></li>
+</ul></div>
+<div id='msect'><kop>IP ADDRESS SETTINGS</kop></div>
 
 <div id='msect'>
-  <kop>IP ADDRESS SETTINGS</kop>
-</div>
-<div id='main-sect'>
 <div class='divstijl' style='height:62vh;'><br><center>
 <form id='fM' method='get' action='IPconfig' oninput='showSubmit();'>
 <table><tr><td style='width:145px;'>IP configuration<td style='width:190px;'>
@@ -55,19 +43,12 @@ function submitF() {
 <p>NOTE: a fixed IP has to be correct, or empty.</p></center>
 </div>
 </div>
-<div id='msect'>
-  <br><ul>
-  <li id="sub"><a href="#" onclick='submitF()'>save</a></li>
-  <li><a href='#' onclick='helpfunctie()'>help</a>
-  <li><a href='/MENU'>done</a></li>
-  </ul>
-  <br></div>
 </div>
 </body></html>
 )=====";
 
 void zendPageIPconfig() {
-   DebugPrintln("we are now on zendPageIPconfig");
+   //("we are now on zendPageIPconfig");
    //loginAdmin(AsyncWebServerRequest *request);
    toSend = FPSTR(HTML_HEAD);
    toSend += FPSTR(IPCONFIG);  
@@ -75,16 +56,16 @@ void zendPageIPconfig() {
    // see if we have a static, if so we put the select right and read the ip vars
    if ( static_ip[0] == '\0' || static_ip[0] == '0' ) 
    {
-        DebugPrint("static_ip = "); DebugPrintln(String(static_ip));
-        DebugPrintln("no static ip");
+        //DebugPrint("static_ip = "); //(String(static_ip));
+        //("no static ip");
         toSend.replace("option}" , "selected" );
         //if we hide the page there are no data put back, the will be saved as null 
   } 
   else 
   {
       // we have a static ip so 
-        DebugPrint("static_ip = "); DebugPrintln(String(static_ip));
-        DebugPrintln("there is a static ip");   
+        //DebugPrint("static_ip = "); //(String(static_ip));
+        //("there is a static ip");   
         toSend.replace("option2" , "selected" );
   }
   //always put back the ip data
@@ -94,7 +75,7 @@ void zendPageIPconfig() {
  
   // we construct the regex for static ip
   String GateWay = WiFi.gatewayIP().toString();
-  DebugPrint("gateway in ipconfig = "); DebugPrintln(GateWay);
+  //DebugPrint("gateway in ipconfig = "); //(GateWay);
   int punt1 = GateWay.indexOf('.');
   int punt2 = GateWay.indexOf('.', punt1+1);
   int punt3 = GateWay.indexOf('.', punt2+1);
@@ -134,8 +115,8 @@ void handleIPconfig(AsyncWebServerRequest *request) {
   String optie = request->getParam("keuze")->value();
   //String optie = server.arg("keuze");
   if ( optie == "DHCP") {
-      DebugPrint("dhcp set, dropped static_ip, optie = ");
-      DebugPrintln(optie);
+      //DebugPrint("dhcp set, dropped static_ip, optie = ");
+      //(optie);
       static_ip2[0] = '\0';
     }
 
@@ -146,16 +127,16 @@ void handleIPconfig(AsyncWebServerRequest *request) {
     //If not equal, it has changed 
      String test1=String(static_ip);  
      String test2=String(static_ip2);
-     DebugPrint("de teststrings zijn: ");
-     DebugPrintln(test1);
-     DebugPrintln(test2);        
+     //DebugPrint("de teststrings zijn: ");
+     //DebugPrintln(test1);
+     //DebugPrintln(test2);        
 
-    DebugPrintln("read the confirm page in toSend");
+    //("read the confirm page in toSend");
     toSend = FPSTR(CONFIRM_IP);
    
     if (String(static_ip) != String(static_ip2) ) 
     {
-        DebugPrintln("the IP has changed");
+        //("the IP has changed");
         //static_ip=static_ip2;
         strcpy(static_ip, static_ip2);
 
@@ -164,7 +145,7 @@ void handleIPconfig(AsyncWebServerRequest *request) {
         {
              actionFlag = 10; // make it reboot in the loop
              adres = String(static_ip);
-             DebugPrint("the specified ip = "); DebugPrintln(adres);
+             //DebugPrint("the specified ip = "); //(adres);
              zin = F("The entered IP is <strong><a href='http://{adres1}'>http://{adres2}</a></strong>");
              zin += F("<br>Use the new IP adres in your browser or click the link.<br>");
              zin += F("<br>This page will close after a few seconds...");
@@ -187,6 +168,6 @@ void handleIPconfig(AsyncWebServerRequest *request) {
    }
    //Serial.println("set actionFlag to " + String(actionFlag) );
    request->send(200, "text/html", toSend);
-   DebugPrintln("IPconfig saved");
+   //("IPconfig saved");
    wifiConfigsave();
 }

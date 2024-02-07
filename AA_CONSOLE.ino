@@ -1,10 +1,12 @@
+//<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
 const char CONSOLE_HTML[] PROGMEM = R"=====(
 <!DOCTYPE html><html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <title>ESP-ECU</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-<link rel="stylesheet" type="text/css" href="/STYLESHEET">
+
+<link rel="stylesheet" type="text/css" href="/STYLESHEET_HOME">
 <script>
 function helpfunctie() {
 document.getElementById("help").style.display = "block";
@@ -12,8 +14,9 @@ document.getElementById("help").style.display = "block";
 function sl() {  
 document.getElementById("help").style.display = "none";
 }
+
 </script>
-</head>
+
 <style>
  tr {height:16px !important;
  font-size:15px !important;
@@ -21,26 +24,35 @@ document.getElementById("help").style.display = "none";
  li a:hover {
    background-color: #333 !important;
 }
+#help {
+  background-color: #ffffff; 
+  border: solid 2px; 
+  display:none; 
+  padding:4px;
+  width:94vw;
+}
 </style>
-
+</head>
 <body>
   <div id='help'>
   <span class='close' onclick='sl();'>&times;</span><h3>CONSOLE COMMANDS</h3>
   <b>10;ZBT=message: </b> send a zigbee message (e.g. 2710).<br><br>
-  <b>10;DEL=filename: </b> delete a file.<br><br>
+  <b>10;DELETE=filename: </b> delete a file.<br><br>
   <b>10;INV_REBOOT: </b> reboot an unresponsive inverter<br><br>
   <b>10;HEALTH: </b> healthcheck zigbee hw/system<br><br>
   <b>10;POLL=x: </b> poll inverter #x<br><br>
-  <b>10;ERASE: </b> delete all inverter files<br><br>
+  <b>10;INIT_N: </b> start the zigbee coordinator<br><br>
   <b>10;DIAG: </b> more Debug messages in console<br><br>
   <b>10;EDIT=0-AABB: </b> mark an inverter as paired<br><br>
+  <b>10;ERASE: </b> delete all inverter files<br><br>
   <b>10;FILES: </b> show filesystem<br><br>
+  <b>10;TESTMQTT: </b>sends a mqtt testmessage<br><br>  
   <b>10;CLEAR: </b> clear console window<br><br> 
   </div>
 
 <div id='msect'>
 <ul>
-<li><a href='/MENU'>done</a>
+<li id='fright'><a href='/MENU' onclick='confirmExit()' class='close'>&times;</span></a>
 <li><a href='#' onclick='helpfunctie()'>help</a>
 <li><a><input type="text" placeholder="type here" id="tiep"></a>
 </ul>
@@ -54,7 +66,6 @@ document.getElementById("help").style.display = "none";
 
 <script>
   var field = document.getElementById('tekstveld');
-  //var gateway = `ws://${window.location.hostname}/ws`;
   var gateway = `${(window.location.protocol == "https:"?"wss":"ws")}://${window.location.hostname}/ws`;
   var websocket;
   var inputField = document.getElementById('tiep');
@@ -82,7 +93,7 @@ document.getElementById("help").style.display = "none";
   function onClose(event) {
     console.log('Connection closed');
     field.insertAdjacentHTML('beforeend', "<tr><td>* * connection closed * *");
-    setTimeout(initWebSocket, 2000);
+    //setTimeout(initWebSocket, 2000);
   }
   function onMessage(event) {
     //var message = event.data;
@@ -134,14 +145,6 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
   txBuffer[i] = data[i];
   }
   txBuffer[len]='\0'; // terminate the array
-  //ws.textAll("length data = " + String(strlen((char*)data)));
-  #ifdef DEBUG
-  Serial.print(F("len = ")); Serial.println(String(len));
-  Serial.print(F("txBuffer = ")); Serial.println(String(txBuffer));
-  ws.textAll("length data = " + String(len));
-  ws.textAll("txBuffer = " + String(txBuffer));
-  #endif
-  //ws.textAll("txBuffer = " + String(txBuffer));
 
   if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) 
   {
@@ -163,7 +166,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
               int kz = String(txBuffer[8]).toInt();
               if ( kz > inverterCount-1 ) {
               ws.textAll("error, no such inverter");
-              if ( kz == 9 ) actionFlag=47;
+              if ( kz == 9 ) actionFlag=48; // poll all
               return;  
               }
               ws.textAll("poll inverter " + String(kz));
@@ -198,6 +201,20 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
               return;             
           } else          
 
+//           if (strncasecmp(txBuffer+3,"SRESET",6) == 0) {  
+//              ws.textAll("reset server");
+//              server.reset(); // perform the serverreset
+//              return;             
+//          } else 
+   
+ // ************  rtest mosquitto *******************************          
+           if (strncasecmp(txBuffer+3,"TESTMQTT",8) == 0) {  
+              ws.textAll("test mosquitto");
+              actionFlag=49; // perform the healthcheck
+              diagNose=true;
+              return;             
+          } else 
+
            if (strncasecmp(txBuffer+3,"CLEAR",5) == 0) {  
               ws.textAll("clearWindow");
               return;             
@@ -214,6 +231,40 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
                  inverterReboot(kz);
               return;
           } else
+
+
+//// ********************** heap sensor **************************************
+//           if (strncasecmp(txBuffer+3,"Mqtt_stateIDX=",6) == 0) {  
+//              int kz = String(txBuffer[10]).toInt()*10;
+//              kz+=String(txBuffer[11]).toInt();
+//              //kz+=String(txBuffer[12]).toInt();
+//              if (kz > 26 || kz < 16 ) {
+//                ws.textAll("invalid number 26 - 16");
+//                return;
+//              }
+//              
+//              memCheck=kz*1000; // max 450
+//              ws.textAll("memCheck = " + String(memCheck) + "<br>");
+//              
+//              return;
+//          } else 
+
+           if (strncasecmp(txBuffer+3,"FILES",5) == 0) {  
+              //we do this in the loop
+              actionFlag = 46;
+              return;             
+          
+          } else 
+ 
+ 
+ // ********************** zigbee test new*****************************          
+           if (strncasecmp(txBuffer+3,"ZBT=",4) == 0) {  
+              ws.textAll("going to send a teststring, len=" + String(len));
+              //we do this in the loop
+              actionFlag = 45;
+              diagNose=true;
+               return;             
+          } else 
 
            if (strncasecmp(txBuffer+3,"ERASE",5) == 0) {  
               ws.textAll("going to delete all inverter files");
@@ -233,52 +284,22 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
               ws.textAll("done");
               return;             
           
-          } else 
-// ********************** heap sensor **************************************
-           if (strncasecmp(txBuffer+3,"DOMIDX=",6) == 0) {  
-              int kz = String(txBuffer[10]).toInt()*100;
-              kz+=String(txBuffer[11]).toInt()*10;
-              kz+=String(txBuffer[12]).toInt();
- 
-              domIdx=kz; // max 450
-              ws.textAll("domIdx = " + String(domIdx) + "<br>");
-              
-              return;
-          } else 
-
-           if (strncasecmp(txBuffer+3,"FILES",5) == 0) {  
-              //we do this in the loop
-              actionFlag = 46;
-              return;             
-          
-          } else 
- 
- 
- // ********************** zigbee test new*****************************          
-           if (strncasecmp(txBuffer+3,"ZBT=",4) == 0) {  
-              ws.textAll("going to send a teststring, len=" + String(len));
-              //we do this in the loop
-              actionFlag = 45;
-              diagNose=true;
-               return;             
-          
-          } else 
+          } else            
            
-           
-           if (strncasecmp(txBuffer+3,"DEL=",4) == 0) {  
+           if (strncasecmp(txBuffer+3,"DELETE=",7) == 0) {  
               //input can be 10;DELETE=filename
               String bestand="";
-              for(int i=7;  i<len+1; i++) { bestand += String(txBuffer[i]); }
+              for(int i=10;  i<len+1; i++) { bestand += String(txBuffer[i]); }
                ws.textAll("bestand = " + bestand); 
               if (LittleFS.exists(bestand)) 
               {
                   ws.textAll("going to delete file " + bestand); 
-                  if(bestand.indexOf("Inv_Prop") == -1 ) 
+                  if(!bestand.indexOf("Inv_Prop") == -1 ) 
                   {
                       LittleFS.remove(bestand);
                       ws.textAll("file " + bestand + " removed!"); 
                   } else {
-                      ws.textAll("inverterfile not removed!"); 
+                      ws.textAll("inverterfile not removed, use 10;erase!"); 
                   }
               
               } else 
