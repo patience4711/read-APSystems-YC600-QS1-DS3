@@ -12,7 +12,10 @@ You can use the provided binary but if you must compile it yourself: Use arduino
 <br>Please note: by popular demand I have published the code here but i do not feel responsible for problems as to compiling. Impossible for me to know why it doesn't compile in your situation.
 
 ## downloads
-july 26 2023: There is a new version 10_8 available, see changelog,<br> 
+feb 12 2024: There is a new version 10_9 available, see changelog. This is a beta version not yet tested.<br>
+Download [ESP_ECU-v10_9](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-v10_9.bin);
+
+july 26 2023: There is a new version 10_8 available, see changelog.<br> 
 Download [ESP-ECU-v10_8](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-v10_8.bin)<br>
 
 july 30 2023: There is package available with all necessary files, like software for the zigbee, a serial communicater etc.<br>
@@ -52,6 +55,10 @@ The interesting values are send via mqtt and displayed on the main page.
 ![graph2](https://user-images.githubusercontent.com/12282915/139062602-71e92216-9703-4fc4-acc6-fabf544c4ffd.jpg)
 
 ## changelog ##
+version ESP-ECU_V10_9:
+-  fixed a swap of the yc600 channels.
+-  fixed a bug as to the zigbeeUp display in about.
+
 version ESP-ECU_V10:
 -  introduced a new way for communication webpage-server.
 -  compressed web files.
