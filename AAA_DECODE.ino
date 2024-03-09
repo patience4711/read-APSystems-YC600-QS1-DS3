@@ -258,7 +258,7 @@ We keep stacking the increases so we have also en_inc_total
             if(diagNose) {delay(100); ws.textAll(" * decoding panel " + String(x) + " \n en_old " + String(en_old[x]) );}
 
             if ( Inv_Prop[which].invType == 0) { // for yc600 channels 1 and 2 are swapped compared to qs1
-                if(x==0)  offset = offst + 8;  else offset = offst;
+                if(x==0)  offset = offst + 10;  else offset = offst;
             // now we extract a new energy_new[which][x] 
             en_extr = extractValue(offset, btc, 1, 0, s_d); // offset 74 todays module energy channel 0
             } else {
