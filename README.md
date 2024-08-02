@@ -13,7 +13,7 @@ You can use the provided binary but if you must compile it yourself: Use arduino
 
 ## downloads
 aug 2 2024: There is a new version 10_9a available, see changelog. This is a beta version not yet tested.<br>
-Download [ESP_ECU-v10_9](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-v10_9.bin);
+Download [ESP_ECU-v10_9a](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-v10_9a.bin);
 
 july 26 2023: There is a new version 10_8 available, see changelog.<br> 
 Download [ESP-ECU-v10_8](https://github.com/patience4711/read-APSystems-YC600-QS1-DS3/blob/main/ESP-ECU-v10_8.bin)<br>
