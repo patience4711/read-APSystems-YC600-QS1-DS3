@@ -1,3 +1,6 @@
+# End Of Life
+This project is deprecated because the program has grown to large for a nodemcu. It is continued on another platform, the ESP32 please [look here](https://github.com/patience4711/ESP32-read-APS-inverters).
+
 # read APS inverters
 The purpose of this project is to read data via Zigbee from APS Systems inverters. The program can pair and poll YC600 QS1 and DS3(-L-M-S verified) inverters, up to 9 pieces. The read values are displayed on a web page and sent via mosquitto in a user-defined Json format.
 The program has a lot of smart features. All settings can be done via the webinterface. It has a console that can be used for debugging and sending/receiving zigbee messages.<br>
